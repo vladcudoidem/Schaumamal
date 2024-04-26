@@ -29,7 +29,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "TheInspector"
+            packageName = "Schaumamal"
             packageVersion = "1.0.0"
         }
     }

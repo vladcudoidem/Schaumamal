@@ -3,23 +3,22 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import model.Utils.customCoroutineScope
 
 class Inspector {
     var state by mutableStateOf(InspectorState.EMPTY)
         private set
 
     fun dumpXml() {
-        val customScope = CoroutineScope(Dispatchers.IO + Job())
-        customScope.launch {
+        state = InspectorState.WAITING
+
+        customCoroutineScope.launch {
             Utils.dumpXml()
             Utils.takeScreenshot()
-        }
 
-        state = InspectorState.POPULATED
+            state = InspectorState.POPULATED
+        }
     }
 
     fun resetState() {

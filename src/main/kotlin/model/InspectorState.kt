@@ -1,5 +1,5 @@
 package model
 
 enum class InspectorState {
-    EMPTY, POPULATED
+    EMPTY, WAITING, POPULATED
 }

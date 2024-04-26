@@ -3,9 +3,10 @@ package viewmodel
 import model.Inspector
 
 class AppViewModel {
-    val inspector = Inspector()
+    private val inspector = Inspector()
 
-    fun dumpXml() {
-        inspector.dumpXml()
-    }
+    val inspectorState
+        get() = inspector.state
+
+    fun dumpXml() = inspector.dumpXml()
 }

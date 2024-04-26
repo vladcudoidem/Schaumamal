@@ -1,5 +1,6 @@
 package view.composables
 
+import AppViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,8 @@ fun Toolbar(modifier: Modifier = Modifier) {
 
 @Composable
 fun ScreenshotBox(modifier: Modifier = Modifier) {
+    val viewModel = AppViewModel.current
+
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -34,12 +37,14 @@ fun ScreenshotBox(modifier: Modifier = Modifier) {
             .background(Color.LightGray),
         contentAlignment = Alignment.Center
     ) {
-        Text("Screenshot")
+        Text(viewModel.inspectorState.toString())
     }
 }
 
 @Composable
 fun UiTreeBox(modifier: Modifier = Modifier) {
+    val viewModel = AppViewModel.current
+
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -47,6 +52,6 @@ fun UiTreeBox(modifier: Modifier = Modifier) {
             .background(Color.LightGray),
         contentAlignment = Alignment.Center
     ) {
-        Text("Ui Tree")
+        Text(viewModel.inspectorState.toString())
     }
 }

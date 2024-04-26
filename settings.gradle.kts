@@ -10,4 +10,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "TheInspector"
+rootProject.name = "Schaumamal"
