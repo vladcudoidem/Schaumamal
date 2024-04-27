@@ -11,7 +11,7 @@ object Utils {
     const val LOCAL_DUMP_PATH = "./dump/ui_dump.xml"
 
     private const val DEVICE_SCREENSHOT_PATH = "/sdcard/screenshot.png"
-    const val LOCAL_SCREENSHOT_PATH = "./screenshot/screenshot.png"
+    const val LOCAL_SCREENSHOT_PATH = "./src/main/resources/screenshot.png"
 
     val customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
     val runtime: Runtime = Runtime.getRuntime()

@@ -20,8 +20,4 @@ class Inspector {
             state = InspectorState.POPULATED
         }
     }
-
-    fun resetState() {
-        state = InspectorState.EMPTY
-    }
 }

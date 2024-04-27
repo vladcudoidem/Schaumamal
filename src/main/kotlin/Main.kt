@@ -20,7 +20,6 @@ fun main() = application {
         }
     ) {
         val viewModel = remember { AppViewModel() }
-
         CompositionLocalProvider(AppViewModel provides viewModel) {
             App()
         }
