@@ -5,8 +5,8 @@ import model.Inspector
 class AppViewModel {
     private val inspector = Inspector()
 
-    val inspectorState
-        get() = inspector.state
+    val isInspectorPopulated
+        get() = inspector.isPopulated
 
     fun dumpXml() = inspector.dumpXml()
 }

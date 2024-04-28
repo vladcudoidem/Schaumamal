@@ -7,8 +7,10 @@ import kotlinx.coroutines.launch
 import model.Utils.customCoroutineScope
 
 class Inspector {
-    var state by mutableStateOf(InspectorState.EMPTY)
-        private set
+    private var state by mutableStateOf(InspectorState.EMPTY)
+
+    val isPopulated
+        get() = state == InspectorState.POPULATED
 
     fun dumpXml() {
         state = InspectorState.WAITING

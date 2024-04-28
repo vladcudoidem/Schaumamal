@@ -1,6 +1,7 @@
 package view.composables
 
 import AppViewModel
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
+import model.Utils
+import java.io.File
+import java.io.FileInputStream
 
 @Composable
 fun Toolbar(modifier: Modifier = Modifier) {
@@ -37,7 +42,14 @@ fun ScreenshotBox(modifier: Modifier = Modifier) {
             .background(Color.LightGray),
         contentAlignment = Alignment.Center
     ) {
-        Text(viewModel.inspectorState.toString())
+        if (viewModel.isInspectorPopulated) {
+            Image(
+                bitmap = loadImageBitmap(FileInputStream(File(Utils.LOCAL_SCREENSHOT_PATH))),
+                contentDescription = null
+            )
+        } else {
+            Text("No data...")
+        }
     }
 }
 
@@ -52,6 +64,10 @@ fun UiTreeBox(modifier: Modifier = Modifier) {
             .background(Color.LightGray),
         contentAlignment = Alignment.Center
     ) {
-        Text(viewModel.inspectorState.toString())
+        if (viewModel.isInspectorPopulated){
+            Text("XML data")
+        } else {
+            Text("No data...")
+        }
     }
 }
