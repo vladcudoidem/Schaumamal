@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
-import model.Utils
+import model.Constants.LOCAL_SCREENSHOT_PATH
 import java.io.File
 import java.io.FileInputStream
 
@@ -44,7 +44,7 @@ fun ScreenshotBox(modifier: Modifier = Modifier) {
     ) {
         if (viewModel.isInspectorPopulated) {
             Image(
-                bitmap = loadImageBitmap(FileInputStream(File(Utils.LOCAL_SCREENSHOT_PATH))),
+                bitmap = viewModel.layoutData.screenshotBitmap,
                 contentDescription = null
             )
         } else {

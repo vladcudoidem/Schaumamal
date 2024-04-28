@@ -17,7 +17,7 @@ fun ToolbarButton(modifier: Modifier = Modifier) {
         modifier = modifier.size(50.dp),
         shape = RoundedCornerShape(5.dp),
         onClick = {
-            viewModel.dumpXml()
+            viewModel.extractLayout()
         }
     ) {
         Text("D")
