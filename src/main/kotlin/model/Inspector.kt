@@ -23,7 +23,7 @@ class Inspector {
 
             layoutData = LayoutData(
                 loadImageBitmap(FileInputStream(File(LOCAL_SCREENSHOT_PATH))),
-                "RootNode"
+                XmlParser.parseSystem(File(Constants.LOCAL_DUMP_PATH))
             )
             state = InspectorState.POPULATED
         }
