@@ -1,4 +1,4 @@
-package view.composables
+package view
 
 import AppViewModel
 import androidx.compose.foundation.Image
@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import view.LayoutPrinter
 
 @Composable
 fun Toolbar(modifier: Modifier = Modifier) {

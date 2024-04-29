@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import view.composables.ScreenshotBox
-import view.composables.Toolbar
-import view.composables.UiTreeBox
 
 @Composable
 fun MainScreen() {
