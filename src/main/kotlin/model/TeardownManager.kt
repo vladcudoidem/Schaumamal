@@ -2,9 +2,9 @@ package model
 
 import model.Constants.LOCAL_DUMP_PATH
 import model.Constants.LOCAL_SCREENSHOT_PATH
-import model.Executor.executeAndWait
+import model.CommandExecutor.executeAndWait
 
-object TeardownHelper {
+object TeardownManager {
     fun deleteLayoutFiles() {
         val removeDumpCommand = "rm $LOCAL_DUMP_PATH"
         executeAndWait(removeDumpCommand)

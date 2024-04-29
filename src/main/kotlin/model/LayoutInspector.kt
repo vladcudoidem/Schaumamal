@@ -4,13 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.loadImageBitmap
+import model.Constants.LOCAL_DUMP_PATH
 import model.Constants.LOCAL_SCREENSHOT_PATH
 import java.io.File
 import java.io.FileInputStream
 
-class Inspector {
+class LayoutInspector {
     private var state by mutableStateOf(InspectorState.EMPTY)
-    lateinit var layoutData: LayoutData
+    lateinit var data: LayoutData
+        private set
 
     val isPopulated
         get() = state == InspectorState.POPULATED
@@ -18,14 +20,19 @@ class Inspector {
     fun extractLayout() {
         state = InspectorState.WAITING
 
-        CoroutineHelper.launch {
+        CoroutineManager.launch {
             LayoutExtractor.extract()
 
-            layoutData = LayoutData(
+            data = LayoutData(
                 loadImageBitmap(FileInputStream(File(LOCAL_SCREENSHOT_PATH))),
-                XmlParser.parseSystem(File(Constants.LOCAL_DUMP_PATH))
+                XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
             state = InspectorState.POPULATED
         }
+    }
+
+    fun teardown() {
+        CoroutineManager.teardown()
+        TeardownManager.deleteLayoutFiles()
     }
 }

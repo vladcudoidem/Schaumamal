@@ -37,7 +37,7 @@ object XmlParser {
         )
     }
 
-    fun parseWindow(element: Element): Window {
+    fun parseWindow(element: Element): WindowNodes {
         val nodes = mutableListOf<Node>()
         val hierarchy = element.getElementsByTagName("hierarchy").item(0)
         // Iterate through all child nodes of the window element
@@ -48,7 +48,7 @@ object XmlParser {
                 nodes.add(parseNode(child))
             }
         }
-        return Window(
+        return WindowNodes(
             index = element.getAttribute("index").toInt(),
             type = element.getAttribute("type"),
             layer = element.getAttribute("layer").toInt(),
@@ -58,28 +58,28 @@ object XmlParser {
         )
     }
 
-    fun parseDisplay(element: Element): Display {
-        val windows = mutableListOf<Window>()
+    fun parseDisplay(element: Element): DisplayNode {
+        val windowNodes = mutableListOf<WindowNodes>()
         val windowElements = element.getElementsByTagName("window")
         for (i in 0 until windowElements.length) {
-            windows.add(parseWindow(windowElements.item(i) as Element))
+            windowNodes.add(parseWindow(windowElements.item(i) as Element))
         }
-        return Display(
+        return DisplayNode(
             id = element.getAttribute("id").toInt(),
-            windows = windows
+            windowNodes = windowNodes
         )
     }
 
-    fun parseSystem(file: File): System {
+    fun parseSystem(file: File): SystemNode {
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         val doc = dBuilder.parse(file)
         doc.documentElement.normalize()
         val displayElements = doc.getElementsByTagName("display")
-        val displays = mutableListOf<Display>()
+        val displayNodes = mutableListOf<DisplayNode>()
         for (i in 0 until displayElements.length) {
-            displays.add(parseDisplay(displayElements.item(i) as Element))
+            displayNodes.add(parseDisplay(displayElements.item(i) as Element))
         }
-        return System(displays)
+        return SystemNode(displayNodes)
     }
 }

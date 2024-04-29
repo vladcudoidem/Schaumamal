@@ -1,15 +1,17 @@
-package model
+package view
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import model.Node
+import model.SystemNode
 
 object LayoutPrinter {
     @Composable
-    fun getStructure(root: System) {
+    fun getStructure(root: SystemNode) {
         Text("System")
-        for (display in root.displays) {
+        for (display in root.displayNodes) {
             Text("   Display")
-            for (window in display.windows) {
+            for (window in display.windowNodes) {
                 Text("      Window")
                 for (node in window.nodes) {
                     printNodes(node, "         ")

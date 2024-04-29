@@ -1,15 +1,15 @@
 package model
 
-data class System(
-    val displays: List<Display>
+data class SystemNode(
+    val displayNodes: List<DisplayNode>
 )
 
-data class Display(
+data class DisplayNode(
     val id: Int,
-    val windows: List<Window>
+    val windowNodes: List<WindowNodes>
 )
 
-data class Window(
+data class WindowNodes(
     val index: Int,
     val type: String,
     val layer: Int,

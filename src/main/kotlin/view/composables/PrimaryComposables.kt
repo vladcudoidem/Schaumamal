@@ -17,12 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
-import model.Constants.LOCAL_SCREENSHOT_PATH
-import model.LayoutPrinter
-import java.io.File
-import java.io.FileInputStream
+import view.LayoutPrinter
 
 @Composable
 fun Toolbar(modifier: Modifier = Modifier) {
@@ -48,7 +44,7 @@ fun ScreenshotBox(modifier: Modifier = Modifier) {
     ) {
         if (viewModel.isInspectorPopulated) {
             Image(
-                bitmap = viewModel.layoutData.screenshotBitmap,
+                bitmap = viewModel.layoutData.screenshot,
                 contentDescription = null
             )
         } else {
@@ -72,7 +68,7 @@ fun UiTreeBox(modifier: Modifier = Modifier) {
             val scrollState = rememberScrollState()
 
             Column(modifier = Modifier.fillMaxSize().verticalScroll(scrollState)) {
-                LayoutPrinter.getStructure(viewModel.layoutData.rootNode)
+                LayoutPrinter.getStructure(viewModel.layoutData.root)
             }
         } else {
             Text("No data...")

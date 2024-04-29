@@ -1,25 +1,21 @@
 package viewmodel
 
-import kotlinx.coroutines.cancel
-import model.CoroutineHelper
-import model.Inspector
-import model.TeardownHelper
+import model.LayoutInspector
 
 // TODO create folders at startup
 
 class AppViewModel {
-    private val inspector = Inspector()
+    private val layoutInspector = LayoutInspector()
 
     val layoutData
-        get() = inspector.layoutData
+        get() = layoutInspector.data
 
     val isInspectorPopulated
-        get() = inspector.isPopulated
+        get() = layoutInspector.isPopulated
 
-    fun extractLayout() = inspector.extractLayout()
+    fun extractLayout() = layoutInspector.extractLayout()
 
     fun teardown() {
-        CoroutineHelper.customCoroutineScope.cancel()
-        TeardownHelper.deleteLayoutFiles()
+        layoutInspector.teardown()
     }
 }
