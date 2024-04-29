@@ -1,4 +1,4 @@
-package model
+package model.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

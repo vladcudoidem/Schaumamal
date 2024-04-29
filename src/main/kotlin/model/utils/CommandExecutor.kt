@@ -1,4 +1,4 @@
-package model
+package model.utils
 
 object CommandExecutor {
     private val runtime: Runtime = Runtime.getRuntime()

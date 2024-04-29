@@ -1,8 +1,8 @@
-package model
+package model.utils
 
 import model.Constants.LOCAL_DUMP_PATH
 import model.Constants.LOCAL_SCREENSHOT_PATH
-import model.CommandExecutor.executeAndWait
+import model.utils.CommandExecutor.executeAndWait
 
 object TeardownManager {
     fun deleteLayoutFiles() {

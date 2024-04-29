@@ -1,20 +1,25 @@
-package model
+package model.parser
 
 data class SystemNode(
-    val displayNodes: List<DisplayNode>
+    val displays: List<DisplayNode>
 )
 
 data class DisplayNode(
     val id: Int,
-    val windowNodes: List<WindowNodes>
+    val windows: List<WindowNodes>
 )
 
 data class WindowNodes(
     val index: Int,
+    val id: Int,
+    val title: String,
+    val bounds: String,
+    val active: Boolean,
     val type: String,
     val layer: Int,
-    val token: String,
+    val token: String, // TODO does this exist?
     val focused: Boolean,
+    val accessibilityFocused: Boolean,
     val nodes: List<Node>
 )
 

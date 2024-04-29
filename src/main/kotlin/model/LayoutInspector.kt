@@ -6,6 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.loadImageBitmap
 import model.Constants.LOCAL_DUMP_PATH
 import model.Constants.LOCAL_SCREENSHOT_PATH
+import model.parser.XmlParser
+import model.utils.CoroutineManager
+import model.utils.LayoutManager
+import model.utils.TeardownManager
 import java.io.File
 import java.io.FileInputStream
 
@@ -21,7 +25,7 @@ class LayoutInspector {
         state = InspectorState.WAITING
 
         CoroutineManager.launch {
-            LayoutExtractor.extract()
+            LayoutManager.extract()
 
             data = LayoutData(
                 loadImageBitmap(FileInputStream(File(LOCAL_SCREENSHOT_PATH))),
