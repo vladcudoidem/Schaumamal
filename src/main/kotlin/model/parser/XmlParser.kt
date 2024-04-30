@@ -22,7 +22,7 @@ object XmlParser {
     }
 
     private fun parseDisplay(element: Element): DisplayNode {
-        val windows = mutableListOf<WindowNodes>()
+        val windows = mutableListOf<WindowNode>()
         val windowElements = element.getElementsByTagName("window")
         windowElements.forEach {
             windows.add(parseWindow(it))
@@ -34,7 +34,7 @@ object XmlParser {
         )
     }
 
-    private fun parseWindow(element: Element): WindowNodes {
+    private fun parseWindow(element: Element): WindowNode {
         val hierarchyElement = element.getElementsByTagName("hierarchy").item(0)
 
         val nodes = mutableListOf<Node>()
@@ -44,7 +44,7 @@ object XmlParser {
             }
         }
 
-        return WindowNodes(
+        return WindowNode(
             index = element.getAttribute("index").toInt(),
             id = element.getAttribute("id").toInt(),
             title = element.getAttribute("title"),

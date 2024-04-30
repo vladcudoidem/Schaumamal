@@ -1,20 +1,16 @@
 package view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun MainScreen() {
-    Row(
-        modifier = Modifier.padding(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Toolbar()
-        ScreenshotBox(modifier = Modifier.weight(0.5f))
-        UiTreeBox(modifier = Modifier.weight(0.5f))
+    Box(modifier = Modifier.fillMaxSize()) {
+        ScreenshotBox(modifier = Modifier.fillMaxSize())
+        RedButton(modifier = Modifier.align(Alignment.TopStart))
+        FloatingPanes(modifier = Modifier.align(Alignment.TopEnd))
     }
 }

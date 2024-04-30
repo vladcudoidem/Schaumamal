@@ -7,6 +7,7 @@ import view.MainScreen
 @Preview
 fun App() {
     MaterialTheme {
+//        OldMainScreen()
         MainScreen()
     }
 }

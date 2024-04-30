@@ -6,10 +6,10 @@ data class SystemNode(
 
 data class DisplayNode(
     val id: Int,
-    val windows: List<WindowNodes>
+    val windows: List<WindowNode>
 )
 
-data class WindowNodes(
+data class WindowNode(
     val index: Int,
     val id: Int,
     val title: String,

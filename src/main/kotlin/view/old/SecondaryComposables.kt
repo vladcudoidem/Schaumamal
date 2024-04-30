@@ -1,4 +1,4 @@
-package view
+package view.old
 
 import AppViewModel
 import androidx.compose.foundation.layout.size
