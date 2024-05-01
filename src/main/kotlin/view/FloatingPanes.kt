@@ -1,5 +1,6 @@
 package view
 
+import AppViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -81,6 +82,7 @@ fun FloatingPanes(modifier: Modifier = Modifier) {
 
 @Composable
 fun TwoBoxColumn(modifier: Modifier = Modifier) {
+    val viewModel = AppViewModel.current
     val density = LocalDensity.current.density
 
     var upperBoxHeight by remember { mutableStateOf(initialUpperBoxHeight) }
@@ -98,9 +100,10 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 .height(upperBoxHeight)
                 .clip(RoundedCornerShape(largeCornerRadius))
                 .background(Colors.floatingPaneBackgroundColor)
-                .padding(mediumPadding)
         ) {
-            // ...
+            if (viewModel.isInspectorPopulated) {
+                TreePrinter(modifier = Modifier.fillMaxSize())
+            }
         }
 
         Wedge(
