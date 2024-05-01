@@ -23,101 +23,135 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
+import view.Dimensions.largeCornerRadius
+import view.Dimensions.mediumPadding
+import view.Dimensions.paddingBetweenItems
 import java.awt.Cursor
+
+private val initialTopLevelBoxWidth = 250.dp
+private val initialUpperBoxHeight = 300.dp
+private val minimumFloatingPaneDimension = 100.dp
+
+private val wedgeSmallDimension = 6.dp
+private val wedgeLargeDimension = 30.dp
 
 @Composable
 fun FloatingPanes(modifier: Modifier = Modifier) {
-    val density = LocalDensity.current.density
-    var upperBoxHeight by remember { mutableStateOf(300.dp) }
-    var lowerBoxHeightPx by remember { mutableStateOf(0.dp) }
-    var wholeBoxWidth by remember { mutableStateOf(250.dp) }
+    var topLevelBoxWidth by remember { mutableStateOf(initialTopLevelBoxWidth) }
 
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .width(wholeBoxWidth)
-            .padding(10.dp)
+            .width(topLevelBoxWidth)
+            .padding(mediumPadding)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(paddingBetweenItems)
 
         ) {
-            Box(
-                modifier = Modifier
-                    .width(6.dp)
-                    .height(30.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(Colors.wedgeColor)
-                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, dragAmount ->
-                            if (change.positionChange() != Offset.Zero) {
-                                change.consume()
-                            }
-                            wholeBoxWidth = (wholeBoxWidth - dragAmount.x.dp / 2).coerceAtLeast(100.dp)
-                        }
+            Wedge(
+                width = wedgeSmallDimension, height = wedgeLargeDimension,
+                pointerHoverIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
+                pointerInputHandler = {
+                    detectDragGestures { change, dragAmount ->
+                        if (change.positionChange() != Offset.Zero) change.consume()
+
+                        topLevelBoxWidth = (topLevelBoxWidth - dragAmount.x.dp / 2).coerceAtLeast(
+                            minimumFloatingPaneDimension
+                        )
                     }
+                }
             )
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(upperBoxHeight)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Colors.floatingPaneBackgroundColor)
-                        .padding(10.dp)
-                ) {
-                    // ...
-                }
-
-                Box(
-                    modifier = Modifier
-                        .width(30.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Colors.wedgeColor)
-                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                if (change.positionChange() != Offset.Zero) {
-                                    change.consume()
-                                }
-                                if (
-                                    dragAmount.y.dp > 0.dp && lowerBoxHeightPx > 100.dp ||
-                                    dragAmount.y.dp < 0.dp
-                                ) {
-                                    upperBoxHeight = (upperBoxHeight + dragAmount.y.dp / 2).coerceAtLeast(100.dp)
-                                    // TODO what is with the '/ 2' factor?
-                                }
-                            }
-                        }
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Colors.floatingPaneBackgroundColor)
-                        .padding(10.dp)
-                        .onSizeChanged {
-                            lowerBoxHeightPx = (it.height / density).dp
-                        }
-                ) {
-                    // ...
-                }
-            }
+            TwoBoxColumn()
         }
     }
+}
+
+@Composable
+fun TwoBoxColumn(modifier: Modifier = Modifier) {
+    val density = LocalDensity.current.density
+
+    var upperBoxHeight by remember { mutableStateOf(initialUpperBoxHeight) }
+    // The lower Box takes up as much height as is left. This value gets updated with the real height at composition.
+    var lowerBoxHeight by remember { mutableStateOf(0.dp) }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(paddingBetweenItems),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(upperBoxHeight)
+                .clip(RoundedCornerShape(largeCornerRadius))
+                .background(Colors.floatingPaneBackgroundColor)
+                .padding(mediumPadding)
+        ) {
+            // ...
+        }
+
+        Wedge(
+            width = wedgeLargeDimension, height = wedgeSmallDimension,
+            pointerHoverIcon = PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)),
+            pointerInputHandler = {
+                detectDragGestures { change, dragAmount ->
+                    if (change.positionChange() != Offset.Zero) change.consume()
+
+                    if (
+                        dragAmount.y.dp > 0.dp && lowerBoxHeight > minimumFloatingPaneDimension ||
+                        dragAmount.y.dp < 0.dp
+                    ) {
+                        upperBoxHeight = (upperBoxHeight + dragAmount.y.dp / 2).coerceAtLeast(
+                            minimumFloatingPaneDimension
+                        ) // TODO what is with the '/ 2' factor?
+                    }
+                }
+            }
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(largeCornerRadius))
+                .background(Colors.floatingPaneBackgroundColor)
+                .padding(mediumPadding)
+                .onSizeChanged {
+                    lowerBoxHeight = (it.height / density).dp
+                }
+        ) {
+            // ...
+        }
+    }
+}
+
+@Composable
+fun Wedge(
+    width: Dp,
+    height: Dp,
+    pointerHoverIcon: PointerIcon,
+    pointerInputHandler: suspend PointerInputScope.() -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .width(width)
+            .height(height)
+            .clip(RoundedCornerShape(min(width, height) / 2))
+            .background(Colors.wedgeColor)
+            .pointerHoverIcon(pointerHoverIcon)
+            .pointerInput(Unit, pointerInputHandler)
+    )
 }

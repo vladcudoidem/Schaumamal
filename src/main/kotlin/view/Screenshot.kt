@@ -18,7 +18,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     Box(modifier = modifier) {
@@ -28,14 +27,11 @@ fun Screenshot(modifier: Modifier = Modifier) {
                 contentDescription = null,
                 modifier = Modifier
                     .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
                         translationX = offset.x,
                         translationY = offset.y
                     )
                     .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, zoom, _ ->
-                            // scale *= zoom // TODO does this work with a mouse?
+                        detectTransformGestures { _, pan, _, _ ->
                             offset += pan
                         }
                     }

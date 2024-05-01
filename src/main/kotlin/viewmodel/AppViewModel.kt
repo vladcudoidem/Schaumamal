@@ -2,7 +2,7 @@ package viewmodel
 
 import model.LayoutInspector
 
-// TODO create folders at startup
+// TODO create folders at startup if needed
 
 class AppViewModel {
     private val layoutInspector = LayoutInspector()
