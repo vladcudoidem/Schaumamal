@@ -35,8 +35,10 @@ import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import view.Dimensions.largeCornerRadius
+import view.Dimensions.mediumCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
+import view.Dimensions.smallCornerRadius
 import java.awt.Cursor
 
 private val initialTopLevelBoxWidth = 250.dp
@@ -98,7 +100,12 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(upperBoxHeight)
-                .clip(RoundedCornerShape(largeCornerRadius))
+                .clip(RoundedCornerShape(
+                    topStart = largeCornerRadius,
+                    topEnd = largeCornerRadius,
+                    bottomStart = smallCornerRadius,
+                    bottomEnd = smallCornerRadius
+                ))
                 .background(Colors.floatingPaneBackgroundColor)
         ) {
             if (viewModel.isInspectorPopulated) {
@@ -128,7 +135,12 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(largeCornerRadius))
+                .clip(RoundedCornerShape(
+                    topStart = smallCornerRadius,
+                    topEnd = smallCornerRadius,
+                    bottomStart = largeCornerRadius,
+                    bottomEnd = largeCornerRadius
+                ))
                 .background(Colors.floatingPaneBackgroundColor)
                 .padding(mediumPadding)
                 .onSizeChanged {
