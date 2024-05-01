@@ -7,21 +7,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RedButton(modifier: Modifier = Modifier) {
+fun RoundButton(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(modifier = modifier.padding(10.dp)) {
         Button(
             onClick = { viewModel.extractLayout() },
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0.6f, 0.2f, 0.2f)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Colors.buttonColor),
             modifier = Modifier.size(40.dp)
         ) { }
     }
