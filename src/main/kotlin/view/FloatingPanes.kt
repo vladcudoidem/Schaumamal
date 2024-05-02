@@ -121,12 +121,12 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                     if (change.positionChange() != Offset.Zero) change.consume()
 
                     if (
-                        dragAmount.y.dp > 0.dp && lowerBoxHeight > minimumFloatingPaneDimension ||
-                        dragAmount.y.dp < 0.dp
+                        dragAmount.y.toDp() > 0.dp && lowerBoxHeight >= minimumFloatingPaneDimension ||
+                        dragAmount.y.toDp() < 0.dp
                     ) {
-                        upperBoxHeight = (upperBoxHeight + dragAmount.y.dp / 2).coerceAtLeast(
+                        upperBoxHeight = (upperBoxHeight + dragAmount.y.toDp()).coerceAtLeast(
                             minimumFloatingPaneDimension
-                        ) // TODO what is with the '/ 2' factor?
+                        )
                     }
                 }
             }
