@@ -26,6 +26,7 @@ import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
 
 // TODO do this with LazyColumn. Is that possible?
+// TODO this file has to be refactored sometime.
 
 val startPaddingPerLevel = 20.dp
 

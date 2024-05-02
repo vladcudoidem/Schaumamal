@@ -4,7 +4,7 @@ import model.InspectorState
 import model.LayoutInspector
 import model.parser.Node
 
-// TODO create folders at startup if needed
+// TODO create folders at startup if needed.
 
 class AppViewModel {
     private val layoutInspector = LayoutInspector()

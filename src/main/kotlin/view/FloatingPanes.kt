@@ -143,7 +143,9 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                     lowerBoxHeight = (it.height / density).dp
                 }
         ) {
-            // ...
+            if (viewModel.isNodeSelected) {
+                SelectedNode()
+            }
         }
     }
 }
