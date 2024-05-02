@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import view.Dimensions.largeCornerRadius
-import view.Dimensions.mediumCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
 import view.Dimensions.smallCornerRadius
