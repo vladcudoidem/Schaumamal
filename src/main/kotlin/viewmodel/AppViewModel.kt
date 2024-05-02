@@ -9,17 +9,12 @@ import model.parser.Node
 class AppViewModel {
     private val layoutInspector = LayoutInspector()
 
-    val isInspectorPopulated
-        get() = layoutInspector.state == InspectorState.POPULATED
-    val isInspectorWaiting
-        get() = layoutInspector.state == InspectorState.WAITING
-    val layoutData
-        get() = layoutInspector.data
+    val isInspectorPopulated get() = layoutInspector.state == InspectorState.POPULATED
+    val isInspectorWaiting get() = layoutInspector.state == InspectorState.WAITING
+    val layoutData get() = layoutInspector.data
 
-    val isNodeSelected
-        get() = layoutInspector.isNodeSelected
-    val selectedNode
-        get() = layoutInspector.selectedNode
+    val isNodeSelected get() = layoutInspector.isNodeSelected
+    val selectedNode get() = layoutInspector.selectedNode
 
     fun extractLayout() = layoutInspector.extractLayout()
 
