@@ -3,23 +3,25 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.loadImageBitmap
 import model.Constants.LOCAL_DUMP_PATH
 import model.Constants.LOCAL_SCREENSHOT_PATH
+import model.parser.Node
 import model.parser.XmlParser
 import model.utils.CoroutineManager
 import model.utils.LayoutManager
 import model.utils.TeardownManager
 import java.io.File
-import java.io.FileInputStream
 
 class LayoutInspector {
-    private var state by mutableStateOf(InspectorState.EMPTY)
-    lateinit var data: LayoutData
+    var state by mutableStateOf(InspectorState.EMPTY)
+        private set
+    var data by mutableStateOf(LayoutData.default)
         private set
 
-    val isPopulated
-        get() = state == InspectorState.POPULATED
+    var isNodeSelected by mutableStateOf(false)
+        private set
+    var selectedNode by mutableStateOf(Node.default)
+        private set
 
     fun extractLayout() {
         state = InspectorState.WAITING
@@ -28,11 +30,15 @@ class LayoutInspector {
             LayoutManager.extract()
 
             data = LayoutData(
-                loadImageBitmap(FileInputStream(File(LOCAL_SCREENSHOT_PATH))),
+                LOCAL_SCREENSHOT_PATH,
                 XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
             state = InspectorState.POPULATED
         }
+    }
+
+    fun selectNode(node: Node) {
+        selectedNode = node
     }
 
     fun teardown() {

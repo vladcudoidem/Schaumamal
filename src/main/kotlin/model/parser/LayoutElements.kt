@@ -2,7 +2,11 @@ package model.parser
 
 data class SystemNode(
     val displays: List<DisplayNode>
-)
+) {
+    companion object {
+        val default = SystemNode(displays = emptyList())
+    }
+}
 
 data class DisplayNode(
     val id: Int,
@@ -42,4 +46,27 @@ data class Node(
     val selected: Boolean,
     val bounds: String,
     val children: List<Node>
-)
+) {
+    companion object {
+        val default = Node(
+            index = -1,
+            text = "",
+            resourceId = "",
+            className = "",
+            packageName = "",
+            contentDesc = "",
+            checkable = false,
+            checked = false,
+            clickable = false,
+            enabled = false,
+            focusable = false,
+            focused = false,
+            scrollable = false,
+            longClickable = false,
+            password = false,
+            selected = false,
+            bounds = "",
+            children = emptyList()
+        )
+    }
+}

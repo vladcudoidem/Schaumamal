@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.loadImageBitmap
+import java.io.File
+import java.io.FileInputStream
 
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
@@ -23,7 +26,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         if (viewModel.isInspectorPopulated) {
             Image(
-                bitmap = viewModel.layoutData.screenshot,
+                bitmap = loadImageBitmap(FileInputStream(File(viewModel.layoutData.screenshotPath))),
                 contentDescription = null,
                 modifier = Modifier
                     .graphicsLayer(

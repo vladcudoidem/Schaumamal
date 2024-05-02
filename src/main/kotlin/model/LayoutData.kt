@@ -1,9 +1,12 @@
 package model
 
-import androidx.compose.ui.graphics.ImageBitmap
 import model.parser.SystemNode
 
 data class LayoutData(
-    val screenshot: ImageBitmap,
+    val screenshotPath: String,
     val root: SystemNode
-)
+) {
+    companion object {
+        val default = LayoutData(screenshotPath = "", root = SystemNode.default)
+    }
+}
