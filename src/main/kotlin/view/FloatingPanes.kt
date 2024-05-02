@@ -108,7 +108,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 .background(Colors.floatingPaneBackgroundColor)
         ) {
             if (viewModel.isInspectorPopulated) {
-                TreePrinter(modifier = Modifier.fillMaxSize())
+                Tree(modifier = Modifier.fillMaxSize())
             }
         }
 

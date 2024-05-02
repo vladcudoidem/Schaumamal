@@ -12,18 +12,25 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import model.parser.DisplayNode
 import model.parser.Node
+import model.parser.SystemNode
+import model.parser.WindowNode
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
 
-// TODO do this with LazyColumn
+// TODO do this with LazyColumn. Is that possible?
 
 val startPaddingPerLevel = 20.dp
 
 @Composable
-fun TreePrinter(modifier: Modifier = Modifier) {
+fun Tree(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
     val rootNode = viewModel.layoutData.root
 
@@ -36,27 +43,64 @@ fun TreePrinter(modifier: Modifier = Modifier) {
             .horizontalScroll(horizontalScrollState)
     ) {
         Spacer(modifier = Modifier.height(mediumPadding))
-
-        TreeLine(text = "Root", depth = 0)
-        for (display in rootNode.displays) {
-            TreeLine(text = "Display ${display.id}", depth = 1)
-            for (window in display.windows) {
-                TreeLine(text = "Window ${window.id}", depth = 2)
-                for (rootWindowNode in window.nodes) {
-                    NodePrinter(rootWindowNode, depth = 3)
-                }
-            }
-        }
-
+        SystemPrinter(rootNode)
         Spacer(modifier = Modifier.height(mediumPadding))
     }
 }
 
 @Composable
-fun NodePrinter(node: Node, depth: Int) {
-    TreeLine(text = "Node:${node.className.split(".").last()}", depth = depth)
-    for (childNode in node.children) {
-        NodePrinter(childNode, depth = depth + 1)
+fun SystemPrinter(system: SystemNode, modifier: Modifier = Modifier) {
+    var enabled by remember { mutableStateOf(true) }
+
+    TreeLine(text = "System", depth = 0)
+    if (enabled) {
+        Column(modifier = modifier) {
+            for (display in system.displays) {
+                DisplayPrinter(display)
+            }
+        }
+    }
+}
+
+@Composable
+fun DisplayPrinter(display: DisplayNode, modifier: Modifier = Modifier) {
+    var enabled by remember { mutableStateOf(true) }
+
+    TreeLine(text = "Display", depth = 1)
+    if (enabled) {
+        Column(modifier = modifier) {
+            for (window in display.windows) {
+                WindowPrinter(window)
+            }
+        }
+    }
+}
+
+@Composable
+fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
+    var enabled by remember { mutableStateOf(true) }
+
+    TreeLine(text = "Window", depth = 2)
+    if (enabled) {
+        Column(modifier = modifier) {
+            for (node in window.nodes) {
+                NodePrinter(node, 3)
+            }
+        }
+    }
+}
+
+@Composable
+fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
+    var enabled by remember { mutableStateOf(true) }
+
+    TreeLine(text = "Node", depth = depth)
+    if (enabled) {
+        Column(modifier = modifier) {
+            for (child in node.children) {
+                NodePrinter(child, depth + 1)
+            }
+        }
     }
 }
 
