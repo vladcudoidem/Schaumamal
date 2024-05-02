@@ -119,10 +119,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 detectDragGestures { change, dragAmount ->
                     if (change.positionChange() != Offset.Zero) change.consume()
 
-                    if (
-                        dragAmount.y.toDp() > 0.dp && lowerBoxHeight >= minimumFloatingPaneDimension ||
-                        dragAmount.y.toDp() < 0.dp
-                    ) {
+                    if (lowerBoxHeight >= minimumFloatingPaneDimension || dragAmount.y.toDp() < 0.dp) {
                         upperBoxHeight = (upperBoxHeight + dragAmount.y.toDp()).coerceAtLeast(
                             minimumFloatingPaneDimension
                         )
