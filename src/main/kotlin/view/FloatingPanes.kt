@@ -144,7 +144,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 }
         ) {
             if (viewModel.isNodeSelected) {
-                SelectedNode()
+                SelectedNode(modifier = Modifier.fillMaxSize())
             }
         }
     }

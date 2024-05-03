@@ -9,4 +9,5 @@ object Colors {
     val primaryTextColor = Color(0xFFE2E2E8)
     val secondaryTextColor = Color(0xFFC3C6D2)
     val wedgeColor = Color(0xFFC3C6D2)
+    val highlightedTextColor = Color(0xFF705575)
 }
