@@ -39,6 +39,7 @@ class LayoutInspector {
 
     fun selectNode(node: Node) {
         selectedNode = node
+        isNodeSelected = true
     }
 
     fun teardown() {

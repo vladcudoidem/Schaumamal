@@ -1,6 +1,7 @@
 package view
 
 import AppViewModel
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,9 +94,11 @@ fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
 
 @Composable
 fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
+    val viewModel = AppViewModel.current
+
     var enabled by remember { mutableStateOf(true) }
 
-    TreeLine(text = "Node", depth = depth)
+    TreeLine(text = "Node", depth = depth, onClickText = { viewModel.selectNode(node) })
     if (enabled) {
         Column(modifier = modifier) {
             for (child in node.children) {
@@ -109,7 +112,8 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
 fun TreeLine(
     text: String,
     modifier: Modifier = Modifier,
-    depth: Int = 0
+    depth: Int = 0,
+    onClickText: () -> Unit = { }
 ) {
     if (depth < 0) error("Depth cannot be lower than 0.")
 
@@ -117,7 +121,13 @@ fun TreeLine(
         Spacer(modifier = Modifier.width(mediumPadding))
 
         Spacer(modifier = Modifier.width(startPaddingPerLevel * depth))
-        Text(text = text, color = Colors.secondaryTextColor, modifier = Modifier.padding(smallPadding))
+        Text(
+            text = text,
+            color = Colors.secondaryTextColor,
+            modifier = Modifier
+                .padding(smallPadding)
+                .clickable { onClickText() }
+        )
 
         Spacer(modifier = Modifier.width(mediumPadding))
     }
