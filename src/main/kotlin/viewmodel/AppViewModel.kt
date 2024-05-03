@@ -1,6 +1,5 @@
 package viewmodel
 
-import model.InspectorState
 import model.LayoutInspector
 import model.parser.Node
 
@@ -9,8 +8,7 @@ import model.parser.Node
 class AppViewModel {
     private val layoutInspector = LayoutInspector()
 
-    val isInspectorPopulated get() = layoutInspector.state == InspectorState.POPULATED
-    val isInspectorWaiting get() = layoutInspector.state == InspectorState.WAITING
+    val inspectorState get() = layoutInspector.state
     val layoutData get() = layoutInspector.data
 
     val isNodeSelected get() = layoutInspector.isNodeSelected

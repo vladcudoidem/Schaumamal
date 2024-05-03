@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import model.InspectorState
 import view.Dimensions.largeCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
@@ -107,7 +108,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 ))
                 .background(Colors.floatingPaneBackgroundColor)
         ) {
-            if (viewModel.isInspectorPopulated) {
+            if (viewModel.inspectorState == InspectorState.POPULATED) {
                 Tree(modifier = Modifier.fillMaxSize())
             }
         }

@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.loadImageBitmap
+import model.InspectorState
 import java.io.File
 import java.io.FileInputStream
 
@@ -24,7 +25,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     Box(modifier = modifier) {
-        if (viewModel.isInspectorPopulated) {
+        if (viewModel.inspectorState == InspectorState.POPULATED) {
             Image(
                 bitmap = loadImageBitmap(FileInputStream(File(viewModel.layoutData.screenshotPath))),
                 contentDescription = null,

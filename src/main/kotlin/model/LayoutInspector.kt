@@ -25,6 +25,8 @@ class LayoutInspector {
 
     fun extractLayout() {
         state = InspectorState.WAITING
+        isNodeSelected = false
+        selectedNode = Node.default
 
         CoroutineManager.launch {
             LayoutManager.extract()
