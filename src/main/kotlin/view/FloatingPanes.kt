@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ import view.Dimensions.largeCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
 import view.Dimensions.smallCornerRadius
+import view.Dimensions.smallPadding
 import java.awt.Cursor
 
 private val initialTopLevelBoxWidth = 250.dp
@@ -110,6 +113,19 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
         ) {
             if (viewModel.inspectorState == InspectorState.POPULATED) {
                 Tree(modifier = Modifier.fillMaxSize())
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(smallPadding)
+                ) {
+                    Text(
+                        text = "Missing layout",
+                        color = Colors.hintTextColor,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
 
@@ -146,6 +162,19 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
         ) {
             if (viewModel.isNodeSelected) {
                 SelectedNode(modifier = Modifier.fillMaxSize())
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(smallPadding)
+                ) {
+                    Text(
+                        text = "No node selected",
+                        color = Colors.hintTextColor,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     }

@@ -7,7 +7,8 @@ object Colors {
     val backgroundColor = Color(0xFF121317)
     val floatingPaneBackgroundColor = Color(0xFF1E2024)
     val primaryTextColor = Color(0xFFE2E2E8)
-    val secondaryTextColor = Color(0xFFC3C6D2)
-    val wedgeColor = Color(0xFFC3C6D2)
-    val highlightedTextColor = Color(0xFF705575)
+    val secondaryTextColor = Color(0xFFB4B7C2)
+    val hintTextColor = Color(0x88FFFFFF)
+    val wedgeColor = Color(0xBBC3C6D2)
+    val highlightedTextBackgroundColor = Color(0xFF705575)
 }

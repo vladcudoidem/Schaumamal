@@ -104,7 +104,11 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
 
     TreeLine(
         text = "Node",
-        textBackgroundColor = if (viewModel.selectedNode === node) Colors.highlightedTextColor else Color.Transparent,
+        textBackgroundColor = if (viewModel.selectedNode === node) {
+            Colors.highlightedTextBackgroundColor
+        } else {
+            Color.Transparent
+        },
         depth = depth,
         onClickText = { viewModel.selectNode(node) }
     )
