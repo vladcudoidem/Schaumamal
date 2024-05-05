@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.PointerInputScope
@@ -181,7 +183,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Wedge(
+fun Wedge( // TODO refactor this composable
     width: Dp,
     height: Dp,
     pointerHoverIcon: PointerIcon,
@@ -192,9 +194,45 @@ fun Wedge(
         modifier = modifier
             .width(width)
             .height(height)
-            .clip(RoundedCornerShape(min(width, height) / 2))
-            .background(Colors.wedgeColor)
             .pointerHoverIcon(pointerHoverIcon)
             .pointerInput(Unit, pointerInputHandler)
-    )
+    ) {
+        if (height > width) {
+            Row {
+                Box(
+                    modifier = Modifier
+                        .height(height)
+                        .width(width / 3)
+                        .clip(RoundedCornerShape(width / 3 / 2))
+                        .background(Colors.wedgeColor)
+                )
+                Spacer(modifier = Modifier.width(width / 3))
+                Box(
+                    modifier = Modifier
+                        .height(height)
+                        .width(width / 3)
+                        .clip(RoundedCornerShape(width / 3 / 2))
+                        .background(Colors.wedgeColor)
+                )
+            }
+        } else {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .height(height / 3)
+                        .width(width)
+                        .clip(RoundedCornerShape(height / 3 / 2))
+                        .background(Colors.wedgeColor)
+                )
+                Spacer(modifier = Modifier.height(height / 3))
+                Box(
+                    modifier = Modifier
+                        .height(height / 3)
+                        .width(width)
+                        .clip(RoundedCornerShape(height / 3 / 2))
+                        .background(Colors.wedgeColor)
+                )
+            }
+        }
+    }
 }
