@@ -33,7 +33,7 @@ import view.Dimensions.smallPadding
 // TODO do this with LazyColumn. Is that possible?
 // TODO this file has to be refactored sometime.
 
-val startPaddingPerLevel = 20.dp
+val startPaddingPerLevel = 25.dp
 
 @Composable
 fun Tree(modifier: Modifier = Modifier) {
@@ -58,7 +58,11 @@ fun Tree(modifier: Modifier = Modifier) {
 fun SystemPrinter(system: SystemNode, modifier: Modifier = Modifier) {
     var enabled by remember { mutableStateOf(true) }
 
-    TreeLine(text = "System", depth = 0)
+    val text = with(system) {
+        "System {displays=${displays.size}}"
+    }
+
+    TreeLine(text = text, depth = 0)
     if (enabled) {
         Column(modifier = modifier) {
             for (display in system.displays) {
@@ -72,7 +76,11 @@ fun SystemPrinter(system: SystemNode, modifier: Modifier = Modifier) {
 fun DisplayPrinter(display: DisplayNode, modifier: Modifier = Modifier) {
     var enabled by remember { mutableStateOf(true) }
 
-    TreeLine(text = "Display", depth = 1)
+    val text = with(display) {
+        "Display {id=$id, windows=${windows.size}}"
+    }
+
+    TreeLine(text = text, depth = 1)
     if (enabled) {
         Column(modifier = modifier) {
             for (window in display.windows) {
@@ -86,7 +94,11 @@ fun DisplayPrinter(display: DisplayNode, modifier: Modifier = Modifier) {
 fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
     var enabled by remember { mutableStateOf(true) }
 
-    TreeLine(text = "Window", depth = 2)
+    val text = with(window) {
+        "($index) Window {title=\"$title\"} $bounds"
+    }
+
+    TreeLine(text = text, depth = 2)
     if (enabled) {
         Column(modifier = modifier) {
             for (node in window.nodes) {
@@ -99,11 +111,23 @@ fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
 @Composable
 fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
-
     var enabled by remember { mutableStateOf(true) }
 
+    val text = with(node) {
+        val formattedClassName = className.split(".").last()
+        val formattedResourceId = resourceId.split(":").last().let {
+            // Add a delimiter if node has a resource-id
+            if (it.isEmpty()) it
+            else "$it "
+        }
+        val formattedText = text.take(10) + if (text.length > 10) "..." else ""
+
+        "($index) $formattedClassName $formattedResourceId" +
+            "{text=\"$formattedText\" contDesc=\"$contentDesc\"} $bounds"
+    }
+
     TreeLine(
-        text = "Node",
+        text = text,
         textBackgroundColor = if (viewModel.selectedNode === node) {
             Colors.highlightedTextBackgroundColor
         } else {

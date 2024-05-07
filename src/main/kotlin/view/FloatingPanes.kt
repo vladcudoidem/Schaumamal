@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.PointerInputScope
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import model.InspectorState
 import view.Dimensions.largeCornerRadius
 import view.Dimensions.mediumPadding
@@ -68,7 +66,7 @@ fun FloatingPanes(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(paddingBetweenItems)
 
         ) {
-            Wedge(
+            VerticalWedge(
                 width = wedgeSmallDimension, height = wedgeLargeDimension,
                 pointerHoverIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
                 pointerInputHandler = {
@@ -131,7 +129,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
             }
         }
 
-        Wedge(
+        HorizontalWedge(
             width = wedgeLargeDimension, height = wedgeSmallDimension,
             pointerHoverIcon = PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)),
             pointerInputHandler = {
@@ -183,13 +181,15 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Wedge( // TODO refactor this composable
+fun HorizontalWedge(
     width: Dp,
     height: Dp,
     pointerHoverIcon: PointerIcon,
     pointerInputHandler: suspend PointerInputScope.() -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val elementHeight = height / 3
+
     Box(
         modifier = modifier
             .width(width)
@@ -197,42 +197,59 @@ fun Wedge( // TODO refactor this composable
             .pointerHoverIcon(pointerHoverIcon)
             .pointerInput(Unit, pointerInputHandler)
     ) {
-        if (height > width) {
-            Row {
-                Box(
-                    modifier = Modifier
-                        .height(height)
-                        .width(width / 3)
-                        .clip(RoundedCornerShape(width / 3 / 2))
-                        .background(Colors.wedgeColor)
-                )
-                Spacer(modifier = Modifier.width(width / 3))
-                Box(
-                    modifier = Modifier
-                        .height(height)
-                        .width(width / 3)
-                        .clip(RoundedCornerShape(width / 3 / 2))
-                        .background(Colors.wedgeColor)
-                )
-            }
-        } else {
-            Column {
-                Box(
-                    modifier = Modifier
-                        .height(height / 3)
-                        .width(width)
-                        .clip(RoundedCornerShape(height / 3 / 2))
-                        .background(Colors.wedgeColor)
-                )
-                Spacer(modifier = Modifier.height(height / 3))
-                Box(
-                    modifier = Modifier
-                        .height(height / 3)
-                        .width(width)
-                        .clip(RoundedCornerShape(height / 3 / 2))
-                        .background(Colors.wedgeColor)
-                )
-            }
+        Column {
+            Box(
+                modifier = Modifier
+                    .height(elementHeight)
+                    .width(width)
+                    .clip(RoundedCornerShape(elementHeight / 2))
+                    .background(Colors.wedgeColor)
+            )
+            Spacer(modifier = Modifier.height(elementHeight))
+            Box(
+                modifier = Modifier
+                    .height(elementHeight)
+                    .width(width)
+                    .clip(RoundedCornerShape(elementHeight / 2))
+                    .background(Colors.wedgeColor)
+            )
+        }
+    }
+}
+
+@Composable
+fun VerticalWedge(
+    width: Dp,
+    height: Dp,
+    pointerHoverIcon: PointerIcon,
+    pointerInputHandler: suspend PointerInputScope.() -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val elementWidth = width / 3
+
+    Box(
+        modifier = modifier
+            .width(width)
+            .height(height)
+            .pointerHoverIcon(pointerHoverIcon)
+            .pointerInput(Unit, pointerInputHandler)
+    ) {
+        Row {
+            Box(
+                modifier = Modifier
+                    .height(height)
+                    .width(elementWidth)
+                    .clip(RoundedCornerShape(elementWidth / 2))
+                    .background(Colors.wedgeColor)
+            )
+            Spacer(modifier = Modifier.width(elementWidth))
+            Box(
+                modifier = Modifier
+                    .height(height)
+                    .width(elementWidth)
+                    .clip(RoundedCornerShape(elementWidth / 2))
+                    .background(Colors.wedgeColor)
+            )
         }
     }
 }
