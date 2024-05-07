@@ -155,7 +155,6 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                     bottomEnd = largeCornerRadius
                 ))
                 .background(Colors.floatingPaneBackgroundColor)
-                .padding(mediumPadding)
                 .onSizeChanged {
                     lowerBoxHeight = (it.height / density).dp
                 }
