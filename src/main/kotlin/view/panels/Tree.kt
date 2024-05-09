@@ -125,7 +125,7 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
         val formattedText = text.take(10) + if (text.length > 10) "..." else ""
 
         "($index) $formattedClassName $formattedResourceId" +
-            "{text=\"$formattedText\" contDesc=\"$contentDesc\"} $bounds"
+            "{text=\"$formattedText\", contDesc=\"$contentDesc\"} $bounds"
     }
 
     TreeLine(
