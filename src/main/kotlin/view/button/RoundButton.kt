@@ -1,4 +1,4 @@
-package view
+package view.button
 
 import AppViewModel
 import androidx.compose.foundation.layout.Row
@@ -18,6 +18,8 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import model.InspectorState
+import view.Colors
+import view.Dimensions
 import view.Dimensions.mediumPadding
 import java.awt.Cursor
 

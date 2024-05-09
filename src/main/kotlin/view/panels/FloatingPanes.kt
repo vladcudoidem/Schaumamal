@@ -1,4 +1,4 @@
-package view
+package view.panels
 
 import AppViewModel
 import androidx.compose.foundation.background
@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import model.InspectorState
+import view.Colors
 import view.Dimensions.largeCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
@@ -91,8 +92,8 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
     val density = LocalDensity.current.density
 
     var upperBoxHeight by remember { mutableStateOf(initialUpperBoxHeight) }
-    // The lower Box takes up as much height as is left. This value gets updated with the real height at composition.
     var lowerBoxHeight by remember { mutableStateOf(0.dp) }
+        // The lower Box takes up as much height as is left. This value gets updated with the real height at composition.
 
     Column(
         verticalArrangement = Arrangement.spacedBy(paddingBetweenItems),

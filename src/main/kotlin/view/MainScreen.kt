@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import view.button.RoundButton
+import view.panels.FloatingPanes
+import view.screenshot.Screenshot
 
 @Composable
 fun MainScreen() {

@@ -1,4 +1,4 @@
-package view
+package view.panels
 
 import AppViewModel
 import androidx.compose.foundation.horizontalScroll
@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import view.Colors
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
 
