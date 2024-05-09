@@ -60,7 +60,6 @@ fun Screenshot(modifier: Modifier = Modifier) {
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = { offset ->
-                                    // TODO make right box scroll to the selected node
                                     val scalingFactor = screenshotFileSize.height / imageSize.height
                                     val scaledOffset = offset * scalingFactor // TODO coerce this
 
