@@ -144,6 +144,7 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
         modifier = modifier.onGloballyPositioned { layoutCoordinates ->
             // Capture the position of each text
             itemPositions[node] = layoutCoordinates.positionInParent().y.roundToInt() - 300
+                // TODO remove the magic number 300
         }
     )
     if (enabled) {
