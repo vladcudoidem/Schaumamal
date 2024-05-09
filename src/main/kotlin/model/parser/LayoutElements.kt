@@ -65,7 +65,7 @@ data class Node(
             longClickable = false,
             password = false,
             selected = false,
-            bounds = "",
+            bounds = "[0,0][0,0]",
             children = emptyList()
         )
     }
