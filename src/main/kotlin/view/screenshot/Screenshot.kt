@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,7 +25,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.toSize
+import kotlinx.coroutines.launch
 import model.InspectorState
+import view.UpperBoxItemPositions
+import view.UpperBoxVerticalScrollState
 import java.awt.Cursor
 import java.io.File
 import java.io.FileInputStream
@@ -32,6 +36,10 @@ import java.io.FileInputStream
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
+    val upperBoxVerticalScrollState = UpperBoxVerticalScrollState.current
+    val upperBoxItemPositions = UpperBoxItemPositions.current
+
+    val coroutineScope = rememberCoroutineScope()
 
     var screenshotFileSize by remember { mutableStateOf(Size.Zero) } // TODO use Offset.Unspecified?
     var imageSize by remember { mutableStateOf(Size.Zero) }
@@ -66,6 +74,14 @@ fun Screenshot(modifier: Modifier = Modifier) {
                                     val flatNodeList = viewModel.layoutData.root.getNodesFlattened()
                                     flatNodeList.doWithNodeUnder(offset = scaledOffset) {
                                         viewModel.selectNode(node = it)
+
+                                        // TODO cancel this somewhere. Need a manager for this as well?
+                                        coroutineScope.launch {
+                                            // Scroll to the selected node in the upper right box
+                                            upperBoxVerticalScrollState.animateScrollTo(
+                                                value = upperBoxItemPositions[it] ?: 0
+                                            )
+                                        }
                                     }
                                 }
                             )
