@@ -22,6 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.dp
 import model.parser.DisplayNode
 import model.parser.Node
@@ -31,6 +35,10 @@ import view.Colors
 import view.Dimensions
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
+import view.UpperBoxItemPositions
+import view.UpperBoxVerticalScrollState
+import java.awt.Cursor
+import kotlin.math.roundToInt
 
 // TODO do this with LazyColumn. Is that possible?
 // TODO this file has to be refactored sometime.
@@ -42,7 +50,7 @@ fun Tree(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
     val rootNode = viewModel.layoutData.root
 
-    val verticalScrollState = rememberScrollState()
+    val verticalScrollState = UpperBoxVerticalScrollState.current
     val horizontalScrollState = rememberScrollState()
 
     Column(
@@ -59,17 +67,16 @@ fun Tree(modifier: Modifier = Modifier) {
 @Composable
 fun SystemPrinter(system: SystemNode, modifier: Modifier = Modifier) {
     var enabled by remember { mutableStateOf(true) }
+        // TODO use these variables at some point...
 
     val text = with(system) {
         "System {displays=${displays.size}}"
     }
 
-    TreeLine(text = text, depth = 0)
+    TreeLine(text = text, depth = 0, modifier = modifier)
     if (enabled) {
-        Column(modifier = modifier) {
-            for (display in system.displays) {
-                DisplayPrinter(display)
-            }
+        for (display in system.displays) {
+            DisplayPrinter(display)
         }
     }
 }
@@ -82,12 +89,10 @@ fun DisplayPrinter(display: DisplayNode, modifier: Modifier = Modifier) {
         "Display {id=$id, windows=${windows.size}}"
     }
 
-    TreeLine(text = text, depth = 1)
+    TreeLine(text = text, depth = 1, modifier = modifier)
     if (enabled) {
-        Column(modifier = modifier) {
-            for (window in display.windows) {
-                WindowPrinter(window)
-            }
+        for (window in display.windows) {
+            WindowPrinter(window)
         }
     }
 }
@@ -100,12 +105,10 @@ fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
         "($index) Window {title=\"$title\"} $bounds"
     }
 
-    TreeLine(text = text, depth = 2)
+    TreeLine(text = text, depth = 2, modifier = modifier)
     if (enabled) {
-        Column(modifier = modifier) {
-            for (node in window.nodes) {
-                NodePrinter(node, 3)
-            }
+        for (node in window.nodes) {
+            NodePrinter(node, 3)
         }
     }
 }
@@ -113,6 +116,7 @@ fun WindowPrinter(window: WindowNode, modifier: Modifier = Modifier) {
 @Composable
 fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
+    val itemPositions = UpperBoxItemPositions.current
     var enabled by remember { mutableStateOf(true) }
 
     val text = with(node) {
@@ -125,7 +129,7 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
         val formattedText = text.take(10) + if (text.length > 10) "..." else ""
 
         "($index) $formattedClassName $formattedResourceId" +
-            "{text=\"$formattedText\" contDesc=\"$contentDesc\"} $bounds"
+            "{text=\"$formattedText\", contDesc=\"$contentDesc\"} $bounds"
     }
 
     TreeLine(
@@ -136,13 +140,16 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
             Color.Transparent
         },
         depth = depth,
-        onClickText = { viewModel.selectNode(node) }
+        onClickText = { viewModel.selectNode(node) },
+        modifier = modifier.onGloballyPositioned { layoutCoordinates ->
+            // Capture the position of each text
+            itemPositions[node] = layoutCoordinates.positionInParent().y.roundToInt() - 300
+                // TODO remove the magic number 300
+        }
     )
     if (enabled) {
-        Column(modifier = modifier) {
-            for (child in node.children) {
-                NodePrinter(child, depth + 1)
-            }
+        for (child in node.children) {
+            NodePrinter(child, depth + 1)
         }
     }
 }
@@ -168,6 +175,7 @@ fun TreeLine(
                 .clip(RoundedCornerShape(Dimensions.smallCornerRadius))
                 .background(textBackgroundColor)
                 .clickable { onClickText() }
+                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 .padding(smallPadding)
         )
 

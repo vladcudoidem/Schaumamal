@@ -3,6 +3,7 @@ package view.screenshot
 import AppViewModel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,19 +19,29 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.toSize
+import kotlinx.coroutines.launch
 import model.InspectorState
+import view.UpperBoxItemPositions
+import view.UpperBoxVerticalScrollState
+import java.awt.Cursor
 import java.io.File
 import java.io.FileInputStream
 
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
+    val upperBoxVerticalScrollState = UpperBoxVerticalScrollState.current
+    val upperBoxItemPositions = UpperBoxItemPositions.current
 
-    var screenshotFileSize by remember { mutableStateOf(Size.Zero) }
+    val coroutineScope = rememberCoroutineScope()
+
+    var screenshotFileSize by remember { mutableStateOf(Size.Zero) } // TODO use Offset.Unspecified?
     var imageSize by remember { mutableStateOf(Size.Zero) }
     var imageOffset by remember { mutableStateOf(Offset.Zero) }
 
@@ -52,6 +64,28 @@ fun Screenshot(modifier: Modifier = Modifier) {
                             }
                         }
                         .onSizeChanged { imageSize = it.toSize() }
+                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = { offset ->
+                                    val scalingFactor = screenshotFileSize.height / imageSize.height
+                                    val scaledOffset = offset * scalingFactor // TODO coerce this
+
+                                    val flatNodeList = viewModel.layoutData.root.getNodesFlattened()
+                                    flatNodeList.doWithNodeUnder(offset = scaledOffset) {
+                                        viewModel.selectNode(node = it)
+
+                                        // TODO cancel this somewhere. Need a manager for this as well?
+                                        coroutineScope.launch {
+                                            // Scroll to the selected node in the upper right box
+                                            upperBoxVerticalScrollState.animateScrollTo(
+                                                value = upperBoxItemPositions[it] ?: 0
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+                        }
                 )
             }
         }
@@ -61,7 +95,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
                 imageOffset = imageOffset,
                 imageSize = imageSize,
                 screenshotFileSize = screenshotFileSize,
-                selectedNodeGraphics = NodeGraphics.from(viewModel.selectedNode.bounds)
+                selectedNodeGraphics = NodeGraphics.from(viewModel.selectedNode)
             )
 
             Box(modifier = Modifier.fillMaxSize()) {

@@ -3,6 +3,30 @@ package model.parser
 data class SystemNode(
     val displays: List<DisplayNode>
 ) {
+    // Only returns simple nodes
+    fun getNodesFlattened(): List<Node> {
+        val layeredMap = mutableMapOf<Int, MutableList<Node>>()
+            // the index of the list represents how many levels of parent nodes its (i.e. the list's) nodes have
+
+        displays.forEach { display ->
+            display.windows.forEach { window ->
+                window.nodes.forEach { rootNode ->
+                    layeredMap.insertNodesLayered(node = rootNode)
+                }
+            }
+        }
+
+        return layeredMap.keys.sorted().flatMap { depth ->
+            layeredMap[depth] ?: emptyList()
+        }
+    }
+
+    // This method inserts all children (children of children as well) into the layered map (keys are depth levels).
+    private fun MutableMap<Int, MutableList<Node>>.insertNodesLayered(node: Node, depth: Int = 0) {
+        getOrPut(depth) { mutableListOf() }.add(node)
+        node.children.forEach { insertNodesLayered(node = it, depth = depth + 1) }
+    }
+
     companion object {
         val default = SystemNode(displays = emptyList())
     }
@@ -47,6 +71,7 @@ data class Node(
     val bounds: String,
     val children: List<Node>
 ) {
+
     companion object {
         val default = Node(
             index = -1,
