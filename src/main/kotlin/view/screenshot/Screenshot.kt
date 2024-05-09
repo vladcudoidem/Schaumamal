@@ -1,4 +1,4 @@
-package view
+package view.screenshot
 
 import AppViewModel
 import androidx.compose.foundation.Canvas
@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.unit.toSize
 import model.InspectorState
 import java.io.File
 import java.io.FileInputStream
@@ -27,44 +29,51 @@ import java.io.FileInputStream
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    var offset by remember { mutableStateOf(Offset.Zero) }
+    var screenshotFileSize by remember { mutableStateOf(Size.Zero) }
+    var imageSize by remember { mutableStateOf(Size.Zero) }
+    var imageOffset by remember { mutableStateOf(Offset.Zero) }
 
     Box(modifier = modifier) {
         if (viewModel.inspectorState == InspectorState.POPULATED) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Image(
-                    bitmap = loadImageBitmap(FileInputStream(File(viewModel.layoutData.screenshotPath))),
+                    bitmap = loadImageBitmap(FileInputStream(File(viewModel.layoutData.screenshotPath))).apply {
+                        screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
+                    },
                     contentDescription = null,
                     modifier = Modifier
                         .graphicsLayer(
-                            translationX = offset.x,
-                            translationY = offset.y
+                            translationX = imageOffset.x,
+                            translationY = imageOffset.y
                         )
                         .pointerInput(Unit) {
                             detectTransformGestures { _, pan, _, _ ->
-                                offset += pan
+                                imageOffset += pan
                             }
                         }
+                        .onSizeChanged { imageSize = it.toSize() }
                 )
             }
         }
 
         if (viewModel.isNodeSelected) { // implies that inspectorState == POPULATED
-            Highlighter()
-        }
-    }
-}
-
-@Composable
-fun Highlighter() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRect(
-                color = Color.Red,
-                topLeft = Offset(20f, -20f),
-                size = Size(100f, 2000f),
-                style = Stroke(width = 5f)
+            val (offset, size) = HighlighterGraphics.from(
+                imageOffset = imageOffset,
+                imageSize = imageSize,
+                screenshotFileSize = screenshotFileSize,
+                selectedNodeGraphics = NodeGraphics.from(viewModel.selectedNode.bounds)
             )
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawRect(
+                        color = Color.Red,
+                        topLeft = offset,
+                        size = size,
+                        style = Stroke(width = 5f)
+                    )
+                }
+            }
         }
     }
 }

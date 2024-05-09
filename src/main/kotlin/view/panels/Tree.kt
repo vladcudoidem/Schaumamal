@@ -1,4 +1,4 @@
-package view
+package view.panels
 
 import AppViewModel
 import androidx.compose.foundation.background
@@ -27,6 +27,8 @@ import model.parser.DisplayNode
 import model.parser.Node
 import model.parser.SystemNode
 import model.parser.WindowNode
+import view.Colors
+import view.Dimensions
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
 
