@@ -1,8 +1,42 @@
 package model.parser
 
+// TODO refactor this data class
 data class SystemNode(
     val displays: List<DisplayNode>
 ) {
+    fun extractOnlySimpleNodesFlattened(): List<Node> {
+        val result = mutableListOf<Node>()
+        val layeredMap = mutableMapOf<Int, MutableList<Node>>()
+            // the index of the list represents how many levels of parent nodes its (the list's) nodes have
+
+        displays.forEach { display ->
+            display.windows.forEach { window ->
+                window.nodes.forEach { rootNode ->
+                    layeredMap.insertChildren(rootNode, 0)
+                }
+            }
+        }
+
+        for (depth in layeredMap.keys.sorted()) {
+            layeredMap[depth]?.let { result.addAll(it) }
+        }
+
+        for (node in result.reversed().take(3)) {
+            println(node.bounds)
+        }
+
+        return result
+    }
+
+    // This method inserts all children (deeply, i.e. children of children as well) into the layered map (keys are depth
+    // levels).
+    private fun MutableMap<Int, MutableList<Node>>.insertChildren(node: Node, depth: Int) {
+        if (depth !in keys) this[depth] = mutableListOf()
+
+        this[depth]?.add(node) // TODO why is `this[depth]` nullable?
+        node.children.forEach { childNode -> insertChildren(childNode, depth + 1) }
+    }
+
     companion object {
         val default = SystemNode(displays = emptyList())
     }

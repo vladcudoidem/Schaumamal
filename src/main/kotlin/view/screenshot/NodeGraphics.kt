@@ -9,6 +9,7 @@ data class NodeGraphics(
 ): Graphics {
 
     companion object {
+        // TODO refactor to receive a Node, not a String
         fun from(bounds: String): NodeGraphics { // bounds are a string in the xml dump
             val boundsValues = bounds
                 .split("][", "[", "]", ",")

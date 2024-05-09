@@ -22,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import model.parser.DisplayNode
 import model.parser.Node
@@ -31,6 +33,7 @@ import view.Colors
 import view.Dimensions
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
+import java.awt.Cursor
 
 // TODO do this with LazyColumn. Is that possible?
 // TODO this file has to be refactored sometime.
@@ -59,6 +62,7 @@ fun Tree(modifier: Modifier = Modifier) {
 @Composable
 fun SystemPrinter(system: SystemNode, modifier: Modifier = Modifier) {
     var enabled by remember { mutableStateOf(true) }
+        // TODO use these variables at some point...
 
     val text = with(system) {
         "System {displays=${displays.size}}"
@@ -168,6 +172,7 @@ fun TreeLine(
                 .clip(RoundedCornerShape(Dimensions.smallCornerRadius))
                 .background(textBackgroundColor)
                 .clickable { onClickText() }
+                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 .padding(smallPadding)
         )
 

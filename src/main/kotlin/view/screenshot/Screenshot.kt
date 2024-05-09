@@ -3,6 +3,7 @@ package view.screenshot
 import AppViewModel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +18,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.toSize
 import model.InspectorState
+import model.parser.Node
+import java.awt.Cursor
 import java.io.File
 import java.io.FileInputStream
 
@@ -29,7 +34,7 @@ import java.io.FileInputStream
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    var screenshotFileSize by remember { mutableStateOf(Size.Zero) }
+    var screenshotFileSize by remember { mutableStateOf(Size.Zero) } // TODO use Offset.Unspecified?
     var imageSize by remember { mutableStateOf(Size.Zero) }
     var imageOffset by remember { mutableStateOf(Offset.Zero) }
 
@@ -52,6 +57,21 @@ fun Screenshot(modifier: Modifier = Modifier) {
                             }
                         }
                         .onSizeChanged { imageSize = it.toSize() }
+                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = { offset ->
+                                    // TODO make right box scroll to the selected node
+                                    val scalingFactor = screenshotFileSize.height / imageSize.height
+                                    val scaledOffset = offset * scalingFactor // TODO coerce this
+                                    val lowestSimpleNode = scaledOffset.getLowestSimpleNode(viewModel.layoutData.root)
+
+                                    if (lowestSimpleNode != Node.default) {
+                                        viewModel.selectNode(node = lowestSimpleNode)
+                                    }
+                                }
+                            )
+                        }
                 )
             }
         }
