@@ -25,7 +25,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.toSize
 import model.InspectorState
-import model.parser.Node
 import java.awt.Cursor
 import java.io.File
 import java.io.FileInputStream
@@ -64,10 +63,10 @@ fun Screenshot(modifier: Modifier = Modifier) {
                                     // TODO make right box scroll to the selected node
                                     val scalingFactor = screenshotFileSize.height / imageSize.height
                                     val scaledOffset = offset * scalingFactor // TODO coerce this
-                                    val lowestSimpleNode = scaledOffset.getLowestSimpleNode(viewModel.layoutData.root)
 
-                                    if (lowestSimpleNode != Node.default) {
-                                        viewModel.selectNode(node = lowestSimpleNode)
+                                    val flatNodeList = viewModel.layoutData.root.getNodesFlattened()
+                                    flatNodeList.doWithNodeUnder(offset = scaledOffset) {
+                                        viewModel.selectNode(node = it)
                                     }
                                 }
                             )
@@ -81,7 +80,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
                 imageOffset = imageOffset,
                 imageSize = imageSize,
                 screenshotFileSize = screenshotFileSize,
-                selectedNodeGraphics = NodeGraphics.from(viewModel.selectedNode.bounds)
+                selectedNodeGraphics = NodeGraphics.from(viewModel.selectedNode)
             )
 
             Box(modifier = Modifier.fillMaxSize()) {

@@ -2,6 +2,7 @@ package view.screenshot
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import model.parser.Node
 
 data class NodeGraphics(
     override val offset: Offset,
@@ -9,21 +10,20 @@ data class NodeGraphics(
 ): Graphics {
 
     companion object {
-        // TODO refactor to receive a Node, not a String
-        fun from(bounds: String): NodeGraphics { // bounds are a string in the xml dump
-            val boundsValues = bounds
-                .split("][", "[", "]", ",")
-                .filter { it.isNotEmpty() }
-                .map { it.toInt() }
+        fun from(node: Node): NodeGraphics {
+            val boundsValues = node.bounds
+                .removeSurrounding("[", "]")
+                .split("][", ",")
+                .map { it.toFloat() }
 
             return NodeGraphics(
                 offset = Offset(
-                    x = boundsValues[0].toFloat(),
-                    y = boundsValues[1].toFloat()
+                    x = boundsValues[0],
+                    y = boundsValues[1]
                 ),
                 size = Size(
-                    width = (boundsValues[2] - boundsValues[0]).toFloat(),
-                    height = (boundsValues[3] - boundsValues[1]).toFloat()
+                    width = (boundsValues[2] - boundsValues[0]),
+                    height = (boundsValues[3] - boundsValues[1])
                 )
             )
         }
