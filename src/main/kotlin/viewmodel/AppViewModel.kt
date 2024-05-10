@@ -3,8 +3,6 @@ package viewmodel
 import model.LayoutInspector
 import model.parser.Node
 
-// TODO create folders at startup if needed.
-
 class AppViewModel {
     private val layoutInspector = LayoutInspector()
 

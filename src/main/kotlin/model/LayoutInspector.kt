@@ -3,8 +3,8 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import model.Constants.LOCAL_DUMP_PATH
-import model.Constants.LOCAL_SCREENSHOT_PATH
+import model.utils.CommandConstants.LOCAL_DUMP_PATH
+import model.utils.CommandConstants.LOCAL_SCREENSHOT_PATH
 import model.parser.Node
 import model.parser.XmlParser
 import model.utils.CoroutineManager
@@ -25,16 +25,22 @@ class LayoutInspector {
 
     fun extractLayout() {
         state = InspectorState.WAITING
+
+        // reset selected node
         isNodeSelected = false
         selectedNode = Node.default
 
         CoroutineManager.launch {
+            // First part of the dump
             LayoutManager.extract()
 
+            // Second part of the dump
             data = LayoutData(
                 LOCAL_SCREENSHOT_PATH,
                 XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
+
+            // This triggers recomposition
             state = InspectorState.POPULATED
         }
     }

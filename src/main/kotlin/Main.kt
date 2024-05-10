@@ -7,8 +7,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import viewmodel.AppViewModel
 
-// TODO refine initial configuration (panels at 50% and image not under button)
-
 val AppViewModel = compositionLocalOf<AppViewModel> {
     error("No ViewModel provided")
 }

@@ -6,6 +6,7 @@ import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
 object XmlParser {
+
     fun parseSystem(file: File): SystemNode {
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
@@ -14,6 +15,7 @@ object XmlParser {
 
         val displays = mutableListOf<DisplayNode>()
         val displayElements = doc.getElementsByTagName("display")
+            // deep search for display because displays can only be direct children of a system node
         displayElements.forEach {
             displays.add(parseDisplay(it))
         }
@@ -24,6 +26,7 @@ object XmlParser {
     private fun parseDisplay(element: Element): DisplayNode {
         val windows = mutableListOf<WindowNode>()
         val windowElements = element.getElementsByTagName("window")
+            // deep search for window because windows can only be direct children of a display node
         windowElements.forEach {
             windows.add(parseWindow(it))
         }
@@ -36,6 +39,8 @@ object XmlParser {
 
     private fun parseWindow(element: Element): WindowNode {
         val hierarchyElement = element.getElementsByTagName("hierarchy").item(0)
+            // There is only one hierarchy tag in a window node, and it is its direct child. The hierarchy tag has a
+            // rotation property that we choose to ignore.
 
         val nodes = mutableListOf<Node>()
         hierarchyElement.childNodes.forEach {

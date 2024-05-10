@@ -22,7 +22,10 @@ data class SystemNode(
     }
 
     // This method inserts all children (children of children as well) into the layered map (keys are depth levels).
-    private fun MutableMap<Int, MutableList<Node>>.insertNodesLayered(node: Node, depth: Int = 0) {
+    private fun MutableMap<Int, MutableList<Node>>.insertNodesLayered(
+        node: Node,
+        depth: Int = 0
+    ) {
         getOrPut(depth) { mutableListOf() }.add(node)
         node.children.forEach { insertNodesLayered(node = it, depth = depth + 1) }
     }
