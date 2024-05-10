@@ -72,7 +72,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
                                     val scaledOffset = offset * scalingFactor // TODO coerce this
 
                                     val flatNodeList = viewModel.layoutData.root.getNodesFlattened()
-                                    flatNodeList.doWithNodeUnder(offset = scaledOffset) {
+                                    flatNodeList.forNodeUnder(offset = scaledOffset) {
                                         viewModel.selectNode(node = it)
 
                                         // TODO cancel this somewhere. Need a manager for this as well?

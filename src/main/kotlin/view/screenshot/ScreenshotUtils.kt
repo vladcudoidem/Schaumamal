@@ -3,7 +3,7 @@ package view.screenshot
 import androidx.compose.ui.geometry.Offset
 import model.parser.Node
 
-fun List<Node>.doWithNodeUnder(offset: Offset, action: (Node) -> Unit) {
+fun List<Node>.forNodeUnder(offset: Offset, action: (Node) -> Unit) {
     reversed().firstOrNull { offset on it }?.let { matchingNode ->
         action(matchingNode)
     }
