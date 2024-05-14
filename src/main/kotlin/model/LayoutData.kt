@@ -8,6 +8,6 @@ data class LayoutData(
 ) {
 
     companion object {
-        val default = LayoutData(screenshotPath = "", root = SystemNode.default)
+        val empty = LayoutData(screenshotPath = "", root = SystemNode.empty)
     }
 }

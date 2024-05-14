@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import model.InspectorState
-import view.Colors
+import view.Colors.floatingPaneBackgroundColor
+import view.Colors.hintTextColor
+import view.Colors.wedgeColor
 import view.Dimensions.largeCornerRadius
 import view.Dimensions.mediumPadding
 import view.Dimensions.paddingBetweenItems
@@ -110,7 +112,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                     bottomStart = smallCornerRadius,
                     bottomEnd = smallCornerRadius
                 ))
-                .background(Colors.floatingPaneBackgroundColor)
+                .background(floatingPaneBackgroundColor)
         ) {
             if (viewModel.inspectorState == InspectorState.POPULATED) {
                 Tree(modifier = Modifier.fillMaxSize())
@@ -122,7 +124,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = "Missing layout",
-                        color = Colors.hintTextColor,
+                        color = hintTextColor,
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -155,7 +157,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                     bottomStart = largeCornerRadius,
                     bottomEnd = largeCornerRadius
                 ))
-                .background(Colors.floatingPaneBackgroundColor)
+                .background(floatingPaneBackgroundColor)
                 .onSizeChanged {
                     lowerBoxHeight = (it.height / density).dp
                 }
@@ -170,7 +172,7 @@ fun TwoBoxColumn(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = "No node selected",
-                        color = Colors.hintTextColor,
+                        color = hintTextColor,
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -203,7 +205,7 @@ fun HorizontalWedge(
                     .height(elementHeight)
                     .width(width)
                     .clip(RoundedCornerShape(elementHeight / 2))
-                    .background(Colors.wedgeColor)
+                    .background(wedgeColor)
             )
             Spacer(modifier = Modifier.height(elementHeight))
             Box(
@@ -211,7 +213,7 @@ fun HorizontalWedge(
                     .height(elementHeight)
                     .width(width)
                     .clip(RoundedCornerShape(elementHeight / 2))
-                    .background(Colors.wedgeColor)
+                    .background(wedgeColor)
             )
         }
     }
@@ -240,7 +242,7 @@ fun VerticalWedge(
                     .height(height)
                     .width(elementWidth)
                     .clip(RoundedCornerShape(elementWidth / 2))
-                    .background(Colors.wedgeColor)
+                    .background(wedgeColor)
             )
             Spacer(modifier = Modifier.width(elementWidth))
             Box(
@@ -248,7 +250,7 @@ fun VerticalWedge(
                     .height(height)
                     .width(elementWidth)
                     .clip(RoundedCornerShape(elementWidth / 2))
-                    .background(Colors.wedgeColor)
+                    .background(wedgeColor)
             )
         }
     }

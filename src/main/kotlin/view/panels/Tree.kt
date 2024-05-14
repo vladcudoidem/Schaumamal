@@ -31,9 +31,10 @@ import model.parser.DisplayNode
 import model.parser.Node
 import model.parser.SystemNode
 import model.parser.WindowNode
-import view.Colors
-import view.Dimensions
+import view.Colors.highlightedTextBackgroundColor
+import view.Colors.secondaryTextColor
 import view.Dimensions.mediumPadding
+import view.Dimensions.smallCornerRadius
 import view.Dimensions.smallPadding
 import view.UpperBoxItemPositions
 import view.UpperBoxVerticalScrollState
@@ -135,7 +136,7 @@ fun NodePrinter(node: Node, depth: Int, modifier: Modifier = Modifier) {
     TreeLine(
         text = text,
         textBackgroundColor = if (viewModel.selectedNode === node) {
-            Colors.highlightedTextBackgroundColor
+            highlightedTextBackgroundColor
         } else {
             Color.Transparent
         },
@@ -170,9 +171,9 @@ fun TreeLine(
         Spacer(modifier = Modifier.width(startPaddingPerLevel * depth))
         Text(
             text = text,
-            color = Colors.secondaryTextColor,
+            color = secondaryTextColor,
             modifier = Modifier
-                .clip(RoundedCornerShape(Dimensions.smallCornerRadius))
+                .clip(RoundedCornerShape(smallCornerRadius))
                 .background(textBackgroundColor)
                 .clickable { onClickText() }
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

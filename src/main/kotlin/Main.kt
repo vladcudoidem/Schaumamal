@@ -13,7 +13,6 @@ val AppViewModel = compositionLocalOf<AppViewModel> {
 
 fun main() = application {
     val viewModel = remember { AppViewModel() }
-
     CompositionLocalProvider(AppViewModel provides viewModel) {
         Window(
             title = "Schaumamal",
