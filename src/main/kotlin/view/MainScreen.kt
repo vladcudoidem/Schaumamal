@@ -14,6 +14,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import model.parser.Node
+import view.Colors.backgroundColor
 import view.button.RoundButton
 import view.panels.FloatingPanes
 import view.screenshot.Screenshot
@@ -27,22 +28,22 @@ val UpperBoxItemPositions = compositionLocalOf<SnapshotStateMap<Node, Int>> {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(modifier: Modifier = Modifier) {
     val upperBoxVerticalScrollState = rememberScrollState()
     val upperBoxItemPositions = remember { mutableStateMapOf<Node, Int>() }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.backgroundColor)
+    CompositionLocalProvider(
+        UpperBoxVerticalScrollState provides upperBoxVerticalScrollState,
+        UpperBoxItemPositions provides upperBoxItemPositions
     ) {
-        CompositionLocalProvider(
-            UpperBoxVerticalScrollState provides upperBoxVerticalScrollState,
-            UpperBoxItemPositions provides upperBoxItemPositions
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(backgroundColor)
         ) {
             Screenshot(modifier = Modifier.fillMaxSize())
             RoundButton(modifier = Modifier.align(Alignment.TopStart))
-            FloatingPanes(modifier = Modifier.align(Alignment.TopEnd))
+            FloatingPanes(modifier = Modifier.align(Alignment.CenterEnd))
         }
     }
 }

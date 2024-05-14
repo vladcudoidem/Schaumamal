@@ -14,4 +14,6 @@ object Dimensions {
     val smallCornerRadius = 5.dp
     val mediumCornerRadius = 10.dp
     val largeCornerRadius = 20.dp
+
+    val extractButtonDiameter = 40.dp
 }

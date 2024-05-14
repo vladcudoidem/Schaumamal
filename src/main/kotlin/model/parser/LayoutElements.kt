@@ -31,7 +31,7 @@ data class SystemNode(
     }
 
     companion object {
-        val default = SystemNode(displays = emptyList())
+        val empty = SystemNode(displays = emptyList())
     }
 }
 
@@ -76,7 +76,7 @@ data class Node(
 ) {
 
     companion object {
-        val default = Node(
+        val empty = Node(
             index = -1,
             text = "",
             resourceId = "",

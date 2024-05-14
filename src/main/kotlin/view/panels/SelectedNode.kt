@@ -17,7 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import view.Colors
+import view.Colors.secondaryTextColor
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallPadding
 
@@ -75,13 +75,13 @@ fun PropertyRow(
         Text(
             text = property,
             modifier = Modifier.width(200.dp),
-            color = Colors.secondaryTextColor
+            color = secondaryTextColor
         )
 
         Text(
             text = value.ifEmpty { "-" },
             modifier = Modifier.widthIn(max = 600.dp),
-            color = Colors.secondaryTextColor
+            color = secondaryTextColor
         )
 
         Spacer(modifier = Modifier.width(mediumPadding))
