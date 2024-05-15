@@ -1,4 +1,4 @@
-package view.screenshot
+package shared.graphics
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -13,7 +13,7 @@ data class HighlighterGraphics(
             imageOffset: Offset,
             imageSize: Size,
             screenshotFileSize: Size,
-            selectedNodeGraphics: NodeGraphics
+            selectedNodeGraphics: RawNodeGraphics
         ): HighlighterGraphics {
             val scalingFactor = imageSize.height / screenshotFileSize.height
                 // it is irrelevant whether we use width or height when calculating the scaling factor

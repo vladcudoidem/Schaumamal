@@ -1,11 +1,11 @@
 package model.utils
 
-import model.utils.CommandConstants.ADB_PATH
-import model.utils.CommandConstants.DEVICE_DUMP_PATH
-import model.utils.CommandConstants.DEVICE_SCREENSHOT_PATH
-import model.utils.CommandConstants.LOCAL_DUMP_PATH
-import model.utils.CommandConstants.LOCAL_SCREENSHOT_PATH
-import model.utils.CommandExecutor.executeAndWait
+import model.utils.CommandManager.Constants.ADB_PATH
+import model.utils.CommandManager.Constants.DEVICE_DUMP_PATH
+import model.utils.CommandManager.Constants.DEVICE_SCREENSHOT_PATH
+import model.utils.CommandManager.Constants.LOCAL_DUMP_PATH
+import model.utils.CommandManager.Constants.LOCAL_SCREENSHOT_PATH
+import model.utils.CommandManager.executeAndWait
 
 object LayoutManager {
 

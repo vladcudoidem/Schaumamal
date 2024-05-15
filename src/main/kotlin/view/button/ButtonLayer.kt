@@ -24,7 +24,7 @@ import view.Dimensions.mediumPadding
 import java.awt.Cursor
 
 @Composable
-fun RoundButton(modifier: Modifier = Modifier) {
+fun ButtonLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Row(
@@ -32,7 +32,7 @@ fun RoundButton(modifier: Modifier = Modifier) {
         modifier = modifier.padding(mediumPadding)
     ) {
         Button(
-            onClick = { viewModel.onExtractButtonPressed() },
+            onClick = viewModel::onExtractButtonPressed,
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(backgroundColor = buttonColor),
             modifier = Modifier

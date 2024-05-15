@@ -1,5 +1,9 @@
 package model.parser
 
+import shared.xmlElements.Display
+import shared.xmlElements.Node
+import shared.xmlElements.System
+import shared.xmlElements.Window
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import java.io.File
@@ -7,37 +11,37 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 object XmlParser {
 
-    fun parseSystem(file: File): SystemNode {
+    fun parseSystem(file: File): System {
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         val doc = dBuilder.parse(file)
         doc.documentElement.normalize()
 
-        val displays = mutableListOf<DisplayNode>()
+        val displays = mutableListOf<Display>()
         val displayElements = doc.getElementsByTagName("display")
             // deep search for display because displays can only be direct children of a system node
         displayElements.forEach {
             displays.add(parseDisplay(it))
         }
 
-        return SystemNode(displays = displays)
+        return System(children = displays)
     }
 
-    private fun parseDisplay(element: Element): DisplayNode {
-        val windows = mutableListOf<WindowNode>()
+    private fun parseDisplay(element: Element): Display {
+        val windows = mutableListOf<Window>()
         val windowElements = element.getElementsByTagName("window")
             // deep search for window because windows can only be direct children of a display node
         windowElements.forEach {
             windows.add(parseWindow(it))
         }
 
-        return DisplayNode(
+        return Display(
             id = element.getAttribute("id").toInt(),
-            windows = windows
+            children = windows
         )
     }
 
-    private fun parseWindow(element: Element): WindowNode {
+    private fun parseWindow(element: Element): Window {
         val hierarchyElement = element.getElementsByTagName("hierarchy").item(0)
             // There is only one hierarchy tag in a window node, and it is its direct child. The hierarchy tag has a
             // rotation property that we choose to ignore.
@@ -49,7 +53,7 @@ object XmlParser {
             }
         }
 
-        return WindowNode(
+        return Window(
             index = element.getAttribute("index").toInt(),
             id = element.getAttribute("id").toInt(),
             title = element.getAttribute("title"),
@@ -60,7 +64,7 @@ object XmlParser {
             token = element.getAttribute("token"),
             focused = element.getAttribute("focused").toBoolean(),
             accessibilityFocused = element.getAttribute("accessibility-focused").toBoolean(),
-            nodes = nodes
+            children = nodes
         )
     }
 

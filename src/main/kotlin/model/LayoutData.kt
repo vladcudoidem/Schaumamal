@@ -1,13 +1,13 @@
 package model
 
-import model.parser.SystemNode
+import shared.xmlElements.System
 
 data class LayoutData(
     val screenshotPath: String,
-    val root: SystemNode
+    val root: System
 ) {
 
     companion object {
-        val empty = LayoutData(screenshotPath = "", root = SystemNode.empty)
+        val Empty = LayoutData(screenshotPath = "", root = System.Empty)
     }
 }

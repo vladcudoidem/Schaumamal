@@ -3,25 +3,27 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import model.parser.Node
+import shared.xmlElements.Node
 import model.parser.XmlParser
-import model.utils.CommandConstants.LOCAL_DUMP_PATH
-import model.utils.CommandConstants.LOCAL_SCREENSHOT_PATH
+import model.utils.CommandManager.Constants.LOCAL_DUMP_PATH
+import model.utils.CommandManager.Constants.LOCAL_SCREENSHOT_PATH
 import model.utils.CoroutineManager
 import model.utils.LayoutManager
 import model.utils.TeardownManager
 import java.io.File
 
-class LayoutInspector {
+class LayoutInspector(
+    private val coroutineManager: CoroutineManager
+) {
 
     var state by mutableStateOf(InspectorState.EMPTY)
         private set
-    var data by mutableStateOf(LayoutData.empty)
+    var data by mutableStateOf(LayoutData.Empty)
         private set
 
     var isNodeSelected by mutableStateOf(false)
         private set
-    var selectedNode by mutableStateOf(Node.empty)
+    var selectedNode by mutableStateOf(Node.Empty)
         private set
 
     fun extractLayout() {
@@ -29,9 +31,9 @@ class LayoutInspector {
 
         // reset selected node
         isNodeSelected = false
-        selectedNode = Node.empty
+        selectedNode = Node.Empty
 
-        CoroutineManager.launch {
+        coroutineManager.launch {
             // first part of the dump
             LayoutManager.extract()
 
@@ -52,7 +54,7 @@ class LayoutInspector {
     }
 
     fun teardown() {
-        CoroutineManager.teardown()
+        coroutineManager.teardown()
         TeardownManager.deleteLayoutFiles()
     }
 }
