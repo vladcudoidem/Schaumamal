@@ -16,7 +16,6 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onGloballyPositioned
 import shared.XmlTreeLine
 import view.Colors.secondaryTextColor
-import view.Dimensions.mediumPadding
 import view.Dimensions.smallCornerRadius
 import view.Dimensions.smallPadding
 import view.Dimensions.startPaddingPerDepthLevel
@@ -30,9 +29,8 @@ fun XmlTreeLine(
     Row(
         modifier = modifier.onGloballyPositioned(line.onTreeLineGloballyPositioned)
     ) {
-        Spacer(modifier = Modifier.width(mediumPadding))
-
         Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
+
         Text(
             text = line.text,
             color = secondaryTextColor,
@@ -43,7 +41,5 @@ fun XmlTreeLine(
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 .padding(smallPadding)
         )
-
-        Spacer(modifier = Modifier.width(mediumPadding))
     }
 }
