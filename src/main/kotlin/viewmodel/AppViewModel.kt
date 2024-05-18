@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import model.InspectorState
 import model.LayoutInspector
@@ -37,7 +40,11 @@ class AppViewModel(
 ) {
     /* Model */
 
-    private val layoutInspector = LayoutInspector(coroutineManager = CoroutineManager())
+    private val layoutInspector = LayoutInspector(
+        coroutineManager = CoroutineManager(
+            customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+        )
+    )
 
     /* Screenshot Layer */
 

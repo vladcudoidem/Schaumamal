@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import shared.xmlElements.Node
 import model.parser.XmlParser
-import model.utils.CommandManager.Constants.LOCAL_DUMP_PATH
-import model.utils.CommandManager.Constants.LOCAL_SCREENSHOT_PATH
 import model.utils.CoroutineManager
-import model.utils.LayoutManager
+import model.utils.ExtractionManager
+import model.utils.Path.LOCAL_DUMP_PATH
+import model.utils.Path.LOCAL_SCREENSHOT_PATH
 import model.utils.TeardownManager
 import java.io.File
 
@@ -18,6 +18,7 @@ class LayoutInspector(
 
     var state by mutableStateOf(InspectorState.EMPTY)
         private set
+
     var data by mutableStateOf(LayoutData.Empty)
         private set
 
@@ -29,13 +30,14 @@ class LayoutInspector(
     fun extractLayout() {
         state = InspectorState.WAITING
 
-        // reset selected node
+        // Reset selected node state and data.
         isNodeSelected = false
         selectedNode = Node.Empty
 
         coroutineManager.launch {
             // first part of the dump
-            LayoutManager.extract()
+            ExtractionManager.extract()
+                // TODO get screenshot path from ExtractionManager
 
             // second part of the dump
             data = LayoutData(
@@ -43,13 +45,14 @@ class LayoutInspector(
                 XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
 
-            // trigger recomposition
+            // Shows data only after refreshing the data.
             state = InspectorState.POPULATED
         }
     }
 
     fun selectNode(node: Node) {
         selectedNode = node
+        // Shows selected node only after refreshing the data.
         isNodeSelected = true
     }
 
