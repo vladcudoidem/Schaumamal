@@ -41,12 +41,12 @@ fun ButtonLayer(modifier: Modifier = Modifier) {
         ) { }
 
         if (viewModel.showButtonText) {
+
             Spacer(modifier = Modifier.width(largePadding))
             Text(
                 text = viewModel.buttonText,
                 color = hintTextColor,
-                fontFamily = FontFamily.Monospace,
-                modifier = modifier
+                fontFamily = FontFamily.Monospace
             )
         }
     }

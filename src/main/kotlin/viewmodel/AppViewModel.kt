@@ -65,7 +65,7 @@ class AppViewModel(
             selectedNodeGraphics = RawNodeGraphics.from(layoutInspector.selectedNode)
         )
 
-    val showImage get() = layoutInspector.state == InspectorState.POPULATED
+    val showScreenshot get() = layoutInspector.state == InspectorState.POPULATED
     val imageBitmap
         get() = loadImageBitmap(
             FileInputStream(File(layoutInspector.data.screenshotPath))

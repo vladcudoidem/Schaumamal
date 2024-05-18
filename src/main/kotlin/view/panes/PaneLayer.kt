@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -45,14 +44,21 @@ fun PaneLayer(modifier: Modifier = Modifier) {
 
         Column(
             verticalArrangement = Arrangement.spacedBy(smallPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.width(viewModel.paneWidth)
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            UpperPane(modifier = Modifier.height(viewModel.upperPaneHeight))
+            UpperPane(
+                modifier = Modifier
+                    .height(viewModel.upperPaneHeight)
+                    .width(viewModel.paneWidth)
+            )
 
             HorizontalWedge()
 
-            LowerPane(modifier = Modifier.fillMaxHeight())
+            LowerPane(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(viewModel.paneWidth)
+            )
         }
     }
 }
@@ -63,7 +69,6 @@ fun UpperPane(modifier: Modifier = Modifier) {
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
                 topEnd = largeCornerRadius,
@@ -92,7 +97,6 @@ fun LowerPane(modifier: Modifier = Modifier) {
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .clip(RoundedCornerShape(
                 topStart = smallCornerRadius,
                 topEnd = smallCornerRadius,

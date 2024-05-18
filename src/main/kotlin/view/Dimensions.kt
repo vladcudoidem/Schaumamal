@@ -14,17 +14,17 @@ object Dimensions {
     val mediumCornerRadius = 10.dp
     val largeCornerRadius = 20.dp
 
-    /* Specific */
+    /* Button Layer */
 
-    // Button Layer
     val extractButtonDiameter = 40.dp
+
+    /* Pane Layer */
+
+    val minimumPaneDimension = 100.dp
 
     // Wedge
     val wedgeSmallDimension = 6.dp
     val wedgeLargeDimension = 30.dp
-
-    // Panes
-    val minimumPaneDimension = 100.dp
 
     // Xml Tree Pane
     val startPaddingPerDepthLevel = 25.dp
@@ -33,8 +33,14 @@ object Dimensions {
     val propertyNameWidth = 200.dp
     val maximumPropertyValueWidth = 600.dp
 
+    /* Screenshot Layer */
+
+    val highlighterStrokeWidth = 3.dp
+
     object Initial {
-        // Panes
+
+        /* Pane Layer */
+
         val initialPaneWidth = 250.dp
         val initialUpperPaneHeight = 300.dp
     }

@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import view.Dimensions.highlighterStrokeWidth
 import java.awt.Cursor
 
 @Composable
@@ -24,7 +25,7 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(modifier = modifier) {
-        if (viewModel.showImage) {
+        if (viewModel.showScreenshot) {
             Screenshot()
         }
 
@@ -48,9 +49,6 @@ fun Screenshot(modifier: Modifier = Modifier) {
                 translationX = viewModel.imageComposableGraphics.offset.x,
                 translationY = viewModel.imageComposableGraphics.offset.y
             )
-            .pointerInput(Unit) {
-                detectTransformGestures(onGesture = viewModel::onImageGesture)
-            }
             .onSizeChanged(onSizeChanged = viewModel::onImageSizeChanged)
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
             .pointerInput(Unit) {
@@ -62,6 +60,9 @@ fun Screenshot(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+            }
+            .pointerInput(Unit) {
+                detectTransformGestures(onGesture = viewModel::onImageGesture)
             }
     )
 }
@@ -76,7 +77,7 @@ fun HighlighterCanvas(modifier: Modifier = Modifier) {
             color = Color.Red,
             topLeft = highlighterOffset,
             size = highlighterSize,
-            style = Stroke(width = 5f)
+            style = Stroke(width = highlighterStrokeWidth.toPx())
         )
     }
 }
