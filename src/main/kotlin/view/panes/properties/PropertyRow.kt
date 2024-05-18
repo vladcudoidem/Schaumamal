@@ -2,7 +2,6 @@ package view.panes.properties
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -23,7 +22,6 @@ fun PropertyRow(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .padding(smallPadding)
     ) {
         Spacer(modifier = Modifier.width(mediumPadding))
@@ -33,7 +31,6 @@ fun PropertyRow(
             modifier = Modifier.width(propertyNameWidth),
             color = secondaryTextColor
         )
-
         Text(
             text = value,
             modifier = Modifier.widthIn(max = maximumPropertyValueWidth),

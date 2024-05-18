@@ -11,11 +11,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import shared.XmlTreeLine
 import view.Colors.secondaryTextColor
 import view.Dimensions.mediumPadding
 import view.Dimensions.smallCornerRadius
@@ -25,26 +24,22 @@ import java.awt.Cursor
 
 @Composable
 fun XmlTreeLine(
-    text: String,
-    textBackgroundColor: Color,
-    depth: Int,
-    onClickText: () -> Unit,
-    onTreeLineGloballyPositioned: (LayoutCoordinates) -> Unit,
+    line: XmlTreeLine,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.onGloballyPositioned(onTreeLineGloballyPositioned)
+        modifier = modifier.onGloballyPositioned(line.onTreeLineGloballyPositioned)
     ) {
         Spacer(modifier = Modifier.width(mediumPadding))
 
-        Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * depth))
+        Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
         Text(
-            text = text,
+            text = line.text,
             color = secondaryTextColor,
             modifier = Modifier
                 .clip(RoundedCornerShape(smallCornerRadius))
-                .background(textBackgroundColor)
-                .clickable(onClick = onClickText)
+                .background(line.textBackgroundColor)
+                .clickable(onClick = line.onClickText)
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 .padding(smallPadding)
         )
