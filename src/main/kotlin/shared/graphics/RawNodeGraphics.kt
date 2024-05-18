@@ -1,22 +1,22 @@
-package view.screenshot
+package shared.graphics
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import model.parser.Node
+import shared.xmlElements.Node
 
-data class NodeGraphics(
+data class RawNodeGraphics(
     override val offset: Offset,
     override val size: Size
 ): Graphics {
 
     companion object {
-        fun from(node: Node): NodeGraphics {
+        fun from(node: Node): RawNodeGraphics {
             val boundsValues = node.bounds
                 .removeSurrounding("[", "]")
                 .split("][", ",")
                 .map { it.toFloat() }
 
-            return NodeGraphics(
+            return RawNodeGraphics(
                 offset = Offset(
                     x = boundsValues[0],
                     y = boundsValues[1]

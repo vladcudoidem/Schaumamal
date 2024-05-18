@@ -1,4 +1,4 @@
-package view.screenshot
+package shared.graphics
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size

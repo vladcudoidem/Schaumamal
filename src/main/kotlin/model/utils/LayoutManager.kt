@@ -1,13 +1,14 @@
 package model.utils
 
-import model.Constants.ADB_PATH
-import model.Constants.DEVICE_DUMP_PATH
-import model.Constants.DEVICE_SCREENSHOT_PATH
-import model.Constants.LOCAL_DUMP_PATH
-import model.Constants.LOCAL_SCREENSHOT_PATH
-import model.utils.CommandExecutor.executeAndWait
+import model.utils.CommandManager.Constants.ADB_PATH
+import model.utils.CommandManager.Constants.DEVICE_DUMP_PATH
+import model.utils.CommandManager.Constants.DEVICE_SCREENSHOT_PATH
+import model.utils.CommandManager.Constants.LOCAL_DUMP_PATH
+import model.utils.CommandManager.Constants.LOCAL_SCREENSHOT_PATH
+import model.utils.CommandManager.executeAndWait
 
 object LayoutManager {
+
     fun extract() {
         dumpXml()
         takeScreenshot()

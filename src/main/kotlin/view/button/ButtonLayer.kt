@@ -16,15 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.dp
-import model.InspectorState
-import view.Colors
-import view.Dimensions
+import view.Colors.buttonColor
+import view.Colors.hintTextColor
+import view.Dimensions.extractButtonDiameter
+import view.Dimensions.largePadding
 import view.Dimensions.mediumPadding
 import java.awt.Cursor
 
 @Composable
-fun RoundButton(modifier: Modifier = Modifier) {
+fun ButtonLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Row(
@@ -32,28 +32,22 @@ fun RoundButton(modifier: Modifier = Modifier) {
         modifier = modifier.padding(mediumPadding)
     ) {
         Button(
-            onClick = { viewModel.extractLayout() },
+            onClick = viewModel::onExtractButtonPressed,
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Colors.buttonColor),
+            colors = ButtonDefaults.buttonColors(backgroundColor = buttonColor),
             modifier = Modifier
-                .size(40.dp)
+                .size(extractButtonDiameter)
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         ) { }
 
-        if (viewModel.inspectorState == InspectorState.EMPTY) {
-            SpacerAndText(text = "...smash the red button")
-        } else if (viewModel.inspectorState == InspectorState.WAITING) {
-            SpacerAndText(text = "...dumping")
+        if (viewModel.showButtonText) {
+            Spacer(modifier = Modifier.width(largePadding))
+            Text(
+                text = viewModel.buttonText,
+                color = hintTextColor,
+                fontFamily = FontFamily.Monospace,
+                modifier = modifier
+            )
         }
     }
-}
-
-@Composable
-fun SpacerAndText(text: String, modifier: Modifier = Modifier) {
-    Spacer(modifier = modifier.width(Dimensions.largePadding))
-    Text(
-        text = text,
-        color = Colors.hintTextColor,
-        fontFamily = FontFamily.Monospace
-    )
 }
