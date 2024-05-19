@@ -1,4 +1,4 @@
-package view
+package viewmodel
 
 import androidx.compose.ui.unit.dp
 

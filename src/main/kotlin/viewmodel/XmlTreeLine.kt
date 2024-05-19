@@ -1,4 +1,4 @@
-package shared
+package viewmodel
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates

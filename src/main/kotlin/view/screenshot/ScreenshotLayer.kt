@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import view.Dimensions.highlighterStrokeWidth
+import viewmodel.Dimensions.highlighterStrokeWidth
 import java.awt.Cursor
 
 @Composable

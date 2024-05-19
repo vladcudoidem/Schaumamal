@@ -1,4 +1,4 @@
-package shared.xmlElements
+package model.parser.xmlElements
 
 data class Display(
     val id: Int,

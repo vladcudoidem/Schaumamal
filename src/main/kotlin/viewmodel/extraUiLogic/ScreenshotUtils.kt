@@ -1,8 +1,8 @@
-package viewmodel
+package viewmodel.extraUiLogic
 
 import androidx.compose.ui.geometry.Offset
-import shared.xmlElements.Node
-import shared.xmlElements.System
+import model.parser.xmlElements.Node
+import model.parser.xmlElements.System
 
 fun List<Node>.forFirstNodeUnder(
     offset: Offset,

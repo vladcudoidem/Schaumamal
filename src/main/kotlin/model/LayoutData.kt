@@ -1,6 +1,6 @@
 package model
 
-import shared.xmlElements.System
+import model.parser.xmlElements.System
 
 data class LayoutData(
     val screenshotPath: String,

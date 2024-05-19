@@ -1,14 +1,14 @@
-package viewmodel
+package viewmodel.extraUiLogic
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
-import shared.XmlTreeLine
-import shared.xmlElements.Display
-import shared.xmlElements.Node
-import shared.xmlElements.System
-import shared.xmlElements.Window
-import shared.xmlElements.XmlElement
-import view.Colors.highlightedTextBackgroundColor
+import model.parser.xmlElements.Display
+import model.parser.xmlElements.Node
+import model.parser.xmlElements.System
+import model.parser.xmlElements.Window
+import model.parser.xmlElements.XmlElement
+import viewmodel.Colors.highlightedTextBackgroundColor
+import viewmodel.XmlTreeLine
 
 fun System.getFlatXmlTree(
     selectedNode: Node,

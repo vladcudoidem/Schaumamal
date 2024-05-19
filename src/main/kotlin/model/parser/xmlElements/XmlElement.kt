@@ -1,4 +1,4 @@
-package shared.xmlElements
+package model.parser.xmlElements
 
 interface XmlElement {
     val children: List<XmlElement>

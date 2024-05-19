@@ -1,4 +1,4 @@
-package shared.graphics
+package viewmodel
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size

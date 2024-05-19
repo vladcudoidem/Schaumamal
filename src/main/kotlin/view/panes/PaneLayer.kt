@@ -20,12 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
-import view.Colors.floatingPaneBackgroundColor
-import view.Colors.hintTextColor
-import view.Dimensions.largeCornerRadius
-import view.Dimensions.mediumPadding
-import view.Dimensions.smallCornerRadius
-import view.Dimensions.smallPadding
+import viewmodel.Colors.floatingPaneBackgroundColor
+import viewmodel.Colors.hintTextColor
+import viewmodel.Dimensions.largeCornerRadius
+import viewmodel.Dimensions.mediumPadding
+import viewmodel.Dimensions.smallCornerRadius
+import viewmodel.Dimensions.smallPadding
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 
