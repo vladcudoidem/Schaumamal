@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 class CoroutineManager(
     private val customCoroutineScope: CoroutineScope
 ) {
-    // TODO what happens if I launch two coroutines in the same scope?
     fun launch(block: suspend CoroutineScope.() -> Unit) =
         customCoroutineScope.launch(block = block)
 
