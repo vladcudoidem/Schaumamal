@@ -1,9 +1,9 @@
 package model.parser
 
-import shared.xmlElements.Display
-import shared.xmlElements.Node
-import shared.xmlElements.System
-import shared.xmlElements.Window
+import model.parser.xmlElements.Display
+import model.parser.xmlElements.Node
+import model.parser.xmlElements.System
+import model.parser.xmlElements.Window
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import java.io.File

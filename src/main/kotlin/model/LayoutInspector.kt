@@ -3,7 +3,7 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import shared.xmlElements.Node
+import model.parser.xmlElements.Node
 import model.parser.XmlParser
 import model.utils.CoroutineManager
 import model.utils.ExtractionManager

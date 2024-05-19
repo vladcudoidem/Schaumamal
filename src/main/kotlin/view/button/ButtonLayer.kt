@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontFamily
-import view.Colors.buttonColor
-import view.Colors.hintTextColor
-import view.Dimensions.extractButtonDiameter
-import view.Dimensions.largePadding
-import view.Dimensions.mediumPadding
+import viewmodel.Colors.buttonColor
+import viewmodel.Colors.hintTextColor
+import viewmodel.Dimensions.extractButtonDiameter
+import viewmodel.Dimensions.largePadding
+import viewmodel.Dimensions.mediumPadding
 import java.awt.Cursor
 
 @Composable

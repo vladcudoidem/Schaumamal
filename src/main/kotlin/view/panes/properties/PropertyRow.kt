@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import view.Colors.secondaryTextColor
-import view.Dimensions.maximumPropertyValueWidth
-import view.Dimensions.propertyNameWidth
-import view.Dimensions.smallPadding
+import viewmodel.Colors.secondaryTextColor
+import viewmodel.Dimensions.maximumPropertyValueWidth
+import viewmodel.Dimensions.propertyNameWidth
+import viewmodel.Dimensions.smallPadding
 
 @Composable
 fun PropertyRow(

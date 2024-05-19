@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import view.Colors.backgroundColor
+import viewmodel.Colors.backgroundColor
 import view.button.ButtonLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer

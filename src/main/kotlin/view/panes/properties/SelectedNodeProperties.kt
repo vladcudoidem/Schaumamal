@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import view.Dimensions.mediumPadding
+import viewmodel.Dimensions.mediumPadding
 
 @Composable
 fun SelectedNodeProperties(modifier: Modifier = Modifier) {
