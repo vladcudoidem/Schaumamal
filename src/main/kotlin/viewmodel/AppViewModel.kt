@@ -109,7 +109,7 @@ class AppViewModel(
                     // Scroll to the selected node in the upper right box.
                     upperPaneVerticalScrollState.animateScrollTo(
                         value = upperPaneNodePositions[layoutInspector.selectedNode]!! - 300
-                            // TODO remove magic number
+                            // TODO remove magic number. Depends on LazyColumn implementation.
                     )
                 }
             }

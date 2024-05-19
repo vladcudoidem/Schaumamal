@@ -13,7 +13,8 @@ import viewmodel.Dimensions.mediumPadding
 fun XmlTree(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    Column( // TODO use LazyColumn?
+    // TODO implement this with LazyColumn.
+    Column(
         modifier = modifier
             .verticalScroll(viewModel.upperPaneVerticalScrollState)
             .horizontalScroll(viewModel.upperPaneHorizontalScrollState)
