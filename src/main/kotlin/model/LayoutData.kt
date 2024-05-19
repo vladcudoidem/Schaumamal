@@ -1,13 +1,15 @@
 package model
 
 import model.parser.xmlElements.System
+import model.utils.Path.LOCAL_SCREENSHOT_PATH
+import java.io.File
 
 data class LayoutData(
-    val screenshotPath: String,
+    val screenshotFile: File,
     val root: System
 ) {
 
     companion object {
-        val Empty = LayoutData(screenshotPath = "", root = System.Empty)
+        val Empty = LayoutData(screenshotFile = File(LOCAL_SCREENSHOT_PATH), root = System.Empty)
     }
 }
