@@ -78,7 +78,7 @@ fun System.getFlatXmlTree(
     return result
 }
 
-fun XmlElement.forThisAndDescendants(
+private fun XmlElement.forThisAndDescendants(
     depth: Int = 0,
     action: (element: XmlElement, depth: Int) -> Unit
 ) {

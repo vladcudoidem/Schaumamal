@@ -44,7 +44,7 @@ fun ButtonLayer(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.width(largePadding))
             Text(
-                text = viewModel.buttonText,
+                text = "...smash the red button",
                 color = hintTextColor,
                 fontFamily = FontFamily.Monospace
             )
