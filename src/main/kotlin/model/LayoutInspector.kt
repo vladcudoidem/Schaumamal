@@ -37,12 +37,11 @@ class LayoutInspector(
         coroutineManager.launch {
             // first part of the dump
             ExtractionManager.extract()
-                // TODO get screenshot path from ExtractionManager
 
             // second part of the dump
             data = LayoutData(
-                File(LOCAL_SCREENSHOT_PATH),
-                XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
+                screenshotFile = File(LOCAL_SCREENSHOT_PATH),
+                root = XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
 
             // Shows data only after refreshing the data.
