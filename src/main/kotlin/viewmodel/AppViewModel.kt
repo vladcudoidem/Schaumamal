@@ -119,7 +119,7 @@ class AppViewModel(
 
     /* Button Layer */
 
-    val showButtonText get() = layoutInspector.state != InspectorState.POPULATED
+    val showButtonText get() = layoutInspector.state == InspectorState.EMPTY
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
 
