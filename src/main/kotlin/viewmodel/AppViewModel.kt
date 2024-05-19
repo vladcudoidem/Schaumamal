@@ -23,9 +23,7 @@ import kotlinx.coroutines.withContext
 import model.InspectorState
 import model.LayoutInspector
 import model.utils.CoroutineManager
-import shared.graphics.HighlighterGraphics
-import shared.graphics.ImageGraphics
-import shared.graphics.RawNodeGraphics
+import shared.graphics.Graphics
 import shared.xmlElements.Node
 import view.Dimensions.Initial.initialPaneWidth
 import view.Dimensions.Initial.initialUpperPaneHeight
@@ -49,30 +47,37 @@ class AppViewModel(
     /* Screenshot Layer */
 
     var imageComposableGraphics by mutableStateOf(
-        ImageGraphics(offset = Offset.Zero, size = Size.Unspecified)
-    ) // Offset is Zero and not Unspecified because it is needed for composing the Image
-        // TODO does this need to be a state?
-
-    private var screenshotFileSizePx = Size.Unspecified
-        // This does not to be a state as it does not have to trigger any recomposition.
+        Graphics(offset = Offset.Zero, size = Size.Unspecified)
+    ) // Offset is Zero and not Unspecified because it is needed for composing the Image.
 
     val showHighlighter get() = layoutInspector.isNodeSelected
-    val highlighterGraphics
-        get() = HighlighterGraphics.from(
-            imageOffset = imageComposableGraphics.offset,
-            imageSize = imageComposableGraphics.size,
-            screenshotFileSize = screenshotFileSizePx,
-            selectedNodeGraphics = RawNodeGraphics.from(layoutInspector.selectedNode)
-        )
+    val highlighterGraphics: Graphics
+        get() {
+            val selectedNodeGraphics =
+                layoutInspector.selectedNode.extractDisplayGraphics(displayPixelConversionFactor)
+
+            return Graphics(
+                offset = imageComposableGraphics.offset + selectedNodeGraphics.offset,
+                size = selectedNodeGraphics.size
+            )
+        }
 
     val showScreenshot get() = layoutInspector.state == InspectorState.POPULATED
     val imageBitmap
         get() = loadImageBitmap(
-            FileInputStream(File(layoutInspector.data.screenshotPath))
+            FileInputStream(File(layoutInspector.data.screenshotPath)) // TODO refactor
         ).apply {
             // Store the screenshot file size as soon as possible.
-            screenshotFileSizePx = Size(height = height.toFloat(), width = width.toFloat())
+            screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
         }
+
+    // This does not to be a state as it does not have to trigger any recomposition. It is initialized when the model
+    // updates the data and thus the imageBitmap.
+    private var screenshotFileSize = Size.Unspecified
+
+    // It is irrelevant whether we use width or height when calculating the conversion factor.
+    private val displayPixelConversionFactor
+        get() = imageComposableGraphics.size.height / screenshotFileSize.height
 
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
         val oldOffset = imageComposableGraphics.offset
@@ -84,22 +89,24 @@ class AppViewModel(
     }
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
-        val scalingFactor = screenshotFileSizePx.height / imageComposableGraphics.size.height
-            // It is irrelevant whether we use width or height when calculating the scaling factor.
-            // TODO create a view model property for this factor and use it in HighlighterGraphics too
-        val scaledOffset = offset * scalingFactor // TODO coerce
+        // Extract node list with the first nodes being the deepest ones.
+        val flatNodeList = layoutInspector.data.root
+            .getNodesOrderedByDepth(deepNodesFirst = true)
+            // TODO this is called on every tap. Store the list.
 
-        val flatNodeList = layoutInspector.data.root.getNodesFlattened()
-            // This is called on every Tap. TODO store flattened nodes.
-        flatNodeList.forNodeUnder(offset = scaledOffset) {
-            layoutInspector.selectNode(node = it)
+        flatNodeList.forFirstNodeUnder(
+            offset = offset,
+            displayPixelConversionFactor = displayPixelConversionFactor
+        ) { matchingNode ->
+            // Update the selected node if a matching node was found.
+            layoutInspector.selectNode(node = matchingNode)
 
             coroutineManager.launch {
                 withContext(uiCoroutineContext) {
-
                     // Scroll to the selected node in the upper right box.
                     upperPaneVerticalScrollState.animateScrollTo(
-                        value = upperPaneNodePositions[layoutInspector.selectedNode] ?: 0
+                        value = upperPaneNodePositions[layoutInspector.selectedNode]!! - 300
+                            // TODO remove magic number
                     )
                 }
             }
@@ -109,27 +116,20 @@ class AppViewModel(
     /* Button Layer */
 
     val showButtonText get() = layoutInspector.state != InspectorState.POPULATED
-    val buttonText
-        get() = when (layoutInspector.state) {
-            InspectorState.POPULATED -> ""
-            InspectorState.EMPTY -> "...smash the red button"
-            InspectorState.WAITING -> "...dumping"
-        } // TODO store the string literals somewhere else maybe?
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
 
     /* Panes Layer */
 
     var paneWidth by mutableStateOf(initialPaneWidth)
-        // TODO should Dimensions be in shared?
 
     var upperPaneHeight by mutableStateOf(initialUpperPaneHeight)
     val upperPaneVerticalScrollState = ScrollState(initial = 0)
     val upperPaneHorizontalScrollState = ScrollState(initial = 0)
-    val upperPaneNodePositions = mutableMapOf<Node, Int>()
+    private val upperPaneNodePositions = mutableMapOf<Node, Int>()
 
+    // The lower Pane takes up as much height as possible. Value gets updated with the actual height at composition.
     private var lowerPaneHeight by mutableStateOf(Dp.Unspecified)
-        // The lower Pane takes up as much height as possible. Value gets updated with the actual height at composition.
     val lowerPaneVerticalScrollState = ScrollState(initial = 0)
     val lowerPaneHorizontalScrollState = ScrollState(initial = 0)
 
@@ -172,16 +172,15 @@ class AppViewModel(
         }
     }
 
-    fun onNodeTreeLineClicked(node: Node) = layoutInspector.selectNode(node)
-
-    fun onNodeTreeLineGloballyPositioned(layoutCoordinates: LayoutCoordinates, node: Node) {
-        // Capture the position of each node row.
-        upperPaneNodePositions[node] = layoutCoordinates.positionInParent().y.roundToInt() - 300
-            // TODO remove the magic number 300
-    }
-
     fun onLowerPaneSizeChanged(size: IntSize, density: Float) {
         lowerPaneHeight = (size.height / density).dp
+    }
+
+    private fun onNodeTreeLineClicked(node: Node) = layoutInspector.selectNode(node)
+
+    private fun onNodeTreeLineGloballyPositioned(layoutCoordinates: LayoutCoordinates, node: Node) {
+        // Capture the position of each node row.
+        upperPaneNodePositions[node] = layoutCoordinates.positionInParent().y.roundToInt()
     }
 
     /* Misc */
