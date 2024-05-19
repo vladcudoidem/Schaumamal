@@ -8,7 +8,6 @@ data class Window(
     val active: Boolean,
     val type: String,
     val layer: Int,
-    val token: String, // TODO does this exist?
     val focused: Boolean,
     val accessibilityFocused: Boolean,
     override val children: List<Node>

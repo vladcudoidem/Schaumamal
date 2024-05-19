@@ -64,7 +64,6 @@ object XmlParser {
                 active = getAttribute(PropertyName.Window.ACTIVE).toBoolean(),
                 type = getAttribute(PropertyName.Window.TYPE),
                 layer = getAttribute(PropertyName.Window.LAYER).toInt(),
-                token = getAttribute(PropertyName.Window.TOKEN),
                 focused = getAttribute(PropertyName.Window.FOCUSED).toBoolean(),
                 accessibilityFocused = getAttribute(PropertyName.Window.ACCESSIBILITY_FOCUSED).toBoolean(),
                 children = nodes
