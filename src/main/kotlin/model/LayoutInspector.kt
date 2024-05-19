@@ -41,7 +41,7 @@ class LayoutInspector(
 
             // second part of the dump
             data = LayoutData(
-                LOCAL_SCREENSHOT_PATH,
+                File(LOCAL_SCREENSHOT_PATH),
                 XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
             )
 

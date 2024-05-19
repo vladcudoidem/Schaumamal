@@ -22,8 +22,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import model.InspectorState
 import model.LayoutInspector
-import model.utils.CoroutineManager
 import model.parser.xmlElements.Node
+import model.utils.CoroutineManager
 import viewmodel.Dimensions.Initial.initialPaneWidth
 import viewmodel.Dimensions.Initial.initialUpperPaneHeight
 import viewmodel.Dimensions.minimumPaneDimension
@@ -32,7 +32,6 @@ import viewmodel.extraUiLogic.forFirstNodeUnder
 import viewmodel.extraUiLogic.getFlatXmlTree
 import viewmodel.extraUiLogic.getNodesOrderedByDepth
 import viewmodel.extraUiLogic.propertyMap
-import java.io.File
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
@@ -69,7 +68,7 @@ class AppViewModel(
     val showScreenshot get() = layoutInspector.state == InspectorState.POPULATED
     val imageBitmap
         get() = loadImageBitmap(
-            FileInputStream(File(layoutInspector.data.screenshotPath)) // TODO refactor
+            FileInputStream(layoutInspector.data.screenshotFile)
         ).apply {
             // Store the screenshot file size as soon as possible.
             screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
