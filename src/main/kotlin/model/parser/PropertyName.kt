@@ -14,7 +14,6 @@ object PropertyName {
         const val ACTIVE = "active"
         const val TYPE = "type"
         const val LAYER = "layer"
-        const val TOKEN = "token"
         const val FOCUSED = "focused"
         const val ACCESSIBILITY_FOCUSED = "accessibility-focused"
     }
