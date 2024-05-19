@@ -93,11 +93,9 @@ class AppViewModel(
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
         // Extract node list with the first nodes being the deepest ones.
-        val flatNodeList = layoutInspector.data.root
-            .getNodesOrderedByDepth(deepNodesFirst = true)
-            // TODO this is called on every tap. Store the list.
+        val flatNodeListByDepth = layoutInspector.data.root.getNodesOrderedByDepth(deepNodesFirst = true)
 
-        flatNodeList.forFirstNodeUnder(
+        flatNodeListByDepth.forFirstNodeUnder(
             offset = offset,
             displayPixelConversionFactor = displayPixelConversionFactor
         ) { matchingNode ->
