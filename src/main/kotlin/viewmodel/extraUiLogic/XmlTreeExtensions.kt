@@ -10,18 +10,18 @@ import model.parser.xmlElements.XmlElement
 import viewmodel.Colors.highlightedTextBackgroundColor
 import viewmodel.XmlTreeLine
 
-fun System.getFlatXmlTree(
+fun System.getFlatXmlTreeMap(
     selectedNode: Node,
     onNodeTreeLineClicked: (Node) -> Unit,
     onNodeTreeLineGloballyPositioned: (LayoutCoordinates, Node) -> Unit
-): List<XmlTreeLine> {
-    val result: MutableList<XmlTreeLine> = mutableListOf()
+): LinkedHashMap<XmlElement, XmlTreeLine> {
+    val result: LinkedHashMap<XmlElement, XmlTreeLine> = linkedMapOf()
 
     forThisAndDescendants { element, depth ->
 
         result += when (element) {
 
-            is System -> XmlTreeLine(
+            is System -> element to XmlTreeLine(
                 text = "System {displays=${element.children.size}}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
@@ -29,7 +29,7 @@ fun System.getFlatXmlTree(
                 onTreeLineGloballyPositioned = { }
             )
 
-            is Display -> XmlTreeLine(
+            is Display -> element to XmlTreeLine(
                 text = "Display {id=${element.id}, windows=${element.children.size}}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
@@ -37,7 +37,7 @@ fun System.getFlatXmlTree(
                 onTreeLineGloballyPositioned = { }
             )
 
-            is Window -> XmlTreeLine(
+            is Window -> element to XmlTreeLine(
                 text = "(${element.index}) Window {title=\"${element.title}\"} ${element.bounds}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
@@ -45,7 +45,7 @@ fun System.getFlatXmlTree(
                 onTreeLineGloballyPositioned = { }
             )
 
-            is Node -> XmlTreeLine(
+            is Node -> element to XmlTreeLine(
                 text = run {
                     val formattedClassName = element.className.split(".").last()
                     val formattedResourceId = element.resourceId.split(":").last().let {

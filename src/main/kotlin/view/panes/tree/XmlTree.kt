@@ -1,10 +1,11 @@
 package view.panes.tree
 
 import AppViewModel
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import viewmodel.Dimensions.mediumPadding
@@ -13,14 +14,14 @@ import viewmodel.Dimensions.mediumPadding
 fun XmlTree(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    // TODO implement this with LazyColumn.
-    Column(
+    LazyColumn(
+        state = viewModel.upperPaneLazyListState,
+        contentPadding = PaddingValues(mediumPadding),
         modifier = modifier
-            .verticalScroll(viewModel.upperPaneVerticalScrollState)
             .horizontalScroll(viewModel.upperPaneHorizontalScrollState)
-            .padding(mediumPadding)
+            .animateContentSize()
     ) {
-        viewModel.flatXmlTree.forEach { line ->
+        items(viewModel.flatXmlTree) { line ->
             XmlTreeLine(line = line)
         }
     }
