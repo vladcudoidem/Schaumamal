@@ -1,6 +1,7 @@
 package viewmodel
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,7 +30,7 @@ import viewmodel.Dimensions.Initial.initialUpperPaneHeight
 import viewmodel.Dimensions.minimumPaneDimension
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
-import viewmodel.extraUiLogic.getFlatXmlTree
+import viewmodel.extraUiLogic.getFlatXmlTreeMap
 import viewmodel.extraUiLogic.getNodesOrderedByDepth
 import viewmodel.extraUiLogic.propertyMap
 import java.io.FileInputStream
@@ -105,9 +106,8 @@ class AppViewModel(
             coroutineManager.launch {
                 withContext(uiCoroutineContext) {
                     // Scroll to the selected node in the upper right box.
-                    upperPaneVerticalScrollState.animateScrollTo(
-                        value = upperPaneNodePositions[layoutInspector.selectedNode]!! - 300
-                            // TODO remove magic number. Depends on LazyColumn implementation.
+                    upperPaneLazyListState.animateScrollToItem(
+                        index = flatXmlTreeMap.keys.indexOf(layoutInspector.selectedNode)
                     )
                 }
             }
@@ -125,7 +125,7 @@ class AppViewModel(
     var paneWidth by mutableStateOf(initialPaneWidth)
 
     var upperPaneHeight by mutableStateOf(initialUpperPaneHeight)
-    val upperPaneVerticalScrollState = ScrollState(initial = 0)
+    val upperPaneLazyListState = LazyListState()
     val upperPaneHorizontalScrollState = ScrollState(initial = 0)
     private val upperPaneNodePositions = mutableMapOf<Node, Int>()
 
@@ -135,12 +135,13 @@ class AppViewModel(
     val lowerPaneHorizontalScrollState = ScrollState(initial = 0)
 
     val showXmlTree get() = layoutInspector.state == InspectorState.POPULATED
-    val flatXmlTree
-        get() = layoutInspector.data.root.getFlatXmlTree(
+    private val flatXmlTreeMap
+        get() = layoutInspector.data.root.getFlatXmlTreeMap(
             selectedNode = layoutInspector.selectedNode,
             onNodeTreeLineClicked = ::onNodeTreeLineClicked,
             onNodeTreeLineGloballyPositioned = ::onNodeTreeLineGloballyPositioned
         )
+    val flatXmlTree get() = flatXmlTreeMap.values.toList()
 
     val showSelectedNodeProperties get() = layoutInspector.isNodeSelected
     val selectedNodePropertyMap get() = layoutInspector.selectedNode.propertyMap
