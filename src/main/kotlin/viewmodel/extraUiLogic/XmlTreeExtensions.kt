@@ -1,7 +1,6 @@
 package viewmodel.extraUiLogic
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
 import model.parser.xmlElements.Display
 import model.parser.xmlElements.Node
 import model.parser.xmlElements.System
@@ -12,8 +11,7 @@ import viewmodel.XmlTreeLine
 
 fun System.getFlatXmlTreeMap(
     selectedNode: Node,
-    onNodeTreeLineClicked: (Node) -> Unit,
-    onNodeTreeLineGloballyPositioned: (LayoutCoordinates, Node) -> Unit
+    onNodeTreeLineClicked: (Node) -> Unit
 ): LinkedHashMap<XmlElement, XmlTreeLine> {
     val result: LinkedHashMap<XmlElement, XmlTreeLine> = linkedMapOf()
 
@@ -25,24 +23,21 @@ fun System.getFlatXmlTreeMap(
                 text = "System {displays=${element.children.size}}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
-                onClickText = { },
-                onTreeLineGloballyPositioned = { }
+                onClickText = { }
             )
 
             is Display -> element to XmlTreeLine(
                 text = "Display {id=${element.id}, windows=${element.children.size}}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
-                onClickText = { },
-                onTreeLineGloballyPositioned = { }
+                onClickText = { }
             )
 
             is Window -> element to XmlTreeLine(
                 text = "(${element.index}) Window {title=\"${element.title}\"} ${element.bounds}",
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
-                onClickText = { },
-                onTreeLineGloballyPositioned = { }
+                onClickText = { }
             )
 
             is Node -> element to XmlTreeLine(
@@ -64,10 +59,7 @@ fun System.getFlatXmlTreeMap(
                     Color.Transparent
                 },
                 depth = depth,
-                onClickText = { onNodeTreeLineClicked(element) },
-                onTreeLineGloballyPositioned = { layoutCoordinates: LayoutCoordinates ->
-                    onNodeTreeLineGloballyPositioned(layoutCoordinates, element)
-                }
+                onClickText = { onNodeTreeLineClicked(element) }
             )
 
             else -> error("XmlTreeLine template not specified for this XmlElement subtype.")

@@ -9,8 +9,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -35,7 +33,6 @@ import viewmodel.extraUiLogic.getNodesOrderedByDepth
 import viewmodel.extraUiLogic.propertyMap
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.roundToInt
 
 class AppViewModel(
     private val coroutineManager: CoroutineManager
@@ -107,7 +104,9 @@ class AppViewModel(
                 withContext(uiCoroutineContext) {
                     // Scroll to the selected node in the upper right box.
                     upperPaneLazyListState.animateScrollToItem(
-                        index = flatXmlTreeMap.keys.indexOf(layoutInspector.selectedNode)
+                        index = flatXmlTreeMap.keys.indexOf(layoutInspector.selectedNode),
+                        // Divide the upper pane height by 2 so that the selected node ends up in the center of the Box.
+                        scrollOffset = - upperPaneHeight.toPx(density).div(2).toInt()
                     )
                 }
             }
@@ -127,7 +126,6 @@ class AppViewModel(
     var upperPaneHeight by mutableStateOf(initialUpperPaneHeight)
     val upperPaneLazyListState = LazyListState()
     val upperPaneHorizontalScrollState = ScrollState(initial = 0)
-    private val upperPaneNodePositions = mutableMapOf<Node, Int>()
 
     // The lower Pane takes up as much height as possible. Value gets updated with the actual height at composition.
     private var lowerPaneHeight by mutableStateOf(Dp.Unspecified)
@@ -138,8 +136,7 @@ class AppViewModel(
     private val flatXmlTreeMap
         get() = layoutInspector.data.root.getFlatXmlTreeMap(
             selectedNode = layoutInspector.selectedNode,
-            onNodeTreeLineClicked = ::onNodeTreeLineClicked,
-            onNodeTreeLineGloballyPositioned = ::onNodeTreeLineGloballyPositioned
+            onNodeTreeLineClicked = ::onNodeTreeLineClicked
         )
     val flatXmlTree get() = flatXmlTreeMap.values.toList()
 
@@ -177,11 +174,6 @@ class AppViewModel(
     }
 
     private fun onNodeTreeLineClicked(node: Node) = layoutInspector.selectNode(node)
-
-    private fun onNodeTreeLineGloballyPositioned(layoutCoordinates: LayoutCoordinates, node: Node) {
-        // Capture the position of each node row.
-        upperPaneNodePositions[node] = layoutCoordinates.positionInParent().y.roundToInt()
-    }
 
     /* Misc */
 
