@@ -148,12 +148,11 @@ class AppViewModel(
 
     fun onVerticalWedgeDrag(
         change: PointerInputChange,
-        dragAmount: Offset,
-        density: Float
+        dragAmount: Offset
     ) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
-        val dragAmountDp = (dragAmount.x / density).dp
+        val dragAmountDp = dragAmount.x.toDp(density)
         paneWidth = (paneWidth - dragAmountDp).coerceAtLeast(
             minimumPaneDimension
         )
@@ -161,12 +160,11 @@ class AppViewModel(
 
     fun onHorizontalWedgeDrag(
         change: PointerInputChange,
-        dragAmount: Offset,
-        density: Float
+        dragAmount: Offset
     ) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
-        val dragAmountDp = (dragAmount.y / density).dp
+        val dragAmountDp = dragAmount.y.toDp(density)
         if (lowerPaneHeight >= minimumPaneDimension || dragAmountDp < 0.dp) {
             upperPaneHeight = (upperPaneHeight + dragAmountDp).coerceAtLeast(
                 minimumPaneDimension
@@ -174,8 +172,8 @@ class AppViewModel(
         }
     }
 
-    fun onLowerPaneSizeChanged(size: IntSize, density: Float) {
-        lowerPaneHeight = (size.height / density).dp
+    fun onLowerPaneSizeChanged(size: IntSize) {
+        lowerPaneHeight = size.height.toDp(density)
     }
 
     private fun onNodeTreeLineClicked(node: Node) = layoutInspector.selectNode(node)
@@ -186,6 +184,12 @@ class AppViewModel(
     }
 
     /* Misc */
+
+    private var density by mutableStateOf(Float.NaN)
+
+    fun onNewDensity(density: Float) {
+        this.density = density
+    }
 
     fun teardown() {
         coroutineManager.teardown()

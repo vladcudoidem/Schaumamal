@@ -34,7 +34,7 @@ fun HorizontalWedge(modifier: Modifier = Modifier) {
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    viewModel.onHorizontalWedgeDrag(change, dragAmount, density)
+                    viewModel.onHorizontalWedgeDrag(change, dragAmount)
                 }
             }
     ) {
@@ -69,7 +69,7 @@ fun VerticalWedge(modifier: Modifier = Modifier) {
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    viewModel.onVerticalWedgeDrag(change, dragAmount, density)
+                    viewModel.onVerticalWedgeDrag(change, dragAmount)
                 }
             }
     ) {

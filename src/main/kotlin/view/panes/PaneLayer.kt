@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
@@ -93,7 +92,6 @@ fun UpperPane(modifier: Modifier = Modifier) {
 @Composable
 fun LowerPane(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
-    val density = LocalDensity.current.density
 
     Box(
         modifier = modifier
@@ -105,7 +103,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
             ))
             .background(floatingPaneBackgroundColor)
             .onSizeChanged { size ->
-                viewModel.onLowerPaneSizeChanged(size, density)
+                viewModel.onLowerPaneSizeChanged(size)
             }
     ) {
         if (viewModel.showSelectedNodeProperties) {
