@@ -100,15 +100,19 @@ class AppViewModel(
             // Update the selected node if a matching node was found.
             layoutInspector.selectNode(node = matchingNode)
 
-            coroutineManager.launch {
-                withContext(uiCoroutineContext) {
-                    // Scroll to the selected node in the upper right box.
-                    upperPaneLazyListState.animateScrollToItem(
-                        index = flatXmlTreeMap.keys.indexOf(layoutInspector.selectedNode),
-                        // Divide the upper pane height by 2 so that the selected node ends up in the center of the Box.
-                        scrollOffset = - upperPaneHeight.toPx(density).div(2).toInt()
-                    )
-                }
+            scrollToSelectedNode(uiCoroutineContext)
+        }
+    }
+
+    private fun scrollToSelectedNode(uiCoroutineContext: CoroutineContext) {
+        coroutineManager.launch {
+            withContext(uiCoroutineContext) {
+                // Scroll to the selected node in the upper right box.
+                upperPaneLazyListState.animateScrollToItem(
+                    index = flatXmlTreeMap.keys.indexOf(layoutInspector.selectedNode),
+                    // Divide the upper pane height by 2 so that the selected node ends up in the center of the Box.
+                    scrollOffset = - upperPaneHeight.toPx(density).div(2).toInt()
+                )
             }
         }
     }
