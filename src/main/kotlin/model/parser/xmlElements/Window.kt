@@ -11,4 +11,4 @@ data class Window(
     val focused: Boolean,
     val accessibilityFocused: Boolean,
     override val children: List<Node>
-): XmlElement
+) : XmlElement

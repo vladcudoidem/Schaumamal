@@ -19,7 +19,7 @@ data class Node(
     val selected: Boolean,
     val bounds: String,
     override val children: List<Node>
-): XmlElement {
+) : XmlElement {
 
     companion object {
         val Empty = Node(
