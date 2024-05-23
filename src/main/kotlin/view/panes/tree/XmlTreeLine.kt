@@ -13,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.onGloballyPositioned
-import viewmodel.XmlTreeLine
 import viewmodel.Colors.secondaryTextColor
 import viewmodel.Dimensions.smallCornerRadius
 import viewmodel.Dimensions.smallPadding
 import viewmodel.Dimensions.startPaddingPerDepthLevel
+import viewmodel.XmlTreeLine
 import java.awt.Cursor
 
 @Composable
@@ -26,9 +25,7 @@ fun XmlTreeLine(
     line: XmlTreeLine,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.onGloballyPositioned(line.onTreeLineGloballyPositioned)
-    ) {
+    Row(modifier = modifier) {
         Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
 
         Text(
