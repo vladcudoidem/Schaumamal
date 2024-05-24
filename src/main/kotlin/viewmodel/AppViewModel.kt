@@ -87,6 +87,7 @@ class AppViewModel(
     private val displayPixelConversionFactor
         get() = imageComposableGraphics.size.height / screenshotFileSize.height
 
+    @Suppress("UNUSED_PARAMETER")
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
         val oldOffset = imageComposableGraphics.offset
         imageComposableGraphics = imageComposableGraphics.copy(offset = oldOffset + pan)
