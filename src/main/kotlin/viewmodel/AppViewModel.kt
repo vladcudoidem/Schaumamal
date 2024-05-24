@@ -2,6 +2,7 @@ package viewmodel
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -64,13 +65,12 @@ class AppViewModel(
         }
 
     val showScreenshot get() = layoutInspector.state == InspectorState.POPULATED
-    val imageBitmap
-        get() = loadImageBitmap(
-            FileInputStream(layoutInspector.data.screenshotFile)
-        ).apply {
+    val imageBitmap by derivedStateOf {
+        loadImageBitmap(FileInputStream(layoutInspector.data.screenshotFile)).apply {
             // Store the screenshot file size as soon as possible.
             screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
         }
+    }
 
     // This does not to be a state as it does not have to trigger any recomposition. It is initialized when the model
     // updates the data and thus the imageBitmap.
