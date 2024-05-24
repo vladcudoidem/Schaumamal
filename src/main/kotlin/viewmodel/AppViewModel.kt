@@ -6,8 +6,15 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.loadImageBitmap
@@ -186,6 +193,26 @@ class AppViewModel(
     fun onNewDensity(density: Float) {
         this.density = density
     }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    fun onWindowKeyEvent(event: KeyEvent) =
+        when {
+            event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
+                when (event.key) {
+                    Key.Equals -> {
+                        true
+                    }
+
+                    Key.Minus -> {
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+            else -> false
+        }
 
     fun teardown() {
         coroutineManager.teardown()

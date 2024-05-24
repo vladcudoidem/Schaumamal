@@ -32,7 +32,8 @@ fun main() = application {
             onCloseRequest = {
                 viewModel.teardown()
                 exitApplication()
-            }
+            },
+            onKeyEvent = viewModel::onWindowKeyEvent
         ) {
             MaterialTheme {
                 MainScreen()
