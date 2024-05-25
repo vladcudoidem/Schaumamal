@@ -33,7 +33,11 @@ import model.parser.xmlElements.Node
 import model.utils.CoroutineManager
 import viewmodel.Dimensions.Initial.initialPaneWidth
 import viewmodel.Dimensions.Initial.initialUpperPaneHeight
+import viewmodel.Dimensions.defaultHighlighterStrokeWidth
 import viewmodel.Dimensions.minimumPaneDimension
+import viewmodel.Values.maxScreenshotScale
+import viewmodel.Values.minScreenshotScale
+import viewmodel.Values.zoomStep
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
 import viewmodel.extraUiLogic.getFlatXmlTreeMap
@@ -55,21 +59,8 @@ class AppViewModel(
 
     /* Screenshot Layer */
 
-    var imageComposableGraphics by mutableStateOf(
-        Graphics(offset = Offset.Zero, size = Size.Unspecified)
-    ) // Offset is Zero and not Unspecified because it is needed for composing the Image.
-
-    val showHighlighter get() = layoutInspector.isNodeSelected
-    val highlighterGraphics: Graphics
-        get() {
-            val selectedNodeGraphics =
-                layoutInspector.selectedNode.extractDisplayGraphics(displayPixelConversionFactor)
-
-            return Graphics(
-                offset = imageComposableGraphics.offset + selectedNodeGraphics.offset,
-                size = selectedNodeGraphics.size
-            )
-        }
+    var screenshotLayerOffset by mutableStateOf(Offset.Zero)
+    var screenshotLayerScale by mutableStateOf(1f)
 
     val showScreenshot get() = layoutInspector.state == InspectorState.POPULATED
     val imageBitmap by derivedStateOf {
@@ -78,6 +69,16 @@ class AppViewModel(
             screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
         }
     }
+    // size of the image composable
+    private var screenshotSize by mutableStateOf(Size.Unspecified)
+
+    val showHighlighter get() = layoutInspector.isNodeSelected
+    val highlighterOffset by derivedStateOf { selectedNodeDisplayGraphics.offset }
+    val highlighterSize by derivedStateOf { selectedNodeDisplayGraphics.size }
+    private val selectedNodeDisplayGraphics
+        get() = layoutInspector.selectedNode.extractDisplayGraphics(displayPixelConversionFactor)
+
+    val highlighterStrokeWidth get() = (defaultHighlighterStrokeWidth / screenshotLayerScale).toPx(density)
 
     // This does not to be a state as it does not have to trigger any recomposition. It is initialized when the model
     // updates the data and thus the imageBitmap.
@@ -85,16 +86,15 @@ class AppViewModel(
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
     private val displayPixelConversionFactor
-        get() = imageComposableGraphics.size.height / screenshotFileSize.height
+        get() = screenshotSize.height / screenshotFileSize.height
 
     @Suppress("UNUSED_PARAMETER")
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
-        val oldOffset = imageComposableGraphics.offset
-        imageComposableGraphics = imageComposableGraphics.copy(offset = oldOffset + pan)
+        screenshotLayerOffset += pan * screenshotLayerScale
     }
 
     fun onImageSizeChanged(size: IntSize) {
-        imageComposableGraphics = imageComposableGraphics.copy(size = size.toSize())
+        screenshotSize = size.toSize()
     }
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
@@ -201,10 +201,12 @@ class AppViewModel(
             event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.Equals -> {
+                        screenshotLayerScale = (screenshotLayerScale + zoomStep).coerceAtMost(maxScreenshotScale)
                         true
                     }
 
                     Key.Minus -> {
+                        screenshotLayerScale = (screenshotLayerScale - zoomStep).coerceAtLeast(minScreenshotScale)
                         true
                     }
 

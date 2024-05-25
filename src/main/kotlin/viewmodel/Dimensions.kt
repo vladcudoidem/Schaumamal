@@ -35,7 +35,7 @@ object Dimensions {
 
     /* Screenshot Layer */
 
-    val highlighterStrokeWidth = 3.dp
+    val defaultHighlighterStrokeWidth = 3.dp
 
     object Initial {
 

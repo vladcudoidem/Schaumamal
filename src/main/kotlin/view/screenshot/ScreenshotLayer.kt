@@ -6,7 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -17,40 +17,29 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import viewmodel.Dimensions.highlighterStrokeWidth
 import java.awt.Cursor
 
 @Composable
 fun ScreenshotLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
-
-    Box(modifier = modifier) {
-        if (viewModel.showScreenshot) {
-            Screenshot()
-        }
-
-        if (viewModel.showHighlighter) {
-            HighlighterCanvas(modifier = Modifier.fillMaxSize())
-        }
-    }
-}
-
-@Composable
-fun Screenshot(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
+    // The context of this coroutine scope is needed for scrolling in the view model.
     val coroutineScope = rememberCoroutineScope()
-        // The context of this coroutine scope is needed for scrolling in the view model.
 
-    Image(
-        bitmap = viewModel.imageBitmap,
-        contentDescription = null,
+    Box(
         modifier = modifier
-            .graphicsLayer(
-                translationX = viewModel.imageComposableGraphics.offset.x,
-                translationY = viewModel.imageComposableGraphics.offset.y
-            )
+            .fillMaxHeight()
+            // TODO add width constraint (get display width)
             .onSizeChanged(onSizeChanged = viewModel::onImageSizeChanged)
-            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+            .graphicsLayer {
+                scaleX = viewModel.screenshotLayerScale
+                scaleY = viewModel.screenshotLayerScale
+
+                translationX = viewModel.screenshotLayerOffset.x
+                translationY = viewModel.screenshotLayerOffset.y
+            }
+            .pointerInput(Unit) {
+                detectTransformGestures(onGesture = viewModel::onImageGesture)
+            }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { offset ->
@@ -61,23 +50,39 @@ fun Screenshot(modifier: Modifier = Modifier) {
                     }
                 )
             }
-            .pointerInput(Unit) {
-                detectTransformGestures(onGesture = viewModel::onImageGesture)
-            }
+            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+    ) {
+        if (viewModel.showScreenshot) {
+            Screenshot()
+        }
+
+        if (viewModel.showHighlighter) {
+            Highlighter()
+        }
+    }
+}
+
+@Composable
+fun Screenshot(modifier: Modifier = Modifier) {
+    val viewModel = AppViewModel.current
+
+    Image(
+        bitmap = viewModel.imageBitmap,
+        contentDescription = null,
+        modifier = modifier
     )
 }
 
 @Composable
-fun HighlighterCanvas(modifier: Modifier = Modifier) {
+fun Highlighter(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Canvas(modifier = modifier) {
-        val (highlighterOffset, highlighterSize) = viewModel.highlighterGraphics
         drawRect(
             color = Color.Red,
-            topLeft = highlighterOffset,
-            size = highlighterSize,
-            style = Stroke(width = highlighterStrokeWidth.toPx())
+            topLeft = viewModel.highlighterOffset,
+            size = viewModel.highlighterSize,
+            style = Stroke(width = viewModel.highlighterStrokeWidth)
         )
     }
 }
