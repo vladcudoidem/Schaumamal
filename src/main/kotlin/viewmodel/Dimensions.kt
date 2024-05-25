@@ -14,6 +14,8 @@ object Dimensions {
     val mediumCornerRadius = 10.dp
     val largeCornerRadius = 20.dp
 
+    val scrollbarThickness = 8.dp
+
     /* Button Layer */
 
     val extractButtonDiameter = 40.dp

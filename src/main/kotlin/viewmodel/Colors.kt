@@ -23,4 +23,6 @@ object Colors {
     /* Other */
 
     val backgroundColor = Color(0xFF121317)
+    val scrollbarHoverColor = Color.White.copy(alpha = 0.50f)
+    val scrollbarUnhoverColor = Color.White.copy(alpha = 0.12f)
 }
