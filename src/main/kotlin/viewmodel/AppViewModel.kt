@@ -210,6 +210,12 @@ class AppViewModel(
                         true
                     }
 
+                    Key.Zero -> {
+                        screenshotLayerScale = 1f
+                        screenshotLayerOffset = Offset.Zero
+                        true
+                    }
+
                     else -> false
                 }
             }
