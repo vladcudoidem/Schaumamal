@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import viewmodel.Colors.highlightedTextBackgroundColor
+import viewmodel.Colors.highlightedBackgroundColor
 import viewmodel.Colors.secondaryTextColor
 import viewmodel.Dimensions.maximumPropertyValueWidth
 import viewmodel.Dimensions.propertyNameWidth
@@ -50,7 +50,7 @@ fun PropertyRow(
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(color = highlightedTextBackgroundColor)
+                    indication = rememberRipple(color = highlightedBackgroundColor)
                 ) { clipboard.setText(AnnotatedString(value)) }
                     // It would make little sense to handle this in the view model as the behaviour is always the same.
                 .padding(smallPadding)
