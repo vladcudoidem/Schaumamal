@@ -28,7 +28,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(backgroundColor)
     ) {
-        ScreenshotLayer()
+        ScreenshotLayer(modifier = Modifier.align(Alignment.CenterStart))
         ButtonLayer(modifier = Modifier.align(Alignment.TopStart))
         PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
     }
