@@ -33,6 +33,7 @@ fun PropertyRow(
 ) {
     val clipboard = LocalClipboardManager.current
     val interactionSource = remember { MutableInteractionSource() }
+    val indication = rememberRipple(color = highlightedBackgroundColor)
 
     Row(modifier = modifier) {
         Text(
@@ -48,10 +49,7 @@ fun PropertyRow(
                 .widthIn(max = maximumPropertyValueWidth)
                 .clip(RoundedCornerShape(smallCornerRadius))
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = rememberRipple(color = highlightedBackgroundColor)
-                ) { clipboard.setText(AnnotatedString(value)) }
+                .clickable(interactionSource, indication) { clipboard.setText(AnnotatedString(value)) }
                     // It would make little sense to handle this in the view model as the behaviour is always the same.
                 .padding(smallPadding)
         )

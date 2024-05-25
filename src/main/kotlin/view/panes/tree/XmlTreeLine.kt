@@ -30,6 +30,7 @@ fun XmlTreeLine(
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val indication = rememberRipple(color = highlightedBackgroundColor)
 
     Row(modifier = modifier) {
         Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
@@ -42,7 +43,7 @@ fun XmlTreeLine(
                 .background(line.textBackgroundColor)
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(color = highlightedBackgroundColor),
+                    indication = indication,
                     onClick = line.onClickText
                 )
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

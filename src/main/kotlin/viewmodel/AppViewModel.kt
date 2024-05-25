@@ -162,9 +162,7 @@ class AppViewModel(
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.x.toDp(density)
-        paneWidth = (paneWidth - dragAmountDp).coerceAtLeast(
-            minimumPaneDimension
-        )
+        paneWidth = (paneWidth - dragAmountDp).coerceAtLeast(minimumPaneDimension)
     }
 
     fun onHorizontalWedgeDrag(
@@ -175,9 +173,7 @@ class AppViewModel(
 
         val dragAmountDp = dragAmount.y.toDp(density)
         if (lowerPaneHeight >= minimumPaneDimension || dragAmountDp < 0.dp) {
-            upperPaneHeight = (upperPaneHeight + dragAmountDp).coerceAtLeast(
-                minimumPaneDimension
-            )
+            upperPaneHeight = (upperPaneHeight + dragAmountDp).coerceAtLeast(minimumPaneDimension)
         }
     }
 
