@@ -20,8 +20,8 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import viewmodel.Dimensions.largePadding
-import viewmodel.Values.screenshotLayerWidthPercentage
+import shared.Dimensions.largePadding
+import shared.Values.screenshotLayerWidthPercentage
 import java.awt.Cursor
 
 @Composable

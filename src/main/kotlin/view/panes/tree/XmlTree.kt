@@ -19,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import viewmodel.CustomScrollbarStyle
-import viewmodel.Dimensions.largePadding
-import viewmodel.Dimensions.mediumPadding
-import viewmodel.Dimensions.scrollbarThickness
-import viewmodel.Dimensions.smallPadding
+import view.CustomScrollbarStyle
+import shared.Dimensions.largePadding
+import shared.Dimensions.mediumPadding
+import shared.Dimensions.scrollbarThickness
+import shared.Dimensions.smallPadding
 import java.awt.Cursor
 
 @Composable

@@ -1,10 +1,10 @@
-package viewmodel
+package view
 
 import androidx.compose.foundation.defaultScrollbarStyle
 import androidx.compose.foundation.shape.RoundedCornerShape
-import viewmodel.Colors.scrollbarHoverColor
-import viewmodel.Colors.scrollbarUnhoverColor
-import viewmodel.Dimensions.scrollbarThickness
+import shared.Colors.scrollbarHoverColor
+import shared.Colors.scrollbarUnhoverColor
+import shared.Dimensions.scrollbarThickness
 
 val CustomScrollbarStyle = defaultScrollbarStyle().copy(
     shape = RoundedCornerShape(50),

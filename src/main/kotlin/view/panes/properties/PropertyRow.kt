@@ -17,12 +17,12 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import viewmodel.Colors.highlightedBackgroundColor
-import viewmodel.Colors.secondaryTextColor
-import viewmodel.Dimensions.maximumPropertyValueWidth
-import viewmodel.Dimensions.propertyNameWidth
-import viewmodel.Dimensions.smallCornerRadius
-import viewmodel.Dimensions.smallPadding
+import shared.Colors.highlightedBackgroundColor
+import shared.Colors.secondaryTextColor
+import shared.Dimensions.maximumPropertyValueWidth
+import shared.Dimensions.propertyNameWidth
+import shared.Dimensions.smallCornerRadius
+import shared.Dimensions.smallPadding
 import java.awt.Cursor
 
 @Composable

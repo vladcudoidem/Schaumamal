@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import viewmodel.Colors.highlightedBackgroundColor
-import viewmodel.Colors.secondaryTextColor
-import viewmodel.Dimensions.smallCornerRadius
-import viewmodel.Dimensions.smallPadding
-import viewmodel.Dimensions.startPaddingPerDepthLevel
+import shared.Colors.highlightedBackgroundColor
+import shared.Colors.secondaryTextColor
+import shared.Dimensions.smallCornerRadius
+import shared.Dimensions.smallPadding
+import shared.Dimensions.startPaddingPerDepthLevel
 import viewmodel.XmlTreeLine
 import java.awt.Cursor
 

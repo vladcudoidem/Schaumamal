@@ -18,9 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
-import viewmodel.Colors.wedgeColor
-import viewmodel.Dimensions.wedgeLargeDimension
-import viewmodel.Dimensions.wedgeSmallDimension
+import shared.Colors.wedgeColor
+import shared.Dimensions.wedgeLargeDimension
+import shared.Dimensions.wedgeSmallDimension
 import java.awt.Cursor
 
 @Composable

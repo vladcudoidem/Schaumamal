@@ -1,4 +1,4 @@
-package viewmodel
+package shared
 
 @Suppress("MayBeConstant")
 object Values {

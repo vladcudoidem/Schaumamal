@@ -6,7 +6,7 @@ import model.parser.xmlElements.Node
 import model.parser.xmlElements.System
 import model.parser.xmlElements.Window
 import model.parser.xmlElements.XmlElement
-import viewmodel.Colors.highlightedBackgroundColor
+import shared.Colors.highlightedBackgroundColor
 import viewmodel.XmlTreeLine
 
 fun System.getFlatXmlTreeMap(

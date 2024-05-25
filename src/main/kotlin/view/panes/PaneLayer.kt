@@ -20,12 +20,12 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
-import viewmodel.Colors.floatingPaneBackgroundColor
-import viewmodel.Colors.hintTextColor
-import viewmodel.Dimensions.largeCornerRadius
-import viewmodel.Dimensions.mediumPadding
-import viewmodel.Dimensions.smallCornerRadius
-import viewmodel.Dimensions.smallPadding
+import shared.Colors.floatingPaneBackgroundColor
+import shared.Colors.hintTextColor
+import shared.Dimensions.largeCornerRadius
+import shared.Dimensions.mediumPadding
+import shared.Dimensions.smallCornerRadius
+import shared.Dimensions.smallPadding
 
 @Composable
 fun PaneLayer(modifier: Modifier = Modifier) {

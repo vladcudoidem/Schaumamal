@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import view.button.ButtonLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
-import viewmodel.Colors.backgroundColor
+import shared.Colors.backgroundColor
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {

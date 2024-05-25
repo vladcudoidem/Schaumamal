@@ -1,7 +1,8 @@
-package viewmodel
+package shared
 
 import androidx.compose.ui.graphics.Color
 
+@Suppress("unused")
 object Colors {
 
     /* Generic */

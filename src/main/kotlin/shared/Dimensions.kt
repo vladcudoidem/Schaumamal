@@ -1,7 +1,8 @@
-package viewmodel
+package shared
 
 import androidx.compose.ui.unit.dp
 
+@Suppress("unused")
 object Dimensions {
 
     /* Generic */
