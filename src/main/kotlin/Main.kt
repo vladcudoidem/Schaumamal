@@ -8,8 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import model.utils.CoroutineManager
+import shared.Dimensions.minimumWindowHeight
+import shared.Dimensions.minimumWindowWidth
 import view.MainScreen
 import viewmodel.AppViewModel
+import java.awt.Dimension
 
 val AppViewModel = compositionLocalOf<AppViewModel> {
     error("No view model provided.")
@@ -35,6 +38,9 @@ fun main() = application {
             },
             onKeyEvent = viewModel::onWindowKeyEvent
         ) {
+            // This seems to be density-independent (i.e. values behave like Dp).
+            window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
+
             MaterialTheme {
                 MainScreen()
             }

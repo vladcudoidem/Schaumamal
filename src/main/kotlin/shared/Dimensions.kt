@@ -2,7 +2,7 @@ package shared
 
 import androidx.compose.ui.unit.dp
 
-@Suppress("unused")
+@Suppress("unused", "MayBeConstant")
 object Dimensions {
 
     /* Generic */
@@ -16,6 +16,10 @@ object Dimensions {
     val largeCornerRadius = 20.dp
 
     val scrollbarThickness = 8.dp
+
+    // These values should be interpreted as Dp.
+    val minimumWindowHeight = 800
+    val minimumWindowWidth = 800
 
     /* Button Layer */
 
