@@ -41,7 +41,7 @@ fun XmlTree(modifier: Modifier = Modifier) {
                 top = mediumPadding,
                 bottom = mediumPadding * 4 + scrollbarThickness,
                 start = mediumPadding,
-                end = mediumPadding + scrollbarThickness
+                end = mediumPadding * 4 + scrollbarThickness
             ),
             modifier = Modifier
                 .horizontalScroll(viewModel.upperPaneHorizontalScrollState)

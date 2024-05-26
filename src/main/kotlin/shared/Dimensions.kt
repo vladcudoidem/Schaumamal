@@ -31,7 +31,7 @@ object Dimensions {
 
     // Wedge
     val wedgeSmallDimension = 6.dp
-    val wedgeLargeDimension = 30.dp
+    val wedgeLargeDimension = 60.dp
 
     // Xml Tree Pane
     val startPaddingPerDepthLevel = 25.dp

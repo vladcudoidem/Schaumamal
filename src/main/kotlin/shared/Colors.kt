@@ -10,7 +10,7 @@ object Colors {
     val primaryTextColor = Color(0xFFE2E2E8)
     val secondaryTextColor = Color(0xFFB4B7C2)
     val hintTextColor = Color(0x88FFFFFF)
-    val highlightedBackgroundColor = Color(0xFF705575)
+    val highlightColor = Color(0xFF705575)
 
     /* Button Layer */
 
