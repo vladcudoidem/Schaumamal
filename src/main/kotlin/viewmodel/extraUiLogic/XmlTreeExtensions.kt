@@ -6,7 +6,7 @@ import model.parser.xmlElements.Node
 import model.parser.xmlElements.System
 import model.parser.xmlElements.Window
 import model.parser.xmlElements.XmlElement
-import shared.Colors.highlightedBackgroundColor
+import shared.Colors.highlightColor
 import viewmodel.XmlTreeLine
 
 fun System.getFlatXmlTreeMap(
@@ -54,7 +54,7 @@ fun System.getFlatXmlTreeMap(
                             "{text=\"$formattedText\", contDesc=\"${element.contentDesc}\"} ${element.bounds}"
                 },
                 textBackgroundColor = if (selectedNode === element) {
-                    highlightedBackgroundColor
+                    highlightColor
                 } else {
                     Color.Transparent
                 },

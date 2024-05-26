@@ -1,6 +1,7 @@
 package view.panes.properties
 
 import AppViewModel
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -41,8 +42,9 @@ fun SelectedNodeProperties(modifier: Modifier = Modifier) {
                     top = mediumPadding,
                     bottom = mediumPadding * 4 + scrollbarThickness,
                     start = mediumPadding,
-                    end = mediumPadding + scrollbarThickness
+                    end = mediumPadding * 4 + scrollbarThickness
                 )
+                .animateContentSize()
         ) {
             viewModel.selectedNodePropertyMap.forEach { (property, value) ->
                 PropertyRow(property = property, value = value)

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import kotlinx.coroutines.cancel
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
@@ -63,8 +65,14 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
+
     // The context of this coroutine scope is needed for scrolling in the view model.
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+    DisposableEffect(Unit) {
+        onDispose {
+            scope.cancel()
+        }
+    }
 
     Image(
         bitmap = viewModel.imageBitmap,
@@ -79,7 +87,7 @@ fun Screenshot(modifier: Modifier = Modifier) {
                     onTap = { offset ->
                         viewModel.onImageTap(
                             offset = offset,
-                            uiCoroutineContext = coroutineScope.coroutineContext
+                            uiCoroutineContext = scope.coroutineContext
                         )
                     }
                 )
