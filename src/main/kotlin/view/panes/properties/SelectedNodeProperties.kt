@@ -39,7 +39,7 @@ fun SelectedNodeProperties(modifier: Modifier = Modifier) {
                 .horizontalScroll(viewModel.lowerPaneHorizontalScrollState)
                 .padding(
                     top = mediumPadding,
-                    bottom = mediumPadding + scrollbarThickness,
+                    bottom = mediumPadding * 4 + scrollbarThickness,
                     start = mediumPadding,
                     end = mediumPadding + scrollbarThickness
                 )
