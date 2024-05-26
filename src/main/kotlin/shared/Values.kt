@@ -1,6 +1,6 @@
 package shared
 
-@Suppress("MayBeConstant")
+@Suppress("MayBeConstant", "unused")
 object Values {
 
     /* Screenshot Layer */
