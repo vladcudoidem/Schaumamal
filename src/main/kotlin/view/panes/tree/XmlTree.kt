@@ -39,7 +39,7 @@ fun XmlTree(modifier: Modifier = Modifier) {
             state = viewModel.upperPaneLazyListState,
             contentPadding = PaddingValues(
                 top = mediumPadding,
-                bottom = mediumPadding + scrollbarThickness,
+                bottom = mediumPadding * 4 + scrollbarThickness,
                 start = mediumPadding,
                 end = mediumPadding + scrollbarThickness
             ),
