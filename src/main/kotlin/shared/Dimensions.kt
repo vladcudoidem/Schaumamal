@@ -50,5 +50,10 @@ object Dimensions {
 
         val initialPaneWidth = 250.dp
         val initialUpperPaneHeight = 300.dp
+
+        /* Screenshot Layer */
+
+        val maximumInitialScreenshotHeight = 600.dp
+        val maximumInitialScreenshotWidth = 450.dp
     }
 }
