@@ -6,9 +6,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -20,8 +20,9 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import shared.Dimensions.Initial.maximumInitialScreenshotHeight
+import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
-import shared.Values.screenshotLayerWidthPercentage
 import java.awt.Cursor
 
 @Composable
@@ -33,8 +34,8 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.CenterStart,
         modifier = modifier
             .padding(largePadding)
-            .fillMaxHeight()
-            .fillMaxWidth(screenshotLayerWidthPercentage)
+            .widthIn(max = maximumInitialScreenshotWidth)
+            .heightIn(max = maximumInitialScreenshotHeight)
     ) {
         // This is the Box that moves around. It inherits the size of the Image composable (or that of the Canvas if it
         // is bigger, but the Canvas cannot get bigger than the Image as of now).

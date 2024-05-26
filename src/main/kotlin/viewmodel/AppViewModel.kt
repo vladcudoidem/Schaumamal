@@ -37,7 +37,7 @@ import shared.Dimensions.defaultHighlighterStrokeWidth
 import shared.Dimensions.minimumPaneDimension
 import shared.Values.maxScreenshotScale
 import shared.Values.minScreenshotScale
-import shared.Values.zoomStep
+import shared.Values.zoomFactor
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
 import viewmodel.extraUiLogic.getFlatXmlTreeMap
@@ -197,12 +197,12 @@ class AppViewModel(
             event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.Equals -> {
-                        screenshotLayerScale = (screenshotLayerScale + zoomStep).coerceAtMost(maxScreenshotScale)
+                        screenshotLayerScale = (screenshotLayerScale * zoomFactor).coerceAtMost(maxScreenshotScale)
                         true
                     }
 
                     Key.Minus -> {
-                        screenshotLayerScale = (screenshotLayerScale - zoomStep).coerceAtLeast(minScreenshotScale)
+                        screenshotLayerScale = (screenshotLayerScale / zoomFactor).coerceAtLeast(minScreenshotScale)
                         true
                     }
 
