@@ -70,7 +70,7 @@ class AppViewModel(
         }
     }
     // size of the image composable
-    private var screenshotSize by mutableStateOf(Size.Unspecified)
+    private var screenshotComposableSize by mutableStateOf(Size.Unspecified)
 
     val showHighlighter get() = layoutInspector.isNodeSelected
     val highlighterOffset by derivedStateOf { selectedNodeDisplayGraphics.offset }
@@ -86,7 +86,7 @@ class AppViewModel(
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
     private val displayPixelConversionFactor
-        get() = screenshotSize.height / screenshotFileSize.height
+        get() = screenshotComposableSize.height / screenshotFileSize.height
 
     @Suppress("UNUSED_PARAMETER")
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
@@ -94,7 +94,7 @@ class AppViewModel(
     }
 
     fun onImageSizeChanged(size: IntSize) {
-        screenshotSize = size.toSize()
+        screenshotComposableSize = size.toSize()
     }
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {

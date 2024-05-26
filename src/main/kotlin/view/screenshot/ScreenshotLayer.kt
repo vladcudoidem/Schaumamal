@@ -27,8 +27,6 @@ import java.awt.Cursor
 @Composable
 fun ScreenshotLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
-    // The context of this coroutine scope is needed for scrolling in the view model.
-    val coroutineScope = rememberCoroutineScope()
 
     // This is the Box that places the next Box correctly on the screen.
     Box(
@@ -42,7 +40,6 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
         // is bigger, but the Canvas cannot get bigger than the Image as of now).
         Box(
             modifier = Modifier
-                .onSizeChanged(onSizeChanged = viewModel::onImageSizeChanged)
                 .graphicsLayer {
                     scaleX = viewModel.screenshotLayerScale
                     scaleY = viewModel.screenshotLayerScale
@@ -50,20 +47,6 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
                     translationX = viewModel.screenshotLayerOffset.x
                     translationY = viewModel.screenshotLayerOffset.y
                 }
-                .pointerInput(Unit) {
-                    detectTransformGestures(onGesture = viewModel::onImageGesture)
-                }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { offset ->
-                            viewModel.onImageTap(
-                                offset = offset,
-                                uiCoroutineContext = coroutineScope.coroutineContext
-                            )
-                        }
-                    )
-                }
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         ) {
             if (viewModel.showScreenshot) {
                 Screenshot()
@@ -79,11 +62,28 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
+    // The context of this coroutine scope is needed for scrolling in the view model.
+    val coroutineScope = rememberCoroutineScope()
 
     Image(
         bitmap = viewModel.imageBitmap,
         contentDescription = null,
         modifier = modifier
+            .onSizeChanged(onSizeChanged = viewModel::onImageSizeChanged)
+            .pointerInput(Unit) {
+                detectTransformGestures(onGesture = viewModel::onImageGesture)
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { offset ->
+                        viewModel.onImageTap(
+                            offset = offset,
+                            uiCoroutineContext = coroutineScope.coroutineContext
+                        )
+                    }
+                )
+            }
+            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
     )
 }
 
