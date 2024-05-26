@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -35,7 +36,11 @@ fun PropertyRow(
     val interactionSource = remember { MutableInteractionSource() }
     val indication = rememberRipple(color = highlightedBackgroundColor)
 
-    Row(modifier = modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .padding(start = smallPadding)
+    ) {
         Text(
             text = property,
             color = secondaryTextColor,

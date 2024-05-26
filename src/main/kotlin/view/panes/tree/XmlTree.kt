@@ -19,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import view.CustomScrollbarStyle
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
+import view.CustomScrollbarStyle
 import java.awt.Cursor
 
 @Composable
@@ -37,7 +37,12 @@ fun XmlTree(modifier: Modifier = Modifier) {
 
         LazyColumn(
             state = viewModel.upperPaneLazyListState,
-            contentPadding = PaddingValues(mediumPadding),
+            contentPadding = PaddingValues(
+                top = mediumPadding,
+                bottom = mediumPadding + scrollbarThickness,
+                start = mediumPadding,
+                end = mediumPadding + scrollbarThickness
+            ),
             modifier = Modifier
                 .horizontalScroll(viewModel.upperPaneHorizontalScrollState)
                 .animateContentSize()
@@ -56,7 +61,7 @@ fun XmlTree(modifier: Modifier = Modifier) {
                 .padding(
                     top = largePadding,
                     end = smallPadding,
-                    bottom = smallPadding + scrollbarThickness
+                    bottom = largePadding
                 )
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         )
@@ -68,9 +73,9 @@ fun XmlTree(modifier: Modifier = Modifier) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(
-                    start = smallPadding + scrollbarThickness,
+                    start = largePadding,
                     bottom = smallPadding,
-                    end = smallPadding + scrollbarThickness
+                    end = largePadding
                 )
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         )

@@ -18,14 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
-import view.panes.properties.SelectedNodeProperties
-import view.panes.tree.XmlTree
 import shared.Colors.floatingPaneBackgroundColor
 import shared.Colors.hintTextColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
-import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
+import view.panes.properties.SelectedNodeProperties
+import view.panes.tree.XmlTree
 
 @Composable
 fun PaneLayer(modifier: Modifier = Modifier) {
@@ -70,8 +69,8 @@ fun UpperPane(modifier: Modifier = Modifier) {
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
                 topEnd = largeCornerRadius,
-                bottomStart = smallCornerRadius,
-                bottomEnd = smallCornerRadius
+                bottomStart = largeCornerRadius,
+                bottomEnd = largeCornerRadius
             ))
             .background(floatingPaneBackgroundColor)
     ) {
@@ -95,8 +94,8 @@ fun LowerPane(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(
-                topStart = smallCornerRadius,
-                topEnd = smallCornerRadius,
+                topStart = largeCornerRadius,
+                topEnd = largeCornerRadius,
                 bottomStart = largeCornerRadius,
                 bottomEnd = largeCornerRadius
             ))

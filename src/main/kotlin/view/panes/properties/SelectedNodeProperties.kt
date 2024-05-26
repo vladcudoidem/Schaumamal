@@ -17,11 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import view.CustomScrollbarStyle
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
+import view.CustomScrollbarStyle
 import java.awt.Cursor
 
 @Composable
@@ -37,7 +37,12 @@ fun SelectedNodeProperties(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .verticalScroll(viewModel.lowerPaneVerticalScrollState)
                 .horizontalScroll(viewModel.lowerPaneHorizontalScrollState)
-                .padding(mediumPadding)
+                .padding(
+                    top = mediumPadding,
+                    bottom = mediumPadding + scrollbarThickness,
+                    start = mediumPadding,
+                    end = mediumPadding + scrollbarThickness
+                )
         ) {
             viewModel.selectedNodePropertyMap.forEach { (property, value) ->
                 PropertyRow(property = property, value = value)
@@ -51,7 +56,7 @@ fun SelectedNodeProperties(modifier: Modifier = Modifier) {
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight()
                 .padding(
-                    top = smallPadding + scrollbarThickness,
+                    top = largePadding,
                     end = smallPadding,
                     bottom = largePadding
                 )
