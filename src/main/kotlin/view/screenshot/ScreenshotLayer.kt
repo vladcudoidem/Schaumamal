@@ -13,11 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -62,6 +65,7 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Screenshot(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
@@ -91,6 +95,9 @@ fun Screenshot(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+            }
+            .onPointerEvent(PointerEventType.Scroll) { event ->
+                viewModel.onImageScroll(event)
             }
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
     )

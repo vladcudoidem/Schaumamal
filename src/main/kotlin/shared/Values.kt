@@ -8,7 +8,7 @@ object Values {
     // Zoom
     val zoomFactor = 1.1f
     val minScreenshotScale = 0.1f
-    val maxScreenshotScale = 10f
+    val maxScreenshotScale = 20f
 
     // Screenshot
     val screenshotLayerWidthPercentage = 0.6f

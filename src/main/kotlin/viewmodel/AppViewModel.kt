@@ -15,6 +15,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.loadImageBitmap
@@ -110,6 +111,27 @@ class AppViewModel(
 
             scrollToSelectedNode(uiCoroutineContext)
         }
+    }
+
+    fun onImageScroll(event: PointerEvent) {
+        val oldScale = screenshotLayerScale
+        val change = event.changes.first()
+        val zoomFactor = 1f - change.scrollDelta.y / 50 // We are using an arbitrary factor.
+
+        // First change scale.
+        val newScale = screenshotLayerScale * zoomFactor
+
+        // Don't change scale if it will be outside limits.
+        if (newScale !in minScreenshotScale..maxScreenshotScale) {
+            return
+        } else {
+            screenshotLayerScale = newScale
+        }
+
+        // Change offset. Enables zooming around the pointer location.
+        val pointerOffsetFromCenter =
+            change.position - Offset(x = screenshotComposableSize.width, y = screenshotComposableSize.height) / 2f
+        screenshotLayerOffset -= pointerOffsetFromCenter * oldScale * (zoomFactor - 1f)
     }
 
     private fun scrollToSelectedNode(uiCoroutineContext: CoroutineContext) {
