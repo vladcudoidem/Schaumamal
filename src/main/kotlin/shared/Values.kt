@@ -12,4 +12,5 @@ object Values {
 
     // Screenshot
     val screenshotLayerWidthPercentage = 0.6f
+    val minimalTouchSlop = 5f
 }

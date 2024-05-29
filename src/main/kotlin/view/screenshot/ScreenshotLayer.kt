@@ -28,6 +28,7 @@ import kotlinx.coroutines.cancel
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
+import shared.Values.minimalTouchSlop
 import java.awt.Cursor
 
 @Composable
@@ -55,7 +56,9 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
                 }
         ) {
             if (viewModel.showScreenshot) {
-                Screenshot()
+                WithTouchSlop(minimalTouchSlop) {
+                    Screenshot()
+                }
             }
 
             if (viewModel.showHighlighter) {
