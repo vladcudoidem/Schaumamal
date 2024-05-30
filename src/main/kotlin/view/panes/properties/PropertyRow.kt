@@ -30,7 +30,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import shared.Colors.highlightColor
-import shared.Colors.secondaryTextColor
+import shared.Colors.primaryTextColor
 import shared.Dimensions.maximumPropertyValueWidth
 import shared.Dimensions.propertyNameWidth
 import shared.Dimensions.smallCornerRadius
@@ -64,13 +64,13 @@ fun PropertyRow(
     ) {
         Text(
             text = property,
-            color = secondaryTextColor,
+            color = primaryTextColor,
             modifier = Modifier.width(propertyNameWidth)
         )
 
         Text(
             text = value,
-            color = secondaryTextColor,
+            color = primaryTextColor,
             modifier = Modifier
                 .widthIn(max = maximumPropertyValueWidth)
                 .clip(RoundedCornerShape(smallCornerRadius))

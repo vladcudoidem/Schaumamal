@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
-import shared.Colors.floatingPaneBackgroundColor
-import shared.Colors.hintTextColor
+import shared.Colors.discreteTextColor
+import shared.Colors.paneBackgroundColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.smallPadding
@@ -72,14 +72,14 @@ fun UpperPane(modifier: Modifier = Modifier) {
                 bottomStart = largeCornerRadius,
                 bottomEnd = largeCornerRadius
             ))
-            .background(floatingPaneBackgroundColor)
+            .background(paneBackgroundColor)
     ) {
         if (viewModel.showXmlTree) {
             XmlTree()
         } else {
             Text(
                 text = "Missing layout",
-                color = hintTextColor,
+                color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -99,7 +99,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 bottomStart = largeCornerRadius,
                 bottomEnd = largeCornerRadius
             ))
-            .background(floatingPaneBackgroundColor)
+            .background(paneBackgroundColor)
             .onSizeChanged { size ->
                 viewModel.onLowerPaneSizeChanged(size)
             }
@@ -109,7 +109,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
         } else {
             Text(
                 text = "No node selected",
-                color = hintTextColor,
+                color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.align(Alignment.Center)
             )

@@ -7,10 +7,14 @@ object Colors {
 
     /* Generic */
 
-    val primaryTextColor = Color(0xFFE2E2E8)
-    val secondaryTextColor = Color(0xFFB4B7C2)
-    val hintTextColor = Color(0x88FFFFFF)
+    val primaryTextColor = Color(0xFFB4B7C2)
+    val discreteTextColor = primaryTextColor.copy(alpha = 0.55f)
     val highlightColor = Color(0xFF705575)
+
+    val backgroundColor = Color(0xFF121317)
+
+    val scrollbarHoverColor = Color.White.copy(alpha = 0.50f)
+    val scrollbarUnhoverColor = Color.White.copy(alpha = 0.12f)
 
     /* Button Layer */
 
@@ -19,11 +23,5 @@ object Colors {
     /* Pane Layer */
 
     val wedgeColor = Color(0xBBC3C6D2)
-    val floatingPaneBackgroundColor = Color(0xFF1E2024)
-
-    /* Other */
-
-    val backgroundColor = Color(0xFF121317)
-    val scrollbarHoverColor = Color.White.copy(alpha = 0.50f)
-    val scrollbarUnhoverColor = Color.White.copy(alpha = 0.12f)
+    val paneBackgroundColor = Color(0xFF1E2024)
 }

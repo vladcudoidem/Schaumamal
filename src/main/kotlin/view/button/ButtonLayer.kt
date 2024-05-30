@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontFamily
 import shared.Colors.buttonColor
-import shared.Colors.hintTextColor
+import shared.Colors.discreteTextColor
 import shared.Dimensions.extractButtonDiameter
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
@@ -45,7 +45,7 @@ fun ButtonLayer(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.width(largePadding))
             Text(
                 text = "...smash the red button",
-                color = hintTextColor,
+                color = discreteTextColor,
                 fontFamily = FontFamily.Monospace
             )
         }

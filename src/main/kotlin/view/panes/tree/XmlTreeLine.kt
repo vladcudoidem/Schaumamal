@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import shared.Colors.highlightColor
-import shared.Colors.secondaryTextColor
+import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
@@ -37,7 +37,7 @@ fun XmlTreeLine(
 
         Text(
             text = line.text,
-            color = secondaryTextColor,
+            color = primaryTextColor,
             modifier = Modifier
                 .clip(RoundedCornerShape(smallCornerRadius))
                 .background(line.textBackgroundColor)
