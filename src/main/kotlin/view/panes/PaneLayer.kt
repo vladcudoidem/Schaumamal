@@ -2,7 +2,6 @@ package view.panes
 
 import AppViewModel
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import shared.Colors.discreteTextColor
 import shared.Colors.paneBackgroundColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
-import shared.Dimensions.smallPadding
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 
@@ -32,7 +30,6 @@ fun PaneLayer(modifier: Modifier = Modifier) {
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(smallPadding),
         modifier = modifier
             .fillMaxHeight()
             .padding(mediumPadding)
@@ -40,7 +37,6 @@ fun PaneLayer(modifier: Modifier = Modifier) {
         VerticalWedge()
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             UpperPane(

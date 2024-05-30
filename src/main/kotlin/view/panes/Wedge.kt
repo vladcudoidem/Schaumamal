@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import shared.Colors.wedgeColor
+import shared.Dimensions.smallPadding
 import shared.Dimensions.wedgeLargeDimension
 import shared.Dimensions.wedgeSmallDimension
 import java.awt.Cursor
@@ -27,34 +29,39 @@ import java.awt.Cursor
 fun HorizontalWedge(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    Column(
+    Box(
         modifier = modifier
-            .width(wedgeLargeDimension)
-            .height(wedgeSmallDimension)
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     viewModel.onHorizontalWedgeDrag(change, dragAmount)
                 }
             }
+            .padding(smallPadding)
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .clip(RoundedCornerShape(50))
-                .background(wedgeColor)
-        )
+                .width(wedgeLargeDimension)
+                .height(wedgeSmallDimension)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(50))
+                    .background(wedgeColor)
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .clip(RoundedCornerShape(50))
-                .background(wedgeColor)
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(50))
+                    .background(wedgeColor)
+            )
+        }
     }
 }
 
@@ -62,33 +69,38 @@ fun HorizontalWedge(modifier: Modifier = Modifier) {
 fun VerticalWedge(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    Row(
+    Box(
         modifier = modifier
-            .width(wedgeSmallDimension)
-            .height(wedgeLargeDimension)
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     viewModel.onVerticalWedgeDrag(change, dragAmount)
                 }
             }
+            .padding(smallPadding)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clip(RoundedCornerShape(50))
-                .background(wedgeColor)
-        )
+                .width(wedgeSmallDimension)
+                .height(wedgeLargeDimension)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(50))
+                    .background(wedgeColor)
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .clip(RoundedCornerShape(50))
-                .background(wedgeColor)
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(50))
+                    .background(wedgeColor)
+            )
+        }
     }
 }
