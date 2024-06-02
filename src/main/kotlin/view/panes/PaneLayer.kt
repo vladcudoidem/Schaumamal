@@ -3,6 +3,7 @@ package view.panes
 import AppViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,22 +38,29 @@ fun PaneLayer(modifier: Modifier = Modifier) {
     ) {
         VerticalWedge()
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            UpperPane(
-                modifier = Modifier
-                    .height(viewModel.upperPaneHeight)
-                    .width(viewModel.paneWidth)
-            )
+        BoxWithConstraints {
 
-            HorizontalWedge()
+            LaunchedEffect(maxHeight) {
+                viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
+            }
 
-            LowerPane(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(viewModel.paneWidth)
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                UpperPane(
+                    modifier = Modifier
+                        .height(viewModel.upperPaneHeight)
+                        .width(viewModel.paneWidth)
+                )
+
+                HorizontalWedge()
+
+                LowerPane(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(viewModel.paneWidth)
+                )
+            }
         }
     }
 }

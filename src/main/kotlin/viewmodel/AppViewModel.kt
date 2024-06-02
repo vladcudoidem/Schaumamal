@@ -22,7 +22,7 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.coerceAtLeast
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -166,6 +166,8 @@ class AppViewModel(
     val lowerPaneVerticalScrollState = ScrollState(initial = 0)
     val lowerPaneHorizontalScrollState = ScrollState(initial = 0)
 
+    private var panesHeightConstraint = Dp.Unspecified
+
     val showXmlTree get() = layoutInspector.state == InspectorState.POPULATED
     private val flatXmlTreeMap
         get() = layoutInspector.data.root.getFlatXmlTreeMap(
@@ -194,9 +196,10 @@ class AppViewModel(
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.y.toDp(density)
-        if (lowerPaneHeight >= minimumPaneDimension || dragAmountDp < 0.dp) {
-            upperPaneHeight = (upperPaneHeight + dragAmountDp).coerceAtLeast(minimumPaneDimension)
-        }
+        upperPaneHeight = (upperPaneHeight + dragAmountDp).coerceIn(
+            minimumValue = minimumPaneDimension,
+            maximumValue = panesHeightConstraint - minimumPaneDimension
+        )
     }
 
     fun onLowerPaneSizeChanged(size: IntSize) {
@@ -240,6 +243,18 @@ class AppViewModel(
 
             else -> false
         }
+
+    fun onPanesHeightConstraintChanged(newHeightConstraint: Dp) {
+        // First update the height constraint.
+        panesHeightConstraint = newHeightConstraint
+
+        // Then make sure that the upper pane height is within limits. This is relevant when the window gets resized
+        // and the height constraint gets smaller, but the upper pane height stays the same.
+        upperPaneHeight = upperPaneHeight.coerceIn(
+            minimumValue = minimumPaneDimension,
+            maximumValue = panesHeightConstraint - minimumPaneDimension
+        )
+    }
 
     fun teardown() {
         coroutineManager.teardown()
