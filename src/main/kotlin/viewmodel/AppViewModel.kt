@@ -21,7 +21,6 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.CoroutineScope
@@ -167,6 +166,7 @@ class AppViewModel(
     val lowerPaneHorizontalScrollState = ScrollState(initial = 0)
 
     private var panesHeightConstraint = Dp.Unspecified
+    private var panesWidthConstraint = Dp.Unspecified
 
     val showXmlTree get() = layoutInspector.state == InspectorState.POPULATED
     private val flatXmlTreeMap
@@ -186,7 +186,10 @@ class AppViewModel(
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.x.toDp(density)
-        paneWidth = (paneWidth - dragAmountDp).coerceAtLeast(minimumPaneDimension)
+        paneWidth = (paneWidth - dragAmountDp).coerceIn(
+            minimumValue = minimumPaneDimension,
+            maximumValue = panesWidthConstraint - minimumPaneDimension
+        )
     }
 
     fun onHorizontalWedgeDrag(
@@ -253,6 +256,18 @@ class AppViewModel(
         upperPaneHeight = upperPaneHeight.coerceIn(
             minimumValue = minimumPaneDimension,
             maximumValue = panesHeightConstraint - minimumPaneDimension
+        )
+    }
+
+    fun onPanesWidthConstraintChanged(newWidthConstraint: Dp) {
+        // First update the width constraint.
+        panesWidthConstraint = newWidthConstraint
+
+        // Then make sure that the pane width is within limits. This is relevant when the window gets resized and the
+        // width constraint gets smaller, but the pane width stays the same.
+        paneWidth = paneWidth.coerceIn(
+            minimumValue = minimumPaneDimension,
+            maximumValue = panesWidthConstraint - minimumPaneDimension
         )
     }
 
