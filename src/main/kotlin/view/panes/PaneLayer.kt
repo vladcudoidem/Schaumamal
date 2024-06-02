@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -30,36 +31,45 @@ import view.panes.tree.XmlTree
 fun PaneLayer(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxHeight()
-            .padding(mediumPadding)
-    ) {
-        VerticalWedge()
+    // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
+    // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
-        BoxWithConstraints {
+        LaunchedEffect(maxWidth) {
+            viewModel.onPanesWidthConstraintChanged(newWidthConstraint = maxWidth)
+        }
 
-            LaunchedEffect(maxHeight) {
-                viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
-            }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(mediumPadding)
+        ) {
+            VerticalWedge()
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                UpperPane(
-                    modifier = Modifier
-                        .height(viewModel.upperPaneHeight)
-                        .width(viewModel.paneWidth)
-                )
+            BoxWithConstraints {
 
-                HorizontalWedge()
+                LaunchedEffect(maxHeight) {
+                    viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
+                }
 
-                LowerPane(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(viewModel.paneWidth)
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    UpperPane(
+                        modifier = Modifier
+                            .height(viewModel.upperPaneHeight)
+                            .width(viewModel.paneWidth)
+                    )
+
+                    HorizontalWedge()
+
+                    LowerPane(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(viewModel.paneWidth)
+                    )
+                }
             }
         }
     }
