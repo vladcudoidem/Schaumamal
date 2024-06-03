@@ -33,43 +33,43 @@ fun PaneLayer(modifier: Modifier = Modifier) {
 
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
     // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(mediumPadding)
+    ) {
 
         LaunchedEffect(maxWidth) {
             viewModel.onPanesWidthConstraintChanged(newWidthConstraint = maxWidth)
+        }
+
+        LaunchedEffect(maxHeight) {
+            viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
         }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxHeight()
-                .padding(mediumPadding)
         ) {
             VerticalWedge()
 
-            BoxWithConstraints {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                UpperPane(
+                    modifier = Modifier
+                        .height(viewModel.upperPaneHeight)
+                        .width(viewModel.paneWidth)
+                )
 
-                LaunchedEffect(maxHeight) {
-                    viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
-                }
+                HorizontalWedge()
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    UpperPane(
-                        modifier = Modifier
-                            .height(viewModel.upperPaneHeight)
-                            .width(viewModel.paneWidth)
-                    )
-
-                    HorizontalWedge()
-
-                    LowerPane(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(viewModel.paneWidth)
-                    )
-                }
+                LowerPane(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(viewModel.paneWidth)
+                )
             }
         }
     }
