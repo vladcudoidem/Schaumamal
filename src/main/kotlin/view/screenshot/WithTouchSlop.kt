@@ -32,6 +32,7 @@ fun WithTouchSlop(
 
     // Set the new ViewConfiguration for the composable content.
     CompositionLocalProvider(LocalViewConfiguration provides viewConfiguration) {
+        println("in CompositionLocalProvider block")
         content()
     }
 }

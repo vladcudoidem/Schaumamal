@@ -38,6 +38,7 @@ import shared.Dimensions.defaultHighlighterStrokeWidth
 import shared.Dimensions.minimumPaneDimension
 import shared.Values.maxScreenshotScale
 import shared.Values.minScreenshotScale
+import shared.Values.minimalTouchSlop
 import shared.Values.zoomFactor
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
@@ -88,6 +89,11 @@ class AppViewModel(
     // It is irrelevant whether we use width or height when calculating the conversion factor.
     private val displayPixelConversionFactor
         get() = screenshotComposableSize.height / screenshotFileSize.height
+
+    val dynamicTouchSlop: Float get() {
+        println("in dynamicTouchSlop getter [slop=${minimalTouchSlop / screenshotLayerScale}]")
+        return minimalTouchSlop / screenshotLayerScale
+    }
 
     @Suppress("UNUSED_PARAMETER")
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {

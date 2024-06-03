@@ -56,7 +56,7 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
                 }
         ) {
             if (viewModel.showScreenshot) {
-                WithTouchSlop(minimalTouchSlop) {
+                WithTouchSlop(viewModel.dynamicTouchSlop) {
                     Screenshot()
                 }
             }
@@ -80,6 +80,8 @@ fun Screenshot(modifier: Modifier = Modifier) {
             scope.cancel()
         }
     }
+
+    println("in Screenshot")
 
     Image(
         bitmap = viewModel.imageBitmap,
