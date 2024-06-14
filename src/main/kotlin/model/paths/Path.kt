@@ -1,4 +1,4 @@
-package model.utils
+package model.paths
 
 object Path {
 
