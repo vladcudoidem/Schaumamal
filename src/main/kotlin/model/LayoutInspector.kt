@@ -6,10 +6,9 @@ import androidx.compose.runtime.setValue
 import model.parser.xmlElements.Node
 import model.parser.XmlParser
 import model.utils.CoroutineManager
-import model.utils.ExtractionManager
-import model.utils.Path.LOCAL_DUMP_PATH
-import model.utils.Path.LOCAL_SCREENSHOT_PATH
-import model.utils.TeardownManager
+import model.extractionManagers.ExtractionManager
+import model.paths.Path.LOCAL_DUMP_PATH
+import model.paths.Path.LOCAL_SCREENSHOT_PATH
 import java.io.File
 
 class LayoutInspector(
@@ -57,6 +56,7 @@ class LayoutInspector(
 
     fun teardown() {
         coroutineManager.teardown()
-        TeardownManager.deleteLayoutFiles()
+        // This might not be needed.
+        // TeardownManager.deleteLayoutFiles()
     }
 }

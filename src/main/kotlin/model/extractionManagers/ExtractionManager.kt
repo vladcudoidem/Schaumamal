@@ -1,11 +1,11 @@
-package model.utils
+package model.extractionManagers
 
 import model.utils.CommandManager.executeAndWait
-import model.utils.Path.ADB_PATH
-import model.utils.Path.DEVICE_DUMP_PATH
-import model.utils.Path.DEVICE_SCREENSHOT_PATH
-import model.utils.Path.LOCAL_DUMP_PATH
-import model.utils.Path.LOCAL_SCREENSHOT_PATH
+import model.paths.Path.ADB_PATH
+import model.paths.Path.DEVICE_DUMP_PATH
+import model.paths.Path.DEVICE_SCREENSHOT_PATH
+import model.paths.Path.LOCAL_DUMP_PATH
+import model.paths.Path.LOCAL_SCREENSHOT_PATH
 
 object ExtractionManager {
 
