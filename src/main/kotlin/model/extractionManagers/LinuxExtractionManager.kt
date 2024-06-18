@@ -1,4 +1,7 @@
 package model.extractionManagers
 
-object LinuxExtractionManager {
+object LinuxExtractionManager : ExtractionManager {
+    override fun extract(): DataPaths {
+        return DataPaths("", "")
+    }
 }

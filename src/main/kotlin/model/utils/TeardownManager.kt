@@ -1,8 +1,8 @@
 package model.utils
 
 import model.utils.CommandManager.executeAndWait
-import model.paths.Path.LOCAL_DUMP_PATH
-import model.paths.Path.LOCAL_SCREENSHOT_PATH
+import model.Paths.LOCAL_DUMP_PATH
+import model.Paths.LOCAL_SCREENSHOT_PATH
 
 object TeardownManager {
 
