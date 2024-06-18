@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import model.parser.xmlElements.Node
 import model.parser.XmlParser
 import model.utils.CoroutineManager
-import model.extractionManagers.ExtractionManager
-import model.paths.Path.LOCAL_DUMP_PATH
-import model.paths.Path.LOCAL_SCREENSHOT_PATH
+import model.extractionManagers.OldExtractionManager
+import model.Paths.LOCAL_DUMP_PATH
+import model.Paths.LOCAL_SCREENSHOT_PATH
 import java.io.File
 
 class LayoutInspector(
@@ -35,7 +35,7 @@ class LayoutInspector(
 
         coroutineManager.launch {
             // first part of the dump
-            ExtractionManager.extract()
+            OldExtractionManager.extract()
 
             // second part of the dump
             data = LayoutData(

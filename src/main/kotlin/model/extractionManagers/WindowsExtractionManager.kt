@@ -1,4 +1,7 @@
 package model.extractionManagers
 
-object WindowsExtractionManager {
+object WindowsExtractionManager : ExtractionManager {
+    override fun extract(): DataPaths {
+        return DataPaths("", "")
+    }
 }

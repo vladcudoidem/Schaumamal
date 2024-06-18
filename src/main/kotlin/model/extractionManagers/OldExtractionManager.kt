@@ -1,13 +1,14 @@
 package model.extractionManagers
 
 import model.utils.CommandManager.executeAndWait
-import model.paths.Path.ADB_PATH
-import model.paths.Path.DEVICE_DUMP_PATH
-import model.paths.Path.DEVICE_SCREENSHOT_PATH
-import model.paths.Path.LOCAL_DUMP_PATH
-import model.paths.Path.LOCAL_SCREENSHOT_PATH
+import model.Paths.ADB_PATH
+import model.Paths.DEVICE_DUMP_PATH
+import model.Paths.DEVICE_SCREENSHOT_PATH
+import model.Paths.LOCAL_DUMP_PATH
+import model.Paths.LOCAL_SCREENSHOT_PATH
 
-object ExtractionManager {
+@Deprecated("Use platform-specific execution manager.")
+object OldExtractionManager {
 
     fun extract() {
         dumpXml()
@@ -36,3 +37,13 @@ object ExtractionManager {
         executeAndWait(removeCommand)
     }
 }
+
+interface ExtractionManager {
+    fun extract(): DataPaths
+}
+
+// TODO move to right location
+data class DataPaths(
+    val localXmlDumpPath: String,
+    val localScreenshotPath: String
+)
