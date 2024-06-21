@@ -1,11 +1,11 @@
 package model.extractionManagers
 
-import model.utils.CommandManager.executeAndWait
 import model.Paths.ADB_PATH
 import model.Paths.DEVICE_DUMP_PATH
 import model.Paths.DEVICE_SCREENSHOT_PATH
 import model.Paths.LOCAL_DUMP_PATH
 import model.Paths.LOCAL_SCREENSHOT_PATH
+import model.utils.CommandManager.executeAndWait
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -72,3 +72,14 @@ fun getOutput(inputStream: InputStream): String {
 
     return output.toString()
 }
+
+// TODO refactor and move this later
+fun getExtractionManager() =
+    with(System.getProperty("os.name").lowercase()) {
+        when {
+            contains("win") -> WindowsExtractionManager
+            contains("mac") -> MacosExtractionManager
+            contains("nix") or contains("nux") or contains("aix") -> LinuxExtractionManager
+            else -> error("Could not detect that operating system is either Windows, MacOS or Linux.")
+        }
+    }
