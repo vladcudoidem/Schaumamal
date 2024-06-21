@@ -3,7 +3,8 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import model.extractionManagers.MacosExtractionManager
+import model.extractionManagers.ExtractionManager
+import model.extractionManagers.getExtractionManager
 import model.parser.XmlParser
 import model.parser.xmlElements.Node
 import model.utils.CoroutineManager
@@ -24,6 +25,8 @@ class LayoutInspector(
     var selectedNode by mutableStateOf(Node.Empty)
         private set
 
+    private val extractionManager: ExtractionManager = getExtractionManager()
+
     fun extractLayout() {
         state = InspectorState.WAITING
 
@@ -32,7 +35,7 @@ class LayoutInspector(
         selectedNode = Node.Empty
 
         // first part of the dump
-        val dataPaths = MacosExtractionManager.extract()
+        val dataPaths = extractionManager.extract()
 
         // second part of the dump
         data = LayoutData(
@@ -43,6 +46,7 @@ class LayoutInspector(
         // Shows data only after refreshing the data.
         state = InspectorState.POPULATED
 
+        // TODO use coroutine again (removed for debugging purposes)
         /*coroutineManager.launch {
             // first part of the dump
             val dataPaths = MacosExtractionManager.extract()
