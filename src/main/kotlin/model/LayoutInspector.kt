@@ -3,12 +3,10 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import model.parser.xmlElements.Node
+import model.extractionManagers.MacosExtractionManager
 import model.parser.XmlParser
+import model.parser.xmlElements.Node
 import model.utils.CoroutineManager
-import model.extractionManagers.OldExtractionManager
-import model.Paths.LOCAL_DUMP_PATH
-import model.Paths.LOCAL_SCREENSHOT_PATH
 import java.io.File
 
 class LayoutInspector(
@@ -33,19 +31,31 @@ class LayoutInspector(
         isNodeSelected = false
         selectedNode = Node.Empty
 
-        coroutineManager.launch {
+        // first part of the dump
+        val dataPaths = MacosExtractionManager.extract()
+
+        // second part of the dump
+        data = LayoutData(
+            screenshotFile = File(dataPaths.localScreenshotPath),
+            root = XmlParser.parseSystem(File(dataPaths.localXmlDumpPath))
+        )
+
+        // Shows data only after refreshing the data.
+        state = InspectorState.POPULATED
+
+        /*coroutineManager.launch {
             // first part of the dump
-            OldExtractionManager.extract()
+            val dataPaths = MacosExtractionManager.extract()
 
             // second part of the dump
             data = LayoutData(
-                screenshotFile = File(LOCAL_SCREENSHOT_PATH),
-                root = XmlParser.parseSystem(File(LOCAL_DUMP_PATH))
+                screenshotFile = File(dataPaths.localScreenshotPath),
+                root = XmlParser.parseSystem(File(dataPaths.localXmlDumpPath))
             )
 
             // Shows data only after refreshing the data.
             state = InspectorState.POPULATED
-        }
+        }*/
     }
 
     fun selectNode(node: Node) {
