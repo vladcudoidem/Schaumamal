@@ -6,6 +6,10 @@ import model.Paths.DEVICE_DUMP_PATH
 import model.Paths.DEVICE_SCREENSHOT_PATH
 import model.Paths.LOCAL_DUMP_PATH
 import model.Paths.LOCAL_SCREENSHOT_PATH
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
 
 @Deprecated("Use platform-specific execution manager.")
 object OldExtractionManager {
@@ -47,3 +51,24 @@ data class DataPaths(
     val localXmlDumpPath: String,
     val localScreenshotPath: String
 )
+
+// TODO move to right location
+infix fun Int.onError(action: (Int) -> Unit) {
+    if (this != 0) {
+        action(this)
+    }
+}
+
+// TODO remove later
+@Throws(IOException::class)
+fun getOutput(inputStream: InputStream): String {
+    val reader = BufferedReader(InputStreamReader(inputStream))
+    val output = StringBuilder()
+    var line: String?
+
+    while (reader.readLine().also { line = it } != null) {
+        output.append(line).append("\n")
+    }
+
+    return output.toString()
+}
