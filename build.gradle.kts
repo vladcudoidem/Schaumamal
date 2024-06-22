@@ -5,8 +5,7 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-group = "com.vladvamos"
-version = "1.0-SNAPSHOT"
+group = "com.vladvamos.schaumamal"
 
 repositories {
     mavenCentral()
