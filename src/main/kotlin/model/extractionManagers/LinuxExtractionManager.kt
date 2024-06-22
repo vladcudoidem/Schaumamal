@@ -1,7 +1,6 @@
 package model.extractionManagers
 
 object LinuxExtractionManager : ExtractionManager {
-    override fun extract(): DataPaths {
-        return DataPaths("", "")
-    }
+
+    override fun extract() = error("Linux functionality not implemented yet.")
 }

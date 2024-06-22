@@ -29,8 +29,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import model.InspectorState
 import model.LayoutInspector
+import model.extractionManagers.getExtractionManager
 import model.parser.xmlElements.Node
-import model.utils.CoroutineManager
+import model.CoroutineManager
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
 import shared.Dimensions.defaultHighlighterStrokeWidth
@@ -54,7 +55,8 @@ class AppViewModel(
     private val layoutInspector = LayoutInspector(
         coroutineManager = CoroutineManager(
             customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
-        )
+        ),
+        extractionManager = getExtractionManager()
     )
 
     /* Screenshot Layer */
