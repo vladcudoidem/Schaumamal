@@ -1,4 +1,4 @@
-package model.utils
+package model
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

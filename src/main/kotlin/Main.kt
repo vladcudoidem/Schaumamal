@@ -7,7 +7,7 @@ import androidx.compose.ui.window.application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import model.utils.CoroutineManager
+import model.CoroutineManager
 import shared.Dimensions.minimumWindowHeight
 import shared.Dimensions.minimumWindowWidth
 import view.MainScreen

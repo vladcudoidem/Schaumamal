@@ -4,16 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import model.extractionManagers.ExtractionManager
-import model.extractionManagers.getExtractionManager
 import model.parser.XmlParser
 import model.parser.xmlElements.Node
-import model.utils.CoroutineManager
 import java.io.File
 
 class LayoutInspector(
-    private val coroutineManager: CoroutineManager
+    private val coroutineManager: CoroutineManager,
+    private val extractionManager: ExtractionManager
 ) {
-
     var state by mutableStateOf(InspectorState.EMPTY)
         private set
 
@@ -25,8 +23,6 @@ class LayoutInspector(
     var selectedNode by mutableStateOf(Node.Empty)
         private set
 
-    private val extractionManager: ExtractionManager = getExtractionManager()
-
     fun extractLayout() {
         state = InspectorState.WAITING
 
@@ -34,32 +30,19 @@ class LayoutInspector(
         isNodeSelected = false
         selectedNode = Node.Empty
 
-        // first part of the dump
-        val dataPaths = extractionManager.extract()
-
-        // second part of the dump
-        data = LayoutData(
-            screenshotFile = File(dataPaths.localScreenshotPath),
-            root = XmlParser.parseSystem(File(dataPaths.localXmlDumpPath))
-        )
-
-        // Shows data only after refreshing the data.
-        state = InspectorState.POPULATED
-
-        // TODO use coroutine again (removed for debugging purposes)
-        /*coroutineManager.launch {
+        coroutineManager.launch {
             // first part of the dump
-            val dataPaths = MacosExtractionManager.extract()
+            val (dumpPath, screenshotPath) = extractionManager.extract()
 
             // second part of the dump
             data = LayoutData(
-                screenshotFile = File(dataPaths.localScreenshotPath),
-                root = XmlParser.parseSystem(File(dataPaths.localXmlDumpPath))
+                screenshotFile = File(screenshotPath),
+                root = XmlParser.parseSystem(File(dumpPath))
             )
 
             // Shows data only after refreshing the data.
             state = InspectorState.POPULATED
-        }*/
+        }
     }
 
     fun selectNode(node: Node) {
@@ -70,7 +53,5 @@ class LayoutInspector(
 
     fun teardown() {
         coroutineManager.teardown()
-        // This might not be needed.
-        // TeardownManager.deleteLayoutFiles()
     }
 }
