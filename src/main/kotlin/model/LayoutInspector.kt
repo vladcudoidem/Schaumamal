@@ -26,9 +26,8 @@ class LayoutInspector(
     fun extractLayout() {
         state = InspectorState.WAITING
 
-        // Reset selected node state and data.
+        // Reset selected node state. Selected node data will be reset later because of the fade out animation.
         isNodeSelected = false
-        selectedNode = Node.Empty
 
         coroutineManager.launch {
             // first part of the dump
@@ -39,6 +38,9 @@ class LayoutInspector(
                 screenshotFile = File(screenshotPath),
                 root = XmlParser.parseSystem(File(dumpPath))
             )
+
+            // Reset selected node data.
+            selectedNode = Node.Empty
 
             // Shows data only after refreshing the data.
             state = InspectorState.POPULATED

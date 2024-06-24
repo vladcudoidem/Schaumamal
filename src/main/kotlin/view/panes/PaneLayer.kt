@@ -26,6 +26,7 @@ import shared.Colors.discreteTextColor
 import shared.Colors.paneBackgroundColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
+import view.FadeVisibility
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 
@@ -82,6 +83,7 @@ fun UpperPane(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
@@ -91,18 +93,18 @@ fun UpperPane(modifier: Modifier = Modifier) {
             ))
             .background(paneBackgroundColor)
     ) {
-        if (viewModel.showXmlTree) {
+        FadeVisibility(viewModel.showXmlTree) {
             XmlTree()
-        } else {
+        }
+
+        FadeVisibility(!viewModel.showXmlTree) {
             Text(
                 text = "Missing layout",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .animateContentSize()
+                modifier = Modifier.animateContentSize()
             )
         }
     }
@@ -113,6 +115,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
@@ -125,18 +128,18 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 viewModel.onLowerPaneSizeChanged(size)
             }
     ) {
-        if (viewModel.showSelectedNodeProperties) {
+        FadeVisibility(viewModel.showSelectedNodeProperties) {
             SelectedNodeProperties()
-        } else {
+        }
+
+        FadeVisibility(!viewModel.showSelectedNodeProperties) {
             Text(
                 text = "No node selected",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .animateContentSize()
+                modifier = Modifier.animateContentSize()
             )
         }
     }
