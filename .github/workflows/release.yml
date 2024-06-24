@@ -21,9 +21,9 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Set up JDK 17 (Corretto)
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
+          distribution: 'zulu'
           java-version: '17'
 
       - name: Build
