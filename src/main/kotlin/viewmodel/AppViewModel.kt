@@ -56,7 +56,7 @@ class AppViewModel(
         coroutineManager = CoroutineManager(
             customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
         ),
-        extractionManager = getExtractionManager(
+        extractionManager = getExtractionManager()
     )
 
     /* Screenshot Layer */
