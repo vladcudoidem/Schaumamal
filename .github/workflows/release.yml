@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Set up JDK 17 (Corretto)
+      - name: Set up JDK 17 (Zulu)
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-${{ matrix.release_suffix }}
-          path: build/libs/
+          path: build/compose/binaries/main-release
