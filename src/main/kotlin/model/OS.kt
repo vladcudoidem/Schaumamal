@@ -24,3 +24,10 @@ fun <T> on(win: T, mac: T, lin: T) = when(OS.current) {
     OS.MACOS -> mac
     OS.LINUX -> lin
 }
+
+@Suppress("unused")
+fun <T> on(win: () -> T, mac: () -> T, lin: () -> T) = when(OS.current) {
+    OS.WIN -> win()
+    OS.MACOS -> mac()
+    OS.LINUX -> lin()
+}
