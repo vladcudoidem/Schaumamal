@@ -2,6 +2,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +33,7 @@ fun main() = application {
 
         Window(
             title = "Schaumamal",
+            icon = painterResource("icons/icon.png"),
             onCloseRequest = {
                 viewModel.teardown()
                 exitApplication()

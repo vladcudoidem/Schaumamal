@@ -27,18 +27,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import model.CoroutineManager
 import model.InspectorState
 import model.LayoutInspector
 import model.extractionManagers.getExtractionManager
 import model.parser.xmlElements.Node
-import model.CoroutineManager
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
 import shared.Dimensions.defaultHighlighterStrokeWidth
 import shared.Dimensions.minimumPaneDimension
+import shared.Values.keyboardZoomFactor
 import shared.Values.maxScreenshotScale
 import shared.Values.minScreenshotScale
-import shared.Values.zoomFactor
+import shared.Values.scrollZoomFactor
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
 import viewmodel.extraUiLogic.getFlatXmlTreeMap
@@ -117,7 +118,7 @@ class AppViewModel(
     fun onImageScroll(event: PointerEvent) {
         val oldScale = screenshotLayerScale
         val change = event.changes.first()
-        val zoomFactor = 1f - change.scrollDelta.y / 50 // We are using an arbitrary factor.
+        val zoomFactor = 1f - change.scrollDelta.y / scrollZoomFactor // We are using an arbitrary factor.
 
         // First change scale.
         val newScale = screenshotLayerScale * zoomFactor
@@ -228,12 +229,12 @@ class AppViewModel(
             event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.Equals -> {
-                        screenshotLayerScale = (screenshotLayerScale * zoomFactor).coerceAtMost(maxScreenshotScale)
+                        screenshotLayerScale = (screenshotLayerScale * keyboardZoomFactor).coerceAtMost(maxScreenshotScale)
                         true
                     }
 
                     Key.Minus -> {
-                        screenshotLayerScale = (screenshotLayerScale / zoomFactor).coerceAtLeast(minScreenshotScale)
+                        screenshotLayerScale = (screenshotLayerScale / keyboardZoomFactor).coerceAtLeast(minScreenshotScale)
                         true
                     }
 
