@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.vladvamos.schaumamal"
-version = "0.1.0"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -20,12 +20,7 @@ dependencies {
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
-
-    // implementation(compose.desktop.currentOs)
-    linuxAmd64(compose.desktop.linux_x64)
-    macAmd64(compose.desktop.macos_x64)
-    macAarch64(compose.desktop.macos_arm64)
-    windowsAmd64(compose.desktop.windows_x64)
+    implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 }
@@ -37,7 +32,6 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Schaumamal"
-            packageVersion = "1.33.7" // This version is not relevant.
 
             macOS {
                 iconFile.set(project.file("src/main/resources/icons/icon.icns"))
