@@ -151,6 +151,8 @@ class AppViewModel(
 
     /* Button Layer */
 
+    val isButtonEnabled get() = layoutInspector.state != InspectorState.WAITING
+
     val showButtonText get() = layoutInspector.state != InspectorState.POPULATED
     val buttonText
         get() = when (layoutInspector.state) {

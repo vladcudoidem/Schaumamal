@@ -33,6 +33,7 @@ fun ButtonLayer(modifier: Modifier = Modifier) {
     ) {
         Button(
             onClick = viewModel::onExtractButtonPressed,
+            enabled = viewModel.isButtonEnabled,
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(backgroundColor = buttonColor),
             modifier = Modifier
