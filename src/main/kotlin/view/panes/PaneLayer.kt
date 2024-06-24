@@ -1,6 +1,7 @@
 package view.panes
 
 import AppViewModel
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import shared.Colors.discreteTextColor
 import shared.Colors.paneBackgroundColor
 import shared.Dimensions.largeCornerRadius
@@ -96,7 +98,11 @@ fun UpperPane(modifier: Modifier = Modifier) {
                 text = "Missing layout",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.align(Alignment.Center)
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .animateContentSize()
             )
         }
     }
@@ -126,7 +132,11 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 text = "No node selected",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.align(Alignment.Center)
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .animateContentSize()
             )
         }
     }
