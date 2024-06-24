@@ -52,8 +52,8 @@ jobs:
       - name: Package Release
         run: ./gradlew packageReleaseDistributionForCurrentOS
 
-      - name: Upload Build Artifacts
+      - name: Upload Release Binaries
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.release_suffix }}
+          name: release-${{ matrix.release_suffix }}
           path: ${{ matrix.output_path }}
