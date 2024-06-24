@@ -8,13 +8,29 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        architecture: [x64, arm64]
         include:
           - os: ubuntu-latest
-            release_suffix: linux
+            architecture: x64
+            release_suffix: linux-x64
+            output_path: build/compose/binaries/main-release/deb
           - os: macos-latest
-            release_suffix: mac
+            architecture: x64
+            release_suffix: mac-x64
+            output_path: build/compose/binaries/main-release/dmg
+          - os: macos-latest
+            architecture: arm64
+            release_suffix: mac-arm64
+            output_path: build/compose/binaries/main-release/dmg
           - os: windows-latest
-            release_suffix: windows
+            architecture: x64
+            release_suffix: windows-x64
+            output_path: build/compose/binaries/main-release/msi
+        exclude:
+          - os: ubuntu-latest
+            architecture: arm64
+          - os: windows-latest
+            architecture: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -25,6 +41,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      
+      - name: Set up QEMU for ARM builds
+        if: matrix.architecture == 'arm64' && matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y qemu-user-static
 
       - name: Build
         run: ./gradlew build
@@ -36,4 +56,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-${{ matrix.release_suffix }}
-          path: build/compose/binaries/main-release
+          path: ${{ matrix.output_path }}
