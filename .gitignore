@@ -44,3 +44,4 @@ bin/
 
 ### Conveyor ###
 output/
+conveyor.conf
