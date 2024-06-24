@@ -20,17 +20,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Set up JDK 11
+      - name: Set up JDK 17 (Corretto)
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          distribution: 'corretto'
+          java-version: '17'
 
       - name: Build
         run: ./gradlew build
 
       - name: Package Release
-        run: ./gradlew packageRelease
+        run: ./gradlew packageReleaseDistributionForCurrentOS
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
