@@ -1,4 +1,4 @@
-name: Manual Build and Package App
+name: Manual Build and Package Release
 
 on:
   workflow_dispatch:

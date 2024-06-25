@@ -8,6 +8,7 @@ object Names {
     const val DEVICE_FOLDER = "sdcard"
 
     const val LOCAL_APPLICATION_FOLDER = "Schaumamal"
+    const val HIDDEN_LOCAL_APPLICATION_FOLDER = ".schaumamal"
     const val LOCAL_CONTENT_FOLDER = "content"
 }
 
