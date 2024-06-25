@@ -13,19 +13,15 @@ jobs:
           - os: ubuntu-latest
             architecture: x64
             release_suffix: linux-x64
-            output_path: build/compose/binaries/main-release/deb
           - os: macos-latest
             architecture: x64
             release_suffix: mac-x64
-            output_path: build/compose/binaries/main-release/dmg
           - os: macos-latest
             architecture: arm64
             release_suffix: mac-arm64
-            output_path: build/compose/binaries/main-release/dmg
           - os: windows-latest
             architecture: x64
             release_suffix: windows-x64
-            output_path: build/compose/binaries/main-release/msi
         exclude:
           - os: ubuntu-latest
             architecture: arm64
@@ -56,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: release-${{ matrix.release_suffix }}
-          path: ${{ matrix.output_path }}
+          path: build/compose/binaries/main-release
