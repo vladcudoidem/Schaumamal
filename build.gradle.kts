@@ -30,7 +30,15 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(
+                TargetFormat.Deb,
+                TargetFormat.Rpm,
+                TargetFormat.Dmg,
+                // TargetFormat.Pkg including this throws an error (might be a bug)
+                TargetFormat.Exe,
+                TargetFormat.Msi,
+                // TargetFormat.AppImage does not work due to a bug in CMP Gradle plugin
+            )
             packageName = "Schaumamal"
 
             macOS {
