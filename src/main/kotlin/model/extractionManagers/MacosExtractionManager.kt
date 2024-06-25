@@ -80,7 +80,7 @@ object MacosExtractionManager : ExtractionManager {
         ProcessBuilder(
             adbPath,
             "pull",
-            "/$DEVICE_FOLDER" at SCREENSHOT_FILE,
+            ROOT at DEVICE_FOLDER at SCREENSHOT_FILE,
             applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at SCREENSHOT_FILE
         ).start().waitFor() onError { error("Pulling screenshot from device failed!") }
 
