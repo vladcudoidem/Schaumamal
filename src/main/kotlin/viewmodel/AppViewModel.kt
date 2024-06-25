@@ -75,7 +75,7 @@ class AppViewModel(
     // size of the image composable
     private var screenshotComposableSize by mutableStateOf(Size.Unspecified)
 
-    val showHighlighter get() = layoutInspector.isNodeSelected
+    val showHighlighter get() = showScreenshot && layoutInspector.isNodeSelected
     val highlighterOffset by derivedStateOf { selectedNodeDisplayGraphics.offset }
     val highlighterSize by derivedStateOf { selectedNodeDisplayGraphics.size }
     private val selectedNodeDisplayGraphics
@@ -187,7 +187,7 @@ class AppViewModel(
         )
     val flatXmlTree get() = flatXmlTreeMap.values.toList()
 
-    val showSelectedNodeProperties get() = layoutInspector.isNodeSelected
+    val showSelectedNodeProperties get() = showXmlTree && layoutInspector.isNodeSelected
     val selectedNodePropertyMap get() = layoutInspector.selectedNode.propertyMap
 
     fun onVerticalWedgeDrag(
