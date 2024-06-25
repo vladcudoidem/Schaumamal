@@ -1,12 +1,15 @@
 package shared
 
+import model.on
+
 @Suppress("MayBeConstant", "unused")
 object Values {
 
     /* Screenshot Layer */
 
     // Zoom
-    val zoomFactor = 1.1f
+    val scrollZoomFactor = on(win = 15, mac = 50, lin = 50)
+    val keyboardZoomFactor = 1.1f
     val minScreenshotScale = 0.1f
     val maxScreenshotScale = 20f
 

@@ -29,6 +29,7 @@ import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
+import view.FadeVisibility
 import java.awt.Cursor
 
 @Composable
@@ -55,13 +56,13 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
                     translationY = viewModel.screenshotLayerOffset.y
                 }
         ) {
-            if (viewModel.showScreenshot) {
+            FadeVisibility(viewModel.showScreenshot) {
                 WithTouchSlop(minimalTouchSlop) {
                     Screenshot()
                 }
             }
 
-            if (viewModel.showHighlighter) {
+            FadeVisibility(viewModel.showHighlighter) {
                 Highlighter()
             }
         }

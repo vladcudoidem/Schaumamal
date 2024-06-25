@@ -1,5 +1,6 @@
 package model.extractionManagers
 
+import model.on
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -9,15 +10,11 @@ interface ExtractionManager {
     fun extract(): DataPaths
 }
 
-fun getExtractionManager() =
-    with(System.getProperty("os.name").lowercase()) {
-        when {
-            contains("win") -> WindowsExtractionManager
-            contains("mac") -> MacosExtractionManager
-            contains("nix") or contains("nux") or contains("aix") -> LinuxExtractionManager
-            else -> error("Could not detect that operating system is either Windows, MacOS or Linux.")
-        }
-    }
+fun getExtractionManager() = on(
+    win = WindowsExtractionManager,
+    mac = MacosExtractionManager,
+    lin = LinuxExtractionManager
+)
 
 infix fun Int.onError(action: (Int) -> Unit) {
     if (this != 0) {

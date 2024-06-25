@@ -1,6 +1,7 @@
 package view.panes
 
 import AppViewModel
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import shared.Colors.discreteTextColor
 import shared.Colors.paneBackgroundColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
+import view.FadeVisibility
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 
@@ -80,6 +83,7 @@ fun UpperPane(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
@@ -89,14 +93,18 @@ fun UpperPane(modifier: Modifier = Modifier) {
             ))
             .background(paneBackgroundColor)
     ) {
-        if (viewModel.showXmlTree) {
+        FadeVisibility(viewModel.showXmlTree) {
             XmlTree()
-        } else {
+        }
+
+        FadeVisibility(!viewModel.showXmlTree) {
             Text(
                 text = "Missing layout",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.align(Alignment.Center)
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
+                modifier = Modifier.animateContentSize()
             )
         }
     }
@@ -107,6 +115,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(
                 topStart = largeCornerRadius,
@@ -119,14 +128,18 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 viewModel.onLowerPaneSizeChanged(size)
             }
     ) {
-        if (viewModel.showSelectedNodeProperties) {
+        FadeVisibility(viewModel.showSelectedNodeProperties) {
             SelectedNodeProperties()
-        } else {
+        }
+
+        FadeVisibility(!viewModel.showSelectedNodeProperties) {
             Text(
                 text = "No node selected",
                 color = discreteTextColor,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.align(Alignment.Center)
+                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
+                modifier = Modifier.animateContentSize()
             )
         }
     }

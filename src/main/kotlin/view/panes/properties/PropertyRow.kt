@@ -1,8 +1,5 @@
 package view.panes.properties
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
@@ -35,6 +32,7 @@ import shared.Dimensions.maximumPropertyValueWidth
 import shared.Dimensions.propertyNameWidth
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
+import view.FadeVisibility
 import java.awt.Cursor
 
 @Composable
@@ -90,11 +88,7 @@ fun PropertyRow(
                 .padding(smallPadding)
         )
 
-        AnimatedVisibility(
-            visible = copyConfirmationVisible,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
+        FadeVisibility(copyConfirmationVisible) {
             Text(
                 text = "✓ copied",
                 color = highlightColor
