@@ -22,7 +22,7 @@ infix fun Int.onError(action: (Int) -> Unit) {
     }
 }
 
-// TODO remove later (used for debugging)
+// Todo: remove later (used for debugging).
 @Suppress("unused")
 @Throws(IOException::class)
 fun getOutput(inputStream: InputStream): String {

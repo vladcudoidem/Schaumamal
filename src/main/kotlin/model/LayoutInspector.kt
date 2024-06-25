@@ -24,25 +24,33 @@ class LayoutInspector(
         private set
 
     fun extractLayout() {
+        // Save previous state so that we can return to it in case the extraction fails.
+        val previousState = state
         state = InspectorState.WAITING
 
-        // Reset selected node state. Selected node data will be reset later because of the fade out animation.
-        isNodeSelected = false
-
         coroutineManager.launch {
-            // first part of the dump
-            val (dumpPath, screenshotPath) = extractionManager.extract()
+            // First we extract the new data.
+            val (dumpPath, screenshotPath) = try {
+                extractionManager.extract()
+            } catch (e: Exception) {
+                // In case of failure, revert the state back to its previous value. Because of the return statement at
+                // the end of this block, the data and UI state remain unchanged.
+                state = previousState
 
-            // second part of the dump
+                // Todo: notify the use in case of failure.
+                return@launch
+            }
+
+            // Then we parse and set the new data.
             data = LayoutData(
                 screenshotFile = File(screenshotPath),
                 root = XmlParser.parseSystem(File(dumpPath))
             )
 
-            // Reset selected node data.
+            isNodeSelected = false
             selectedNode = Node.Empty
 
-            // Shows data only after refreshing the data.
+            // At the end, show the data.
             state = InspectorState.POPULATED
         }
     }
