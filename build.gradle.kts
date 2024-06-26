@@ -40,6 +40,9 @@ compose.desktop {
                 // TargetFormat.AppImage does not work due to a bug in CMP Gradle plugin
             )
             packageName = "Schaumamal"
+            description = "The second coming of UiAutomatorViewer."
+            copyright = "Copyright (c) 2024 Alexandru-Vlad Vamoș"
+            licenseFile.set(project.file("LICENSE"))
 
             macOS {
                 iconFile.set(project.file("src/main/resources/icons/icon.icns"))
@@ -47,20 +50,16 @@ compose.desktop {
 
             windows {
                 iconFile.set(project.file("src/main/resources/icons/icon.ico"))
+                menu = true
+                menuGroup = "Development"
+                console = true
+                upgradeUuid = "de0bbc5f-6290-4967-aab2-94707a706f92"
             }
 
             linux {
                 iconFile.set(project.file("src/main/resources/icons/icon.png"))
+                menuGroup = "Development"
             }
         }
     }
 }
-
-// region Work around temporary Compose bugs.
-configurations.all {
-    attributes {
-        // https://github.com/JetBrains/compose-jb/issues/1404#issuecomment-1146894731
-        attribute(Attribute.of("ui", String::class.java), "awt")
-    }
-}
-// endregion
