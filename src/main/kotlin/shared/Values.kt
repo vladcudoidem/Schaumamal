@@ -8,7 +8,7 @@ object Values {
     /* Screenshot Layer */
 
     // Zoom
-    val scrollZoomFactor = on(win = 15, mac = 50, lin = 50)
+    val scrollZoomFactor = on(win = 10, mac = 50, lin = 50)
     val keyboardZoomFactor = 1.1f
     val minScreenshotScale = 0.1f
     val maxScreenshotScale = 20f
