@@ -233,14 +233,14 @@ class AppViewModel(
     @OptIn(ExperimentalComposeUiApi::class)
     fun onWindowKeyEvent(event: KeyEvent) =
         when {
-            event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
+            event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
-                    Key.Equals -> {
+                    Key.DirectionUp -> {
                         screenshotLayerScale = (screenshotLayerScale * keyboardZoomFactor).coerceAtMost(maxScreenshotScale)
                         true
                     }
 
-                    Key.Minus -> {
+                    Key.DirectionDown -> {
                         screenshotLayerScale = (screenshotLayerScale / keyboardZoomFactor).coerceAtLeast(minScreenshotScale)
                         true
                     }
