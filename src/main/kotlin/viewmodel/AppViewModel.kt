@@ -160,6 +160,19 @@ class AppViewModel(
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
 
+    fun onResetScreenshotLocationButtonPressed() {
+        screenshotLayerScale = 1f
+        screenshotLayerOffset = Offset.Zero
+    }
+
+    fun onEnlargeScreenshotButtonPressed() {
+        screenshotLayerScale = (screenshotLayerScale * keyboardZoomFactor).coerceAtMost(maxScreenshotScale)
+    }
+
+    fun onShrinkScreenshotButtonPressed() {
+        screenshotLayerScale = (screenshotLayerScale / keyboardZoomFactor).coerceAtLeast(minScreenshotScale)
+    }
+
     /* Panes Layer */
 
     var paneWidth by mutableStateOf(initialPaneWidth)
@@ -239,18 +252,17 @@ class AppViewModel(
                     }
 
                     Key.DirectionUp -> {
-                        screenshotLayerScale = (screenshotLayerScale * keyboardZoomFactor).coerceAtMost(maxScreenshotScale)
+                        onEnlargeScreenshotButtonPressed()
                         true
                     }
 
                     Key.DirectionDown -> {
-                        screenshotLayerScale = (screenshotLayerScale / keyboardZoomFactor).coerceAtLeast(minScreenshotScale)
+                        onShrinkScreenshotButtonPressed()
                         true
                     }
 
                     Key.Zero -> {
-                        screenshotLayerScale = 1f
-                        screenshotLayerOffset = Offset.Zero
+                        onResetScreenshotLocationButtonPressed()
                         true
                     }
 
