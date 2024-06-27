@@ -186,7 +186,9 @@ class AppViewModel(
     val lowerPaneVerticalScrollState = ScrollState(initial = 0)
     val lowerPaneHorizontalScrollState = ScrollState(initial = 0)
 
-    // These values do not need to be states as they are only used as limits in the wedge drag event handlers.
+    // panesHeightConstraint and panesWidthConstraint are, under the current implementation, also the height and width
+    // of the window content area (i.e. the total area, excluding the window bar). These values do not need to be states
+    // as they are only used as limits in the wedge drag event handlers.
     private var panesHeightConstraint = Dp.Unspecified
     private var panesWidthConstraint = Dp.Unspecified
 
