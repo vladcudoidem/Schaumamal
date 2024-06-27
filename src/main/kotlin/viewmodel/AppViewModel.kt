@@ -233,6 +233,11 @@ class AppViewModel(
         when {
             event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
+                    Key.D -> {
+                        onExtractButtonPressed()
+                        true
+                    }
+
                     Key.DirectionUp -> {
                         screenshotLayerScale = (screenshotLayerScale * keyboardZoomFactor).coerceAtMost(maxScreenshotScale)
                         true
