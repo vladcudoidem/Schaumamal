@@ -152,11 +152,10 @@ class AppViewModel(
 
     val isButtonEnabled get() = layoutInspector.state != InspectorState.WAITING
 
-    val showButtonText get() = layoutInspector.state != InspectorState.POPULATED
     val buttonText
         get() = when (layoutInspector.state) {
-            InspectorState.EMPTY -> "...smash the red button"
-            else -> "...dumping"
+            InspectorState.WAITING -> "Dumping..."
+            else -> "Smash button to dump."
         }
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()

@@ -26,7 +26,7 @@ import androidx.compose.ui.text.AnnotatedString
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import shared.Colors.highlightColor
+import shared.Colors.accentColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.maximumPropertyValueWidth
 import shared.Dimensions.propertyNameWidth
@@ -44,7 +44,7 @@ fun PropertyRow(
     val clipboard = LocalClipboardManager.current
 
     val interactionSource = remember { MutableInteractionSource() }
-    val indication = rememberRipple(color = highlightColor)
+    val indication = rememberRipple(color = accentColor)
 
     val scope = rememberCoroutineScope()
     DisposableEffect(Unit) {
@@ -91,7 +91,7 @@ fun PropertyRow(
         FadeVisibility(copyConfirmationVisible) {
             Text(
                 text = "✓ copied",
-                color = highlightColor
+                color = accentColor
             )
         }
     }

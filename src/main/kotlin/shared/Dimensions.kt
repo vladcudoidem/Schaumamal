@@ -23,7 +23,7 @@ object Dimensions {
 
     /* Button Layer */
 
-    val extractButtonDiameter = 40.dp
+    val extractButtonDiameter = largeCornerRadius * 2
 
     /* Pane Layer */
 
