@@ -155,7 +155,7 @@ class AppViewModel(
     val buttonText
         get() = when (layoutInspector.state) {
             InspectorState.WAITING -> "Dumping..."
-            else -> "Smash button to dump."
+            else -> "Smash red button to dump."
         }
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
