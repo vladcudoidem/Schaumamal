@@ -9,6 +9,8 @@ object Colors {
 
     val primaryTextColor = Color(0xFFB4B7C2)
     val discreteTextColor = primaryTextColor.copy(alpha = 0.55f)
+
+    val primaryElementColor = primaryTextColor
     val accentColor = Color(0xFF705575)
 
     val backgroundColor = Color(0xFF121317)
