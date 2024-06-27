@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import shared.Colors.discreteTextColor
-import shared.Colors.paneBackgroundColor
+import shared.Colors.elevatedBackgroundColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
 import view.FadeVisibility
@@ -91,7 +91,7 @@ fun UpperPane(modifier: Modifier = Modifier) {
                 bottomStart = largeCornerRadius,
                 bottomEnd = largeCornerRadius
             ))
-            .background(paneBackgroundColor)
+            .background(elevatedBackgroundColor)
     ) {
         FadeVisibility(viewModel.showXmlTree) {
             XmlTree()
@@ -123,7 +123,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 bottomStart = largeCornerRadius,
                 bottomEnd = largeCornerRadius
             ))
-            .background(paneBackgroundColor)
+            .background(elevatedBackgroundColor)
             .onSizeChanged { size ->
                 viewModel.onLowerPaneSizeChanged(size)
             }

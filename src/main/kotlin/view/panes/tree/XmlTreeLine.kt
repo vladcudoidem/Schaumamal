@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import shared.Colors.highlightColor
+import shared.Colors.accentColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
@@ -30,7 +30,7 @@ fun XmlTreeLine(
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val indication = rememberRipple(color = highlightColor)
+    val indication = rememberRipple(color = accentColor)
 
     Row(modifier = modifier) {
         Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))

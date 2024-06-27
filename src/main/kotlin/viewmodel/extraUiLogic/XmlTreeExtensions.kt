@@ -13,7 +13,7 @@ import model.parser.xmlElements.System
 import model.parser.xmlElements.Window
 import model.parser.xmlElements.XmlElement
 import shared.Colors
-import shared.Colors.highlightColor
+import shared.Colors.accentColor
 import viewmodel.XmlTreeLine
 
 fun System.getFlatXmlTreeMap(
@@ -50,7 +50,7 @@ fun System.getFlatXmlTreeMap(
             is Node -> element to XmlTreeLine(
                 text = element.displayText,
                 textBackgroundColor = if (selectedNode === element) {
-                    highlightColor
+                    accentColor
                 } else {
                     Color.Transparent
                 },
