@@ -33,7 +33,7 @@ fun main() = application {
 
         Window(
             title = "Schaumamal",
-            icon = painterResource("icons/icon.png"),
+            icon = painterResource("appIcons/icon.png"),
             onCloseRequest = {
                 viewModel.teardown()
                 exitApplication()

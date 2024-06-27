@@ -36,7 +36,7 @@ fun DisplayControlPill(modifier: Modifier = Modifier) {
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         ) {
             Icon(
-                painter = painterResource("symbolIcons/arrow_backward.svg"),
+                painter = painterResource("icons/arrow_backward.svg"),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(0.8f)
@@ -60,7 +60,7 @@ fun DisplayControlPill(modifier: Modifier = Modifier) {
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
         ) {
             Icon(
-                painter = painterResource("symbolIcons/arrow_forward.svg"),
+                painter = painterResource("icons/arrow_forward.svg"),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(0.8f)

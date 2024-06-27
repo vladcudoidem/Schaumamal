@@ -45,17 +45,17 @@ compose.desktop {
             licenseFile.set(project.file("LICENSE"))
 
             macOS {
-                iconFile.set(project.file("src/main/resources/icons/icon.icns"))
+                iconFile.set(project.file("src/main/resources/appIcons/icon.icns"))
             }
 
             windows {
-                iconFile.set(project.file("src/main/resources/icons/icon.ico"))
+                iconFile.set(project.file("src/main/resources/appIcons/icon.ico"))
                 menu = true
                 upgradeUuid = "de0bbc5f-6290-4967-aab2-94707a706f92"
             }
 
             linux {
-                iconFile.set(project.file("src/main/resources/icons/icon.png"))
+                iconFile.set(project.file("src/main/resources/appIcons/icon.png"))
                 menuGroup = "Development"
             }
         }
