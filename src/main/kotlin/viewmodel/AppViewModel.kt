@@ -12,6 +12,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
@@ -298,7 +299,7 @@ class AppViewModel(
     @OptIn(ExperimentalComposeUiApi::class)
     fun onWindowKeyEvent(event: KeyEvent) =
         when {
-            event.type == KeyEventType.KeyDown -> {
+            event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.D -> {
                         if (isExtractButtonEnabled) {
@@ -307,14 +308,14 @@ class AppViewModel(
                         true
                     }
 
-                    Key.DirectionUp -> {
+                    Key.Period -> {
                         if (areResizeButtonsEnabled) {
                             onEnlargeScreenshotButtonPressed()
                         }
                         true
                     }
 
-                    Key.DirectionDown -> {
+                    Key.Comma -> {
                         if (areResizeButtonsEnabled) {
                             onShrinkScreenshotButtonPressed()
                         }
