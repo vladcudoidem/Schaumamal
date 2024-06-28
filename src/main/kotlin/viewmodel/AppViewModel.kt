@@ -150,15 +150,20 @@ class AppViewModel(
 
     /* Button Layer */
 
-    val isButtonEnabled get() = layoutInspector.state != InspectorState.WAITING
-
-    val buttonText
+    val isExtractButtonEnabled get() = layoutInspector.state != InspectorState.WAITING
+    val extractButtonText
         get() = when (layoutInspector.state) {
             InspectorState.WAITING -> "Dumping..."
             else -> "Smash red button to dump."
         }
 
+    val areResizeButtonsEnabled get() = layoutInspector.state == InspectorState.POPULATED
+
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
+
+    fun onFitScreenshotToScreenButtonPressed() {
+        // Todo: implement.
+    }
 
     fun onResetScreenshotLocationButtonPressed() {
         screenshotLayerScale = 1f
@@ -249,22 +254,37 @@ class AppViewModel(
             event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.D -> {
-                        onExtractButtonPressed()
+                        if (isExtractButtonEnabled) {
+                            onExtractButtonPressed()
+                        }
                         true
                     }
 
                     Key.DirectionUp -> {
-                        onEnlargeScreenshotButtonPressed()
+                        if (areResizeButtonsEnabled) {
+                            onEnlargeScreenshotButtonPressed()
+                        }
                         true
                     }
 
                     Key.DirectionDown -> {
-                        onShrinkScreenshotButtonPressed()
+                        if (areResizeButtonsEnabled) {
+                            onShrinkScreenshotButtonPressed()
+                        }
                         true
                     }
 
                     Key.Zero -> {
-                        onResetScreenshotLocationButtonPressed()
+                        if (areResizeButtonsEnabled) {
+                            onResetScreenshotLocationButtonPressed()
+                        }
+                        true
+                    }
+
+                    Key.M -> {
+                        if (areResizeButtonsEnabled) {
+                            onFitScreenshotToScreenButtonPressed()
+                        }
                         true
                     }
 
