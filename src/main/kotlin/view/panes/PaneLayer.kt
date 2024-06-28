@@ -103,7 +103,9 @@ fun UpperPane(modifier: Modifier = Modifier) {
                 fontFamily = FontFamily.Monospace,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier.animateContentSize()
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(mediumPadding)
             )
         }
     }
@@ -138,7 +140,9 @@ fun LowerPane(modifier: Modifier = Modifier) {
                 fontFamily = FontFamily.Monospace,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier.animateContentSize()
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(mediumPadding)
             )
         }
     }
