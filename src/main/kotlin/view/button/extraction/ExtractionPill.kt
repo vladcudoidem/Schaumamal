@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
 import view.button.HorizontalPill
@@ -21,9 +22,9 @@ fun ExtractionPill(modifier: Modifier = Modifier) {
         Text(
             text = viewModel.extractButtonText,
             color = discreteTextColor,
-            fontFamily = FontFamily.Monospace,
+            fontFamily = FontFamily.SansSerif,
             modifier = Modifier
-                .padding(end = mediumPadding)
+                .padding(end = mediumPadding + 2.dp)
                 .animateContentSize()
         )
     }

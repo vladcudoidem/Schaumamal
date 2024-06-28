@@ -98,9 +98,9 @@ fun UpperPane(modifier: Modifier = Modifier) {
 
         FadeVisibility(!viewModel.showXmlTree) {
             Text(
-                text = "Missing layout",
+                text = "Missing layout.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier
@@ -135,9 +135,9 @@ fun LowerPane(modifier: Modifier = Modifier) {
 
         FadeVisibility(!viewModel.showSelectedNodeProperties) {
             Text(
-                text = "No node selected",
+                text = "No node selected.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier

@@ -23,7 +23,7 @@ fun DisplayControlPill(modifier: Modifier = Modifier) {
         Text(
             text = "Display 1/3",
             color = Colors.primaryTextColor,
-            fontFamily = FontFamily.Monospace
+            fontFamily = FontFamily.SansSerif
         )
 
         RoundIconButton(
