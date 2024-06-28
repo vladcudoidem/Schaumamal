@@ -170,20 +170,20 @@ class AppViewModel(
     // This is a method that is highly dependent on the specific arrangement of the UI components on the screen. It will
     // likely break when the UI undergoes significant change.
     fun onFitScreenshotToScreenButtonPressed() {
-        // We first place the screenshot in the center of the screenshot area (the area between the buttons and the
-        // panes).
+        // The following variables define the screenshot area (the area between the buttons and the panes).
+        val topVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
+        val bottomVisibleScreenshotAreaBound = panesHeightConstraint
+        val startVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
+        val endVisibleScreenshotAreaBound =
+            panesWidthConstraint - (wedgeSmallDimension + smallPadding + paneWidth + mediumPadding)
+
+        // We first place the screenshot in the center of the screenshot area.
 
         // The reference of this offset is the upper-left corner (x = 0, y = 0).
         val screenshotComposableGlobalOffsetAtCenter = Offset(
             x = largePadding.toPx(density) + screenshotComposableSize.width / 2,
             y = panesHeightConstraint.toPx(density) / 2
         )
-
-        val topVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
-        val bottomVisibleScreenshotAreaBound = panesHeightConstraint
-        val startVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
-        val endVisibleScreenshotAreaBound =
-            panesWidthConstraint - (wedgeSmallDimension + smallPadding + paneWidth + mediumPadding)
 
         // The reference of this offset is the upper-left corner (x = 0, y = 0) as well.
         val targetGlobalOffsetAtCenter = Offset(
