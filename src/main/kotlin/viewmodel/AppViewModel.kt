@@ -160,7 +160,7 @@ class AppViewModel(
     val extractButtonText
         get() = when (layoutInspector.state) {
             InspectorState.WAITING -> "Dumping..."
-            else -> "Smash red button to dump."
+            else -> "Smash the red button to dump."
         }
 
     val areResizeButtonsEnabled get() = layoutInspector.state == InspectorState.POPULATED
