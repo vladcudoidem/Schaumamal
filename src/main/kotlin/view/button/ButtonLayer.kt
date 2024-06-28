@@ -42,12 +42,6 @@ fun ButtonLayer(modifier: Modifier = Modifier) {
         )
 
         RoundIconButton(
-            onClick = viewModel::onResetScreenshotLocationButtonPressed,
-            enabled = viewModel.areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/reset_location.svg")
-        )
-
-        RoundIconButton(
             onClick = viewModel::onEnlargeScreenshotButtonPressed,
             enabled = viewModel.areResizeButtonsEnabled,
             iconPainter = painterResource("icons/enlarge.svg")
