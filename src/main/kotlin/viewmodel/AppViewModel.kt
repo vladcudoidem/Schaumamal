@@ -34,7 +34,12 @@ import model.parser.xmlElements.Node
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
 import shared.Dimensions.defaultHighlighterStrokeWidth
+import shared.Dimensions.extractButtonDiameter
+import shared.Dimensions.largePadding
+import shared.Dimensions.mediumPadding
 import shared.Dimensions.minimumPaneDimension
+import shared.Dimensions.smallPadding
+import shared.Dimensions.wedgeSmallDimension
 import shared.Values.keyboardZoomFactor
 import shared.Values.maxScreenshotScale
 import shared.Values.minScreenshotScale
@@ -46,6 +51,7 @@ import viewmodel.extraUiLogic.getNodesOrderedByDepth
 import viewmodel.extraUiLogic.propertyMap
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.min
 
 class AppViewModel(
     private val coroutineManager: CoroutineManager
@@ -161,13 +167,54 @@ class AppViewModel(
 
     fun onExtractButtonPressed() = layoutInspector.extractLayout()
 
+    // This is a method that is highly dependent on the specific arrangement of the UI components on the screen. It will
+    // likely break when the UI undergoes significant change.
     fun onFitScreenshotToScreenButtonPressed() {
-        // Todo: implement.
-    }
+        // We first place the screenshot in the center of the screenshot area (the area between the buttons and the
+        // panes).
 
-    fun onResetScreenshotLocationButtonPressed() {
-        screenshotLayerScale = 1f
-        screenshotLayerOffset = Offset.Zero
+        // The reference of this offset is the upper-left corner (x = 0, y = 0).
+        val screenshotComposableGlobalOffsetAtCenter = Offset(
+            x = largePadding.toPx(density) + screenshotComposableSize.width / 2,
+            y = panesHeightConstraint.toPx(density) / 2
+        )
+
+        val topVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
+        val bottomVisibleScreenshotAreaBound = panesHeightConstraint
+        val startVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
+        val endVisibleScreenshotAreaBound =
+            panesWidthConstraint - (wedgeSmallDimension + smallPadding + paneWidth + mediumPadding)
+
+        // The reference of this offset is the upper-left corner (x = 0, y = 0) as well.
+        val targetGlobalOffsetAtCenter = Offset(
+            x = (startVisibleScreenshotAreaBound + endVisibleScreenshotAreaBound).toPx(density) / 2,
+            y = (topVisibleScreenshotAreaBound + bottomVisibleScreenshotAreaBound).toPx(density) / 2
+        )
+
+        screenshotLayerOffset = targetGlobalOffsetAtCenter - screenshotComposableGlobalOffsetAtCenter
+
+        // Then we resize the screenshot to take up as much space as possible (the actual "fit-to-screen").
+
+        val targetHorizontalScale =
+            (endVisibleScreenshotAreaBound - startVisibleScreenshotAreaBound)
+                .toPx(density)
+                .div(screenshotComposableSize.width)
+        val targetVerticalScale =
+            (bottomVisibleScreenshotAreaBound - topVisibleScreenshotAreaBound)
+                .toPx(density)
+                .div(screenshotComposableSize.height)
+
+        // We use this factor to leave some space between the screenshot and the other UI elements.
+        val convenienceFactor = 0.9f
+
+        // We then use the most restrictive scale.
+        screenshotLayerScale =
+            min(targetHorizontalScale, targetVerticalScale)
+                .times(convenienceFactor)
+                .coerceIn(
+                    minimumValue = minScreenshotScale,
+                    maximumValue = maxScreenshotScale
+                )
     }
 
     fun onEnlargeScreenshotButtonPressed() {
@@ -270,13 +317,6 @@ class AppViewModel(
                     Key.DirectionDown -> {
                         if (areResizeButtonsEnabled) {
                             onShrinkScreenshotButtonPressed()
-                        }
-                        true
-                    }
-
-                    Key.Zero -> {
-                        if (areResizeButtonsEnabled) {
-                            onResetScreenshotLocationButtonPressed()
                         }
                         true
                     }

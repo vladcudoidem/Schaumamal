@@ -37,9 +37,7 @@ fun PaneLayer(modifier: Modifier = Modifier) {
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
     // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(mediumPadding)
+        modifier = Modifier.fillMaxSize()
     ) {
 
         LaunchedEffect(maxWidth) {
@@ -54,6 +52,7 @@ fun PaneLayer(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxHeight()
+                .padding(mediumPadding)
         ) {
             VerticalWedge()
 
