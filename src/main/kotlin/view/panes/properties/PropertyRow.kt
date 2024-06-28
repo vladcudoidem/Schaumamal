@@ -95,7 +95,7 @@ fun PropertyRow(
             Text(
                 text = "✓ copied",
                 color = accentColor,
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = FontFamily.SansSerif
             )
         }
     }
