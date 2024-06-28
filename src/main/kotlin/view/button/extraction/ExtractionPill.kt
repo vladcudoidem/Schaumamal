@@ -19,7 +19,7 @@ fun ExtractionPill(modifier: Modifier = Modifier) {
         ExtractionButton()
 
         Text(
-            text = viewModel.buttonText,
+            text = viewModel.extractButtonText,
             color = discreteTextColor,
             fontFamily = FontFamily.Monospace,
             modifier = Modifier

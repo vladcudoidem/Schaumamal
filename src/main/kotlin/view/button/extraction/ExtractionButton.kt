@@ -20,12 +20,12 @@ fun ExtractionButton(modifier: Modifier = Modifier) {
     val viewModel = AppViewModel.current
 
     val disabledBackgroundColor by animateColorAsState(
-        if (viewModel.isButtonEnabled) extractionButtonColor else extractionButtonColor.copy(alpha = 0.3f)
+        if (viewModel.isExtractButtonEnabled) extractionButtonColor else extractionButtonColor.copy(alpha = 0.3f)
     )
 
     Button(
         onClick = viewModel::onExtractButtonPressed,
-        enabled = viewModel.isButtonEnabled,
+        enabled = viewModel.isExtractButtonEnabled,
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = extractionButtonColor,
