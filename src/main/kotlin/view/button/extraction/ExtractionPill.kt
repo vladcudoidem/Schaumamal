@@ -2,6 +2,8 @@ package view.button.extraction
 
 import AppViewModel
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +26,12 @@ fun ExtractionPill(modifier: Modifier = Modifier) {
             color = discreteTextColor,
             fontFamily = FontFamily.SansSerif,
             modifier = Modifier
-                .padding(end = mediumPadding + 2.dp)
-                .animateContentSize()
+                .padding(end = mediumPadding + 3.dp)
+                .animateContentSize(
+                    animationSpec = spring(
+                        stiffness = Spring.StiffnessMediumLow
+                    )
+                )
         )
     }
 }
