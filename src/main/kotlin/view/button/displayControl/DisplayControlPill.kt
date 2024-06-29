@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
+import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import view.button.HorizontalPill
 import view.button.RoundIconButton
@@ -36,7 +37,7 @@ fun DisplayControlPill(modifier: Modifier = Modifier) {
             color = elevatedBackgroundColor,
             fontFamily = FontFamily.SansSerif,
             modifier = Modifier
-                .clip(RoundedCornerShape(50))
+                .clip(RoundedCornerShape(smallCornerRadius))
                 .background(primaryTextColor)
                 .padding(smallPadding)
         )
