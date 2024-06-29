@@ -1,10 +1,13 @@
 package view.button.displayControl
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -12,8 +15,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
-import shared.Dimensions.smallCornerRadius
-import shared.Dimensions.smallPadding
 import view.button.HorizontalPill
 import view.button.RoundIconButton
 
@@ -32,15 +33,19 @@ fun DisplayControlPill(modifier: Modifier = Modifier) {
             fontFamily = FontFamily.SansSerif
         )
 
-        Text(
-            text = "1/3",
-            color = elevatedBackgroundColor,
-            fontFamily = FontFamily.SansSerif,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .clip(RoundedCornerShape(smallCornerRadius))
+                .clip(RoundedCornerShape(50))
                 .background(primaryTextColor)
-                .padding(smallPadding)
-        )
+                .size(height = 25.dp, width = 40.dp)
+        ) {
+            Text(
+                text = "2/3",
+                color = elevatedBackgroundColor,
+                fontFamily = FontFamily.SansSerif
+            )
+        }
 
         RoundIconButton(
             onClick = { },
