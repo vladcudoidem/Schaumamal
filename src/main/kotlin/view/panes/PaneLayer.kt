@@ -3,6 +3,7 @@ package view.panes
 import AppViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
+import shared.Colors.paneBorderColor
 import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
+import shared.Dimensions.paneBorderWidth
 import view.FadeVisibility
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
@@ -85,6 +88,7 @@ fun UpperPane(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(largeCornerRadius))
+            .border(paneBorderWidth, paneBorderColor, RoundedCornerShape(largeCornerRadius))
             .background(elevatedBackgroundColor)
     ) {
         FadeVisibility(viewModel.showXmlTree) {
@@ -114,6 +118,7 @@ fun LowerPane(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(largeCornerRadius))
+            .border(paneBorderWidth, paneBorderColor, RoundedCornerShape(largeCornerRadius))
             .background(elevatedBackgroundColor)
             .onSizeChanged { size ->
                 viewModel.onLowerPaneSizeChanged(size)

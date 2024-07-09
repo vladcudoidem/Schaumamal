@@ -27,6 +27,8 @@ object Colors {
     val scrollbarHoverColor = Color.White.copy(alpha = 0.50f)
     val scrollbarUnhoverColor = Color.White.copy(alpha = 0.12f)
 
+    val paneBorderColor = scrollbarUnhoverColor
+
     /* Screenshot Layer */
 
     val highlighterColor = Color.Red

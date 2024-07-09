@@ -32,6 +32,7 @@ object Dimensions {
     /* Pane Layer */
 
     val minimumPaneDimension = 100.dp
+    val paneBorderWidth = 1.dp
 
     // Wedge
     val wedgeSmallDimension = 6.dp
