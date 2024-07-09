@@ -25,6 +25,10 @@ object Dimensions {
 
     val extractButtonDiameter = largeCornerRadius * 2
 
+    /* Notification Layer */
+
+    val notificationPillHeight = largeCornerRadius * 2
+
     /* Pane Layer */
 
     val minimumPaneDimension = 100.dp
