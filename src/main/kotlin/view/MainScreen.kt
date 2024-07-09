@@ -13,6 +13,7 @@ import view.button.ButtonLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
 import shared.Colors.backgroundColor
+import view.notification.NotificationLayer
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
@@ -31,5 +32,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ScreenshotLayer(modifier = Modifier.align(Alignment.CenterStart))
         ButtonLayer(modifier = Modifier.align(Alignment.TopStart))
         PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
+        NotificationLayer()
     }
 }

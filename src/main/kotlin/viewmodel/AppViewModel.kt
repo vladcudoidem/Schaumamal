@@ -31,6 +31,7 @@ import model.CoroutineManager
 import model.InspectorState
 import model.LayoutInspector
 import model.extractionManagers.getExtractionManager
+import model.notification.NotificationManager
 import model.parser.xmlElements.Node
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
@@ -154,6 +155,11 @@ class AppViewModel(
             }
         }
     }
+
+    /* Notification Layer */
+
+    // Todo: inject
+    var notificationManager = NotificationManager()
 
     /* Button Layer */
 
