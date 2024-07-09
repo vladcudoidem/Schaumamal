@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import model.notification.Notification
-import shared.Colors.elevatedBackgroundColor
+import shared.Colors.accentColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.largePadding
 import shared.Dimensions.notificationPillHeight
@@ -27,7 +27,7 @@ fun NotificationPill(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(elevatedBackgroundColor)
+            .background(accentColor)
             .padding(start = largePadding, end = largePadding)
             .height(notificationPillHeight)
     ) {

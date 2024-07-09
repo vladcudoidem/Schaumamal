@@ -88,7 +88,11 @@ fun UpperPane(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(largeCornerRadius))
-            .border(paneBorderWidth, paneBorderColor, RoundedCornerShape(largeCornerRadius))
+            .border(
+                width = paneBorderWidth,
+                color = paneBorderColor,
+                shape = RoundedCornerShape(largeCornerRadius)
+            )
             .background(elevatedBackgroundColor)
     ) {
         FadeVisibility(viewModel.showXmlTree) {
@@ -118,7 +122,11 @@ fun LowerPane(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .clip(RoundedCornerShape(largeCornerRadius))
-            .border(paneBorderWidth, paneBorderColor, RoundedCornerShape(largeCornerRadius))
+            .border(
+                width = paneBorderWidth,
+                color = paneBorderColor,
+                shape = RoundedCornerShape(largeCornerRadius)
+            )
             .background(elevatedBackgroundColor)
             .onSizeChanged { size ->
                 viewModel.onLowerPaneSizeChanged(size)

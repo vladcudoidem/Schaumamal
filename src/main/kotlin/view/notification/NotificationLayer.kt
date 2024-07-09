@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import shared.Dimensions.mediumPadding
+import shared.Dimensions.largePadding
 
 @Composable
 fun NotificationLayer(modifier: Modifier = Modifier) {
@@ -20,7 +20,7 @@ fun NotificationLayer(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
             .fillMaxSize()
-            .padding(mediumPadding)
+            .padding(largePadding)
     ) {
         AnimatedVisibility(
             visible = viewModel.notificationManager.active,
