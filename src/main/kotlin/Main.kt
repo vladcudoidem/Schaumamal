@@ -1,19 +1,14 @@
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import model.CoroutineManager
-import shared.Dimensions.minimumWindowHeight
-import shared.Dimensions.minimumWindowWidth
-import view.MainScreen
 import viewmodel.AppViewModel
-import java.awt.Dimension
+import zlayground.Dashboard
 
 val AppViewModel = compositionLocalOf<AppViewModel> {
     error("No view model provided.")
@@ -21,7 +16,18 @@ val AppViewModel = compositionLocalOf<AppViewModel> {
 
 fun main() = application {
 
-    val viewModel = remember {
+    Window(
+        title = "Schaumamal",
+        icon = painterResource("appIcons/icon.png"),
+        onCloseRequest = ::exitApplication,
+        state = WindowState(position = WindowPosition(alignment = Alignment.BottomEnd))
+    ) {
+        MaterialTheme {
+            Dashboard()
+        }
+    }
+
+    /*val viewModel = remember {
         AppViewModel(
             coroutineManager = CoroutineManager(
                 customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
@@ -47,5 +53,5 @@ fun main() = application {
                 MainScreen()
             }
         }
-    }
+    }*/
 }
