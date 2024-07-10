@@ -31,6 +31,7 @@ import model.CoroutineManager
 import model.InspectorState
 import model.LayoutInspector
 import model.extractionManagers.getExtractionManager
+import model.notification.Notification
 import model.notification.NotificationManager
 import model.parser.xmlElements.Node
 import shared.Dimensions.Initial.initialPaneWidth
@@ -54,6 +55,7 @@ import viewmodel.extraUiLogic.propertyMap
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 class AppViewModel(
     private val coroutineManager: CoroutineManager
@@ -172,7 +174,15 @@ class AppViewModel(
 
     val areResizeButtonsEnabled get() = layoutInspector.state == InspectorState.POPULATED
 
-    fun onExtractButtonPressed() = layoutInspector.extractLayout()
+    fun onExtractButtonPressed() = layoutInspector.extractLayout(
+        onException = {
+            val exceptionNotification = Notification(
+                description = "Dump failed.",
+                timeout = 4000.milliseconds
+            )
+            notificationManager.notify(exceptionNotification)
+        }
+    )
 
     // This is a method that is highly dependent on the specific arrangement of the UI components on the screen. It will
     // likely break when the UI undergoes significant change.

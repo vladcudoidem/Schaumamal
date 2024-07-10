@@ -23,7 +23,7 @@ class LayoutInspector(
     var selectedNode by mutableStateOf(Node.Empty)
         private set
 
-    fun extractLayout() {
+    fun extractLayout(onException: (Exception) -> Unit = { }) {
         // Save previous state so that we can return to it in case the extraction fails.
         val previousState = state
         state = InspectorState.WAITING
@@ -37,7 +37,7 @@ class LayoutInspector(
                 // the end of this block, the data and UI state remain unchanged.
                 state = previousState
 
-                // Todo: notify the use in case of failure.
+                onException(e)
                 return@launch
             }
 
