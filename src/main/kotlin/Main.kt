@@ -3,7 +3,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
@@ -20,7 +19,7 @@ fun main() = application {
         title = "Schaumamal",
         icon = painterResource("appIcons/icon.png"),
         onCloseRequest = ::exitApplication,
-        state = WindowState(position = WindowPosition(alignment = Alignment.BottomEnd))
+        state = WindowState(position = WindowPosition(alignment = Alignment.TopEnd))
     ) {
         MaterialTheme {
             Dashboard()

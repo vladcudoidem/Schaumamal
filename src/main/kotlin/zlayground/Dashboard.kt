@@ -68,7 +68,7 @@ fun Dashboard() {
             }
         }
 
-        Row {
+        /*Row {
             Button(
                 onClick = ::checkDirectJsonExistence
             ) {
@@ -85,6 +85,34 @@ fun Dashboard() {
                 onClick = ::deleteDirectJson
             ) {
                 Text("Delete direct JSON")
+            }
+        }*/
+
+        Row {
+            Button(
+                onClick = ::saveJsonData
+            ) {
+                Text("Save to JSON")
+            }
+
+            Button(
+                onClick = ::readJsonData
+            ) {
+                Text("Read JSON")
+            }
+
+            Button(
+                onClick = ::readChangeWriteJson
+            ) {
+                Text("Read, change, write")
+            }
+        }
+
+        Row {
+            Button(
+                onClick = ::readNewJsonData
+            ) {
+                Text("Read new JSON")
             }
         }
     }

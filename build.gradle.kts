@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
     id("dev.hydraulic.conveyor") version "1.10"
+    kotlin("plugin.serialization") version "1.8.20"
 }
 
 group = "com.vladvamos.schaumamal"
@@ -23,6 +24,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }
 
 compose.desktop {
