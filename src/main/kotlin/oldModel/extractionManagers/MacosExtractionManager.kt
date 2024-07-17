@@ -1,14 +1,14 @@
-package model.extractionManagers
+package oldModel.extractionManagers
 
-import model.Names.DEVICE_FOLDER
-import model.Names.DUMP_FILE
-import model.Names.HIDDEN_LOCAL_APPLICATION_FOLDER
-import model.Names.LOCAL_CONTENT_FOLDER
-import model.Names.SCREENSHOT_FILE
-import model.ROOT
-import model.at
+import oldModel.Names.DEVICE_FOLDER
+import oldModel.Names.DUMP_FILE
+import oldModel.Names.LOCAL_APPLICATION_FOLDER
+import oldModel.Names.LOCAL_CONTENT_FOLDER
+import oldModel.Names.SCREENSHOT_FILE
+import oldModel.ROOT
+import oldModel.at
 
-object LinuxExtractionManager : ExtractionManager {
+object MacosExtractionManager : ExtractionManager {
 
     override fun extract(): DataPaths {
         createFolder()
@@ -21,21 +21,23 @@ object LinuxExtractionManager : ExtractionManager {
 
     private fun createFolder() {
         val userHomePath = System.getProperty("user.home")
+        val applicationSupportPath = userHomePath at "Library" at "Application Support"
 
         ProcessBuilder(
             "mkdir",
-            userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER
+            applicationSupportPath at LOCAL_APPLICATION_FOLDER
         ).start().waitFor()
 
         ProcessBuilder(
             "mkdir",
-            userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER
+            applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER
         ).start().waitFor()
     }
 
     private fun dumpXml(): String {
         val userHomePath = System.getProperty("user.home")
-        val adbPath = userHomePath at "Android" at "Sdk" at "platform-tools" at "adb"
+        val applicationSupportPath = userHomePath at "Library" at "Application Support"
+        val adbPath = userHomePath at "Library" at "Android" at "sdk" at "platform-tools" at "adb"
 
         ProcessBuilder(
             adbPath,
@@ -50,7 +52,7 @@ object LinuxExtractionManager : ExtractionManager {
             adbPath,
             "pull",
             ROOT at DEVICE_FOLDER at DUMP_FILE,
-            userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at DUMP_FILE
+            applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at DUMP_FILE
         ).start().waitFor() onError { error("Pulling dump from device failed!") }
 
         ProcessBuilder(
@@ -60,12 +62,13 @@ object LinuxExtractionManager : ExtractionManager {
             ROOT at DEVICE_FOLDER at DUMP_FILE
         ).start().waitFor() onError { error("Removing dump from device failed!") }
 
-        return userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at DUMP_FILE
+        return applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at DUMP_FILE
     }
 
     private fun takeScreenshot(): String {
         val userHomePath = System.getProperty("user.home")
-        val adbPath = userHomePath at "Android" at "Sdk" at "platform-tools" at "adb"
+        val applicationSupportPath = userHomePath at "Library" at "Application Support"
+        val adbPath = userHomePath at "Library" at "Android" at "sdk" at "platform-tools" at "adb"
 
         ProcessBuilder(
             adbPath,
@@ -78,7 +81,7 @@ object LinuxExtractionManager : ExtractionManager {
             adbPath,
             "pull",
             ROOT at DEVICE_FOLDER at SCREENSHOT_FILE,
-            userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at SCREENSHOT_FILE
+            applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at SCREENSHOT_FILE
         ).start().waitFor() onError { error("Pulling screenshot from device failed!") }
 
         ProcessBuilder(
@@ -88,6 +91,6 @@ object LinuxExtractionManager : ExtractionManager {
             ROOT at DEVICE_FOLDER at SCREENSHOT_FILE
         ).start().waitFor() onError { error("Removing screenshot from device failed!") }
 
-        return userHomePath at HIDDEN_LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at SCREENSHOT_FILE
+        return applicationSupportPath at LOCAL_APPLICATION_FOLDER at LOCAL_CONTENT_FOLDER at SCREENSHOT_FILE
     }
 }

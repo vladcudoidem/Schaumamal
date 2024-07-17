@@ -1,6 +1,6 @@
 package shared
 
-import model.on
+import oldModel.on
 
 @Suppress("MayBeConstant", "unused")
 object Values {

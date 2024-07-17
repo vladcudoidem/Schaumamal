@@ -1,4 +1,4 @@
-package model
+package oldModel
 
 enum class InspectorState {
     EMPTY, WAITING, POPULATED

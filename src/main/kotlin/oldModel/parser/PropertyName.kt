@@ -1,4 +1,4 @@
-package model.parser
+package oldModel.parser
 
 object PropertyName {
 

@@ -2,7 +2,7 @@ package viewmodel.extraUiLogic
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import model.parser.xmlElements.Node
+import oldModel.parser.xmlElements.Node
 import viewmodel.Graphics
 
 // "Display" means that the offset and size have already been transformed to screen pixels by multiplying the screenshot

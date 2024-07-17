@@ -1,12 +1,12 @@
-package model.extractionManagers
+package oldModel.extractionManagers
 
-import model.Names.DEVICE_FOLDER
-import model.Names.DUMP_FILE
-import model.Names.LOCAL_APPLICATION_FOLDER
-import model.Names.LOCAL_CONTENT_FOLDER
-import model.Names.SCREENSHOT_FILE
-import model.ROOT
-import model.at
+import oldModel.Names.DEVICE_FOLDER
+import oldModel.Names.DUMP_FILE
+import oldModel.Names.LOCAL_APPLICATION_FOLDER
+import oldModel.Names.LOCAL_CONTENT_FOLDER
+import oldModel.Names.SCREENSHOT_FILE
+import oldModel.ROOT
+import oldModel.at
 
 object WindowsExtractionManager : ExtractionManager {
 

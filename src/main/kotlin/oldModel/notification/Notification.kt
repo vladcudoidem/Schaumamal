@@ -1,4 +1,4 @@
-package model.notification
+package oldModel.notification
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds

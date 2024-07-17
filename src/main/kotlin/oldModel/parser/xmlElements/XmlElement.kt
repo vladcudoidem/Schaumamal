@@ -1,4 +1,4 @@
-package model.parser.xmlElements
+package oldModel.parser.xmlElements
 
 interface XmlElement {
     val children: List<XmlElement>

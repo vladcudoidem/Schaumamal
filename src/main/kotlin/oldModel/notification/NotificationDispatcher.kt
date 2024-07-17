@@ -1,4 +1,4 @@
-package model.notification
+package oldModel.notification
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
