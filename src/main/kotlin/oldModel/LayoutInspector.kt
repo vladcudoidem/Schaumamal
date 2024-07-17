@@ -1,11 +1,11 @@
-package model
+package oldModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import model.extractionManagers.ExtractionManager
-import model.parser.XmlParser
-import model.parser.xmlElements.Node
+import oldModel.extractionManagers.ExtractionManager
+import oldModel.parser.XmlParser
+import oldModel.parser.xmlElements.Node
 import java.io.File
 
 class LayoutInspector(

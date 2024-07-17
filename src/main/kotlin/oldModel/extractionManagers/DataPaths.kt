@@ -1,4 +1,4 @@
-package model.extractionManagers
+package oldModel.extractionManagers
 
 data class DataPaths(
     val localDumpPath: String,

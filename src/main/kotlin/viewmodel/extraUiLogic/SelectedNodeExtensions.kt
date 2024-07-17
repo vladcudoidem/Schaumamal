@@ -1,7 +1,7 @@
 package viewmodel.extraUiLogic
 
-import model.parser.PropertyName
-import model.parser.xmlElements.Node
+import oldModel.parser.PropertyName
+import oldModel.parser.xmlElements.Node
 
 val Node.propertyMap
     get() = linkedMapOf(

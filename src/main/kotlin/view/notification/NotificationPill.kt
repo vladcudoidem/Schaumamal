@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import model.notification.Notification
+import oldModel.notification.Notification
 import shared.Colors.accentColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.largePadding

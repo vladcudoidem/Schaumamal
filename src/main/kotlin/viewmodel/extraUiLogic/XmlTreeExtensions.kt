@@ -7,11 +7,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import model.parser.xmlElements.Display
-import model.parser.xmlElements.Node
-import model.parser.xmlElements.System
-import model.parser.xmlElements.Window
-import model.parser.xmlElements.XmlElement
+import oldModel.parser.xmlElements.Display
+import oldModel.parser.xmlElements.Node
+import oldModel.parser.xmlElements.System
+import oldModel.parser.xmlElements.Window
+import oldModel.parser.xmlElements.XmlElement
 import shared.Colors
 import shared.Colors.accentColor
 import viewmodel.XmlTreeLine

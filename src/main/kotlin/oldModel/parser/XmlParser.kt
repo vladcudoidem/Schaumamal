@@ -1,9 +1,9 @@
-package model.parser
+package oldModel.parser
 
-import model.parser.xmlElements.Display
-import model.parser.xmlElements.Node
-import model.parser.xmlElements.System
-import model.parser.xmlElements.Window
+import oldModel.parser.xmlElements.Display
+import oldModel.parser.xmlElements.Node
+import oldModel.parser.xmlElements.System
+import oldModel.parser.xmlElements.Window
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import java.io.File
