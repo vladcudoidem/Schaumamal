@@ -3,15 +3,23 @@ package zlayground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.android.ddmlib.AndroidDebugBridge
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import model.at
 import java.io.File
+import java.util.concurrent.TimeUnit
+
+// adb shell cmd display get-displays
 
 /*
 * Todo:
 *  - JSON manipulation (also: outdated/new properties) -> Done!
+*      -> Outdated properties just get ignored and passively removed and new ones need a default value
 *  - ADB (maybe with some library?)
+*      -> https://github.com/Malinskiy/adam
+*      -> test pushing/pulling, shell commands, device list, adb connection and connecting to device
 * */
 
 /* Utils */
@@ -129,4 +137,47 @@ fun readNewJsonData() {
     val config = json.decodeFromString<NewConfig>(configText)
 
     o(config.toString())
+}
+
+/* Adb */
+
+fun testAdam() = runBlocking {
+    /*//Start the adb server
+    StartAdbInteractor().execute()
+
+    //Create adb client
+    val adb = AndroidDebugBridgeClientFactory().build()
+
+    //Execute a request
+    val output = adb.execute(ShellCommandRequest("echo hello"), "emulator-5554")
+    println(output) // hello*/
+
+    o("not implemented")
+}
+
+lateinit var adb: AndroidDebugBridge
+
+fun initDdmlib() {
+    AndroidDebugBridge.init(false)
+    o("initialized ddmlib")
+}
+
+fun createAdb() {
+    adb = AndroidDebugBridge.createBridge("adb", false, 5, TimeUnit.SECONDS)
+    o("initialized adb")
+}
+
+fun checkInitialDevicesList() {
+    val hasDevices = adb.hasInitialDeviceList()
+    o(hasDevices)
+}
+
+fun showDevicesList() {
+    val devices = adb.devices
+    o(devices.map { it.serialNumber }.toString())
+}
+
+fun takeSS() {
+    val device = adb.devices.first()
+    device.getScreenshot()
 }

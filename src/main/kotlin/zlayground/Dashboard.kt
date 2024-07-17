@@ -115,5 +115,39 @@ fun Dashboard() {
                 Text("Read new JSON")
             }
         }
+
+        Row {
+            Button(
+                onClick = ::testAdam
+            ) {
+                Text("Test Adam")
+            }
+        }
+
+        Row {
+            Button(
+                onClick = ::initDdmlib
+            ) {
+                Text("Init Ddmlib")
+            }
+
+            Button(
+                onClick = ::createAdb
+            ) {
+                Text("Create ADB")
+            }
+
+            Button(
+                onClick = ::checkInitialDevicesList
+            ) {
+                Text("Has Initial Devices")
+            }
+
+            Button(
+                onClick = ::showDevicesList
+            ) {
+                Text("Show Devices")
+            }
+        }
     }
 }
