@@ -1,6 +1,5 @@
 package view.screenshot
 
-import AppViewModel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,17 +24,20 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import kotlinx.coroutines.cancel
+import org.koin.compose.koinInject
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
+import viewmodel.AppViewModel
 import java.awt.Cursor
 
 @Composable
-fun ScreenshotLayer(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun ScreenshotLayer(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     // This is the Box that places the next Box correctly on the screen.
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -71,9 +73,10 @@ fun ScreenshotLayer(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Screenshot(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun Screenshot(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     // The context of this coroutine scope is needed for scrolling in the view model.
     val scope = rememberCoroutineScope()
     DisposableEffect(Unit) {
@@ -108,9 +111,10 @@ fun Screenshot(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Highlighter(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun Highlighter(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     Canvas(modifier = modifier) {
         drawRect(
             color = Color.Red,

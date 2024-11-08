@@ -1,6 +1,5 @@
 package view.notification
 
-import AppViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -10,12 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.koin.compose.koinInject
 import shared.Dimensions.largePadding
+import viewmodel.AppViewModel
 
 @Composable
-fun NotificationLayer(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun NotificationLayer(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = modifier
