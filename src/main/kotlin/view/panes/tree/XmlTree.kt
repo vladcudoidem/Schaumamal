@@ -1,6 +1,5 @@
 package view.panes.tree
 
-import AppViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
@@ -19,17 +18,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import org.koin.compose.koinInject
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
 import view.CustomScrollbarStyle
+import viewmodel.AppViewModel
 import java.awt.Cursor
 
 @Composable
-fun XmlTree(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun XmlTree(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     val verticalScrollbarAdapter = rememberScrollbarAdapter(viewModel.upperPaneLazyListState)
     val horizontalScrollbarAdapter = rememberScrollbarAdapter(viewModel.upperPaneHorizontalScrollState)
 

@@ -1,35 +1,28 @@
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import oldModel.CoroutineManager
+import org.koin.compose.KoinApplication
+import org.koin.compose.koinInject
 import shared.Dimensions.minimumWindowHeight
 import shared.Dimensions.minimumWindowWidth
 import view.MainScreen
 import viewmodel.AppViewModel
 import java.awt.Dimension
 
-val AppViewModel = compositionLocalOf<AppViewModel> {
-    error("No view model provided.")
-}
-
 fun main() = application {
 
-    val viewModel = remember {
-        AppViewModel(
-            coroutineManager = CoroutineManager(
-                customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+    KoinApplication(
+        application = {
+            modules(
+                viewModelModule,
+                inspectorModule,
+                coroutineModule,
+                extractionModule
             )
-        )
-    }
-
-    CompositionLocalProvider(AppViewModel provides viewModel) {
+        }
+    ) {
+        val viewModel: AppViewModel = koinInject()
 
         Window(
             title = "Schaumamal",

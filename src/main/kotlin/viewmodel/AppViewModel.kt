@@ -23,14 +23,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.toSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import oldModel.CoroutineManager
 import oldModel.InspectorState
 import oldModel.LayoutInspector
-import oldModel.extractionManagers.getExtractionManager
 import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
 import oldModel.parser.xmlElements.Node
@@ -58,16 +54,9 @@ import kotlin.math.min
 import kotlin.time.Duration.Companion.milliseconds
 
 class AppViewModel(
+    private val layoutInspector: LayoutInspector,
     private val coroutineManager: CoroutineManager
 ) {
-    /* Model */
-
-    private val layoutInspector = LayoutInspector(
-        coroutineManager = CoroutineManager(
-            customCoroutineScope = CoroutineScope(Dispatchers.IO + Job())
-        ),
-        extractionManager = getExtractionManager()
-    )
 
     /* Screenshot Layer */
 

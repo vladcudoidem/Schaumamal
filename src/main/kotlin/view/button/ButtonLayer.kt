@@ -1,6 +1,5 @@
 package view.button
 
-import AppViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,14 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import org.koin.compose.koinInject
 import shared.Dimensions.mediumPadding
 import view.button.displayControl.DisplayControlPill
 import view.button.extraction.ExtractionPill
+import viewmodel.AppViewModel
 
 @Composable
-fun ButtonLayer(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun ButtonLayer(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(mediumPadding),

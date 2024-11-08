@@ -23,6 +23,8 @@ dependencies {
     implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("io.insert-koin:koin-core:4.0.0")
+    implementation("io.insert-koin:koin-compose:4.0.0")
 }
 
 compose.desktop {

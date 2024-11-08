@@ -1,6 +1,5 @@
 package view.panes
 
-import AppViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import org.koin.compose.koinInject
 import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.paneBorderColor
@@ -32,11 +32,13 @@ import shared.Dimensions.paneBorderWidth
 import view.FadeVisibility
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
+import viewmodel.AppViewModel
 
 @Composable
-fun PaneLayer(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun PaneLayer(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
     // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
     BoxWithConstraints(
@@ -81,9 +83,10 @@ fun PaneLayer(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun UpperPane(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun UpperPane(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -115,9 +118,10 @@ fun UpperPane(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LowerPane(modifier: Modifier = Modifier) {
-    val viewModel = AppViewModel.current
-
+fun LowerPane(
+    viewModel: AppViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
