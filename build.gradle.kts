@@ -3,7 +3,6 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
-    id("dev.hydraulic.conveyor") version "1.10"
 }
 
 group = "com.vladvamos.schaumamal"
@@ -22,9 +21,9 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation("io.insert-koin:koin-core:4.0.0")
-    implementation("io.insert-koin:koin-compose:4.0.0")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.koin.core)
+    implementation(libs.koin.compose)
 }
 
 compose.desktop {
