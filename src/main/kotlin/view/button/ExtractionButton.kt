@@ -1,4 +1,4 @@
-package view.button.extraction
+package view.button
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.size
@@ -10,24 +10,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import org.koin.compose.koinInject
 import shared.Colors.extractionButtonColor
 import shared.Dimensions.extractButtonDiameter
-import viewmodel.AppViewModel
 import java.awt.Cursor
 
 @Composable
 fun ExtractionButton(
-    viewModel: AppViewModel = koinInject(),
+    isExtractButtonEnabled: Boolean,
+    onExtractButtonPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val disabledBackgroundColor by animateColorAsState(
-        if (viewModel.isExtractButtonEnabled) extractionButtonColor else extractionButtonColor.copy(alpha = 0.3f)
+        if (isExtractButtonEnabled) extractionButtonColor else extractionButtonColor.copy(alpha = 0.3f)
     )
 
     Button(
-        onClick = viewModel::onExtractButtonPressed,
-        enabled = viewModel.isExtractButtonEnabled,
+        onClick = onExtractButtonPressed,
+        enabled = isExtractButtonEnabled,
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = extractionButtonColor,

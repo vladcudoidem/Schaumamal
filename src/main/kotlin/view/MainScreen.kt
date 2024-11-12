@@ -33,8 +33,20 @@ fun MainScreen(
             .background(backgroundColor)
     ) {
         ScreenshotLayer(modifier = Modifier.align(Alignment.CenterStart))
-        ButtonLayer(modifier = Modifier.align(Alignment.TopStart))
+
+        ButtonLayer(
+            extractButtonText = viewModel.extractButtonText,
+            isExtractButtonEnabled = viewModel.isExtractButtonEnabled,
+            onExtractButtonPressed = viewModel::onExtractButtonPressed,
+            areResizeButtonsEnabled = viewModel.areResizeButtonsEnabled,
+            onFitScreenshotToScreen = viewModel::onFitScreenshotToScreenButtonPressed,
+            onEnlargeScreenshot = viewModel::onEnlargeScreenshotButtonPressed,
+            onShrinkScreenshot = viewModel::onShrinkScreenshotButtonPressed,
+            modifier = Modifier.align(Alignment.TopStart)
+        )
+
         PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
+
         NotificationLayer()
     }
 }

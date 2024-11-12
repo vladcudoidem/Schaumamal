@@ -1,23 +1,32 @@
 package view.button
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import org.koin.compose.koinInject
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
-import view.button.displayControl.DisplayControlPill
-import view.button.extraction.ExtractionPill
-import viewmodel.AppViewModel
 
 @Composable
 fun ButtonLayer(
-    viewModel: AppViewModel = koinInject(),
+    extractButtonText: String,
+    isExtractButtonEnabled: Boolean,
+    onExtractButtonPressed: () -> Unit,
+    areResizeButtonsEnabled: Boolean,
+    onFitScreenshotToScreen: () -> Unit,
+    onEnlargeScreenshot: () -> Unit,
+    onShrinkScreenshot: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -29,7 +38,25 @@ fun ButtonLayer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(mediumPadding)
         ) {
-            ExtractionPill()
+            HorizontalPill(modifier = modifier) {
+                ExtractionButton(
+                    isExtractButtonEnabled = isExtractButtonEnabled,
+                    onExtractButtonPressed = onExtractButtonPressed
+                )
+
+                Text(
+                    text = extractButtonText,
+                    color = discreteTextColor,
+                    fontFamily = FontFamily.SansSerif,
+                    modifier = Modifier
+                        .padding(end = mediumPadding + 3.dp)
+                        .animateContentSize(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
+                )
+            }
 
             DisplayControlPill()
         }
@@ -38,20 +65,20 @@ fun ButtonLayer(
         Spacer(modifier = Modifier.weight(1f))
 
         RoundIconButton(
-            onClick = viewModel::onFitScreenshotToScreenButtonPressed,
-            enabled = viewModel.areResizeButtonsEnabled,
+            onClick = onFitScreenshotToScreen,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/fit.svg")
         )
 
         RoundIconButton(
-            onClick = viewModel::onEnlargeScreenshotButtonPressed,
-            enabled = viewModel.areResizeButtonsEnabled,
+            onClick = onEnlargeScreenshot,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/enlarge.svg")
         )
 
         RoundIconButton(
-            onClick = viewModel::onShrinkScreenshotButtonPressed,
-            enabled = viewModel.areResizeButtonsEnabled,
+            onClick = onShrinkScreenshot,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/shrink.svg")
         )
     }
