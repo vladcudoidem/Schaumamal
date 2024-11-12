@@ -1,4 +1,4 @@
-package view.button.displayControl
+package view.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,8 +15,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
-import view.button.HorizontalPill
-import view.button.RoundIconButton
 
 @Composable
 fun DisplayControlPill(modifier: Modifier = Modifier) {
