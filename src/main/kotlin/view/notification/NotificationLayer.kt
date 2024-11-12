@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.koin.compose.koinInject
+import oldModel.notification.Notification
 import shared.Dimensions.largePadding
-import viewmodel.AppViewModel
 
 @Composable
 fun NotificationLayer(
-    viewModel: AppViewModel = koinInject(),
+    showNotification: Boolean,
+    currentNotification: Notification,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -25,7 +25,7 @@ fun NotificationLayer(
             .padding(largePadding)
     ) {
         AnimatedVisibility(
-            visible = viewModel.notificationManager.active,
+            visible = showNotification,
             enter = slideInVertically(
                 initialOffsetY = { fullHeight -> fullHeight * 2 }
             ),
@@ -33,7 +33,7 @@ fun NotificationLayer(
                 targetOffsetY = { fullHeight -> fullHeight * 2 }
             )
         ) {
-            NotificationPill(viewModel.notificationManager.latestNotification)
+            NotificationPill(currentNotification)
         }
     }
 }

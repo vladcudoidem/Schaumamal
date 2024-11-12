@@ -47,6 +47,9 @@ fun MainScreen(
 
         PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
 
-        NotificationLayer()
+        NotificationLayer(
+            showNotification = viewModel.notificationManager.active,
+            currentNotification = viewModel.notificationManager.latestNotification
+        )
     }
 }
