@@ -17,12 +17,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
+import viewmodel.ExtractButtonState
 
 @Composable
 fun ButtonLayer(
-    extractButtonText: String,
-    isExtractButtonEnabled: Boolean,
-    onExtractButtonPressed: () -> Unit,
+    extractButtonState: ExtractButtonState,
     areResizeButtonsEnabled: Boolean,
     onFitScreenshotToScreen: () -> Unit,
     onEnlargeScreenshot: () -> Unit,
@@ -40,12 +39,12 @@ fun ButtonLayer(
         ) {
             HorizontalPill(modifier = modifier) {
                 ExtractionButton(
-                    isExtractButtonEnabled = isExtractButtonEnabled,
-                    onExtractButtonPressed = onExtractButtonPressed
+                    isExtractButtonEnabled = extractButtonState.isEnabled,
+                    onExtractButtonPressed = extractButtonState::onButtonPressed
                 )
 
                 Text(
-                    text = extractButtonText,
+                    text = extractButtonState.text,
                     color = discreteTextColor,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier

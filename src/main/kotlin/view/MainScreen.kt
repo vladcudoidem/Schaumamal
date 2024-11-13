@@ -35,9 +35,7 @@ fun MainScreen(
         ScreenshotLayer(modifier = Modifier.align(Alignment.CenterStart))
 
         ButtonLayer(
-            extractButtonText = viewModel.extractButtonText,
-            isExtractButtonEnabled = viewModel.isExtractButtonEnabled,
-            onExtractButtonPressed = viewModel::onExtractButtonPressed,
+            extractButtonState = viewModel.extractButtonState,
             areResizeButtonsEnabled = viewModel.areResizeButtonsEnabled,
             onFitScreenshotToScreen = viewModel::onFitScreenshotToScreenButtonPressed,
             onEnlargeScreenshot = viewModel::onEnlargeScreenshotButtonPressed,
@@ -48,8 +46,7 @@ fun MainScreen(
         PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
 
         NotificationLayer(
-            showNotification = viewModel.notificationManager.active,
-            currentNotification = viewModel.notificationManager.latestNotification
+            notificationManager = viewModel.notificationManager
         )
     }
 }

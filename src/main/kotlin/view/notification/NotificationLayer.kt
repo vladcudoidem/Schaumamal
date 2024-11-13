@@ -9,13 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import oldModel.notification.Notification
+import oldModel.notification.NotificationManager
 import shared.Dimensions.largePadding
 
 @Composable
 fun NotificationLayer(
-    showNotification: Boolean,
-    currentNotification: Notification,
+    notificationManager: NotificationManager,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -25,7 +24,7 @@ fun NotificationLayer(
             .padding(largePadding)
     ) {
         AnimatedVisibility(
-            visible = showNotification,
+            visible = notificationManager.active,
             enter = slideInVertically(
                 initialOffsetY = { fullHeight -> fullHeight * 2 }
             ),
@@ -33,7 +32,7 @@ fun NotificationLayer(
                 targetOffsetY = { fullHeight -> fullHeight * 2 }
             )
         ) {
-            NotificationPill(currentNotification)
+            NotificationPill(notificationManager.latestNotification)
         }
     }
 }

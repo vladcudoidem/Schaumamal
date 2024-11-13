@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
 import oldModel.CoroutineManager
 import oldModel.InspectorState
 import oldModel.LayoutInspector
-import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
 import oldModel.parser.xmlElements.Node
 import shared.Dimensions.Initial.initialPaneWidth
@@ -51,11 +50,12 @@ import viewmodel.extraUiLogic.propertyMap
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.min
-import kotlin.time.Duration.Companion.milliseconds
 
 class AppViewModel(
     private val layoutInspector: LayoutInspector,
-    private val coroutineManager: CoroutineManager
+    private val coroutineManager: CoroutineManager,
+    val notificationManager: NotificationManager,
+    val extractButtonState: ExtractButtonState
 ) {
 
     /* Screenshot Layer */
@@ -147,31 +147,9 @@ class AppViewModel(
         }
     }
 
-    /* Notification Layer */
-
-    // Todo: inject
-    var notificationManager = NotificationManager()
-
     /* Button Layer */
 
-    val isExtractButtonEnabled get() = layoutInspector.state != InspectorState.WAITING
-    val extractButtonText
-        get() = when (layoutInspector.state) {
-            InspectorState.WAITING -> "Dumping..."
-            else -> "Smash the red button to dump."
-        }
-
     val areResizeButtonsEnabled get() = layoutInspector.state == InspectorState.POPULATED
-
-    fun onExtractButtonPressed() = layoutInspector.extractLayout(
-        onException = {
-            val exceptionNotification = Notification(
-                description = "Dump failed.",
-                timeout = 4000.milliseconds
-            )
-            notificationManager.notify(exceptionNotification)
-        }
-    )
 
     // This is a method that is highly dependent on the specific arrangement of the UI components on the screen. It will
     // likely break when the UI undergoes significant change.
@@ -307,8 +285,8 @@ class AppViewModel(
             event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
                 when (event.key) {
                     Key.D -> {
-                        if (isExtractButtonEnabled) {
-                            onExtractButtonPressed()
+                        if (extractButtonState.isEnabled) {
+                            extractButtonState.onButtonPressed()
                         }
                         true
                     }

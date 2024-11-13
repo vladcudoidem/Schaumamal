@@ -16,6 +16,7 @@ fun main() = application {
         application = {
             modules(
                 viewModelModule,
+                notificationModule,
                 inspectorModule,
                 coroutineModule,
                 extractionModule
