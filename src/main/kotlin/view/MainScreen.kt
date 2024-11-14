@@ -32,18 +32,24 @@ fun MainScreen(
             .fillMaxSize()
             .background(backgroundColor)
     ) {
-        ScreenshotLayer(modifier = Modifier.align(Alignment.CenterStart))
+        ScreenshotLayer(
+            screenshotState = viewModel.screenshotState,
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
 
         ButtonLayer(
             extractButtonState = viewModel.extractButtonState,
             areResizeButtonsEnabled = viewModel.areResizeButtonsEnabled,
-            onFitScreenshotToScreen = viewModel::onFitScreenshotToScreenButtonPressed,
-            onEnlargeScreenshot = viewModel::onEnlargeScreenshotButtonPressed,
-            onShrinkScreenshot = viewModel::onShrinkScreenshotButtonPressed,
+            screenshotState = viewModel.screenshotState,
             modifier = Modifier.align(Alignment.TopStart)
         )
 
-        PaneLayer(modifier = Modifier.align(Alignment.CenterEnd))
+        PaneLayer(
+            paneState = viewModel.paneState,
+            onWidthConstraintChanged = viewModel::onPanesWidthConstraintChanged,
+            onHeightConstraintChanged = viewModel::onPanesHeightConstraintChanged,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
 
         NotificationLayer(
             notificationManager = viewModel.notificationManager

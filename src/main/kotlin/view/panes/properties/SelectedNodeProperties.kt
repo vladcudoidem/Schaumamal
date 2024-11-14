@@ -2,6 +2,7 @@ package view.panes.properties
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.HorizontalScrollbar
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -17,29 +18,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import org.koin.compose.koinInject
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
 import view.CustomScrollbarStyle
-import viewmodel.AppViewModel
 import java.awt.Cursor
 
 @Composable
 fun SelectedNodeProperties(
-    viewModel: AppViewModel = koinInject(),
+    selectedNodePropertyMap: LinkedHashMap<String, String>,
+    verticalScrollState: ScrollState,
+    horizontalScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-    val verticalScrollbarAdapter = rememberScrollbarAdapter(viewModel.lowerPaneVerticalScrollState)
-    val horizontalScrollbarAdapter = rememberScrollbarAdapter(viewModel.lowerPaneHorizontalScrollState)
+    val verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScrollState)
+    val horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScrollState)
 
     Box(modifier = modifier.fillMaxSize()) {
 
         Column(
             modifier = Modifier
-                .verticalScroll(viewModel.lowerPaneVerticalScrollState)
-                .horizontalScroll(viewModel.lowerPaneHorizontalScrollState)
+                .verticalScroll(verticalScrollState)
+                .horizontalScroll(horizontalScrollState)
                 .padding(
                     top = mediumPadding,
                     bottom = mediumPadding * 4 + scrollbarThickness,
@@ -48,7 +49,7 @@ fun SelectedNodeProperties(
                 )
                 .animateContentSize()
         ) {
-            viewModel.selectedNodePropertyMap.forEach { (property, value) ->
+            selectedNodePropertyMap.forEach { (property, value) ->
                 PropertyRow(property = property, value = value)
             }
         }

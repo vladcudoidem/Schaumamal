@@ -1,6 +1,7 @@
 package view.panes
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import org.koin.compose.koinInject
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.paneBorderColor
@@ -32,11 +35,14 @@ import shared.Dimensions.paneBorderWidth
 import view.FadeVisibility
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
-import viewmodel.AppViewModel
+import viewmodel.PaneState
+import viewmodel.XmlTreeLine
 
 @Composable
 fun PaneLayer(
-    viewModel: AppViewModel = koinInject(),
+    paneState: PaneState,
+    onWidthConstraintChanged: (Dp) -> Unit,
+    onHeightConstraintChanged: (Dp) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
@@ -46,11 +52,11 @@ fun PaneLayer(
     ) {
 
         LaunchedEffect(maxWidth) {
-            viewModel.onPanesWidthConstraintChanged(newWidthConstraint = maxWidth)
+            onWidthConstraintChanged(maxWidth)
         }
 
         LaunchedEffect(maxHeight) {
-            viewModel.onPanesHeightConstraintChanged(newHeightConstraint = maxHeight)
+            onHeightConstraintChanged(maxHeight)
         }
 
         Row(
@@ -59,23 +65,36 @@ fun PaneLayer(
                 .fillMaxHeight()
                 .padding(mediumPadding)
         ) {
-            VerticalWedge()
+            VerticalWedge(
+                onDrag = paneState::onVerticalWedgeDrag
+            )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 UpperPane(
+                    showXmlTree = paneState.showXmlTree,
+                    flatXmlTree = paneState.flatXmlTree,
+                    lazyListState = paneState.upperPaneLazyListState,
+                    horizontalScrollState = paneState.upperPaneHorizontalScrollState,
                     modifier = Modifier
-                        .height(viewModel.upperPaneHeight)
-                        .width(viewModel.paneWidth)
+                        .height(paneState.upperPaneHeight)
+                        .width(paneState.paneWidth)
                 )
 
-                HorizontalWedge()
+                HorizontalWedge(
+                    onDrag = paneState::onHorizontalWedgeDrag
+                )
 
                 LowerPane(
+                    showSelectedNodeProperties = paneState.showSelectedNodeProperties,
+                    onSizeChanged = paneState::onLowerPaneSizeChanged,
+                    selectedNodePropertyMap = paneState.selectedNodePropertyMap,
+                    verticalScrollState = paneState.lowerPaneVerticalScrollState,
+                    horizontalScrollState = paneState.lowerPaneHorizontalScrollState,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(viewModel.paneWidth)
+                        .width(paneState.paneWidth)
                 )
             }
         }
@@ -84,7 +103,10 @@ fun PaneLayer(
 
 @Composable
 fun UpperPane(
-    viewModel: AppViewModel = koinInject(),
+    showXmlTree: Boolean,
+    flatXmlTree: List<XmlTreeLine>,
+    lazyListState: LazyListState,
+    horizontalScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -98,11 +120,15 @@ fun UpperPane(
             )
             .background(elevatedBackgroundColor)
     ) {
-        FadeVisibility(viewModel.showXmlTree) {
-            XmlTree()
+        FadeVisibility(showXmlTree) {
+            XmlTree(
+                flatXmlTree = flatXmlTree,
+                lazyListState = lazyListState,
+                horizontalScrollState = horizontalScrollState
+            )
         }
 
-        FadeVisibility(!viewModel.showXmlTree) {
+        FadeVisibility(!showXmlTree) {
             Text(
                 text = "Missing layout.",
                 color = discreteTextColor,
@@ -119,7 +145,11 @@ fun UpperPane(
 
 @Composable
 fun LowerPane(
-    viewModel: AppViewModel = koinInject(),
+    showSelectedNodeProperties: Boolean,
+    onSizeChanged: (IntSize) -> Unit,
+    selectedNodePropertyMap: LinkedHashMap<String, String>,
+    verticalScrollState: ScrollState,
+    horizontalScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -133,14 +163,18 @@ fun LowerPane(
             )
             .background(elevatedBackgroundColor)
             .onSizeChanged { size ->
-                viewModel.onLowerPaneSizeChanged(size)
+                onSizeChanged(size)
             }
     ) {
-        FadeVisibility(viewModel.showSelectedNodeProperties) {
-            SelectedNodeProperties()
+        FadeVisibility(showSelectedNodeProperties) {
+            SelectedNodeProperties(
+                selectedNodePropertyMap = selectedNodePropertyMap,
+                verticalScrollState = verticalScrollState,
+                horizontalScrollState = horizontalScrollState
+            )
         }
 
-        FadeVisibility(!viewModel.showSelectedNodeProperties) {
+        FadeVisibility(!showSelectedNodeProperties) {
             Text(
                 text = "No node selected.",
                 color = discreteTextColor,

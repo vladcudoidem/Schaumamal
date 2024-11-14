@@ -14,28 +14,33 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.cancel
-import org.koin.compose.koinInject
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
-import viewmodel.AppViewModel
+import viewmodel.ScreenshotState
 import java.awt.Cursor
+import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun ScreenshotLayer(
-    viewModel: AppViewModel = koinInject(),
+    screenshotState: ScreenshotState,
     modifier: Modifier = Modifier
 ) {
     // This is the Box that places the next Box correctly on the screen.
@@ -51,21 +56,31 @@ fun ScreenshotLayer(
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    scaleX = viewModel.screenshotLayerScale
-                    scaleY = viewModel.screenshotLayerScale
+                    scaleX = screenshotState.screenshotLayerScale
+                    scaleY = screenshotState.screenshotLayerScale
 
-                    translationX = viewModel.screenshotLayerOffset.x
-                    translationY = viewModel.screenshotLayerOffset.y
+                    translationX = screenshotState.screenshotLayerOffset.x
+                    translationY = screenshotState.screenshotLayerOffset.y
                 }
         ) {
-            FadeVisibility(viewModel.showScreenshot) {
+            FadeVisibility(screenshotState.showScreenshot) {
                 WithTouchSlop(minimalTouchSlop) {
-                    Screenshot()
+                    Screenshot(
+                        bitmap = screenshotState.imageBitmap,
+                        onSizeChanged = screenshotState::onImageSizeChanged,
+                        onGesture = screenshotState::onImageGesture,
+                        onTap = screenshotState::onImageTap,
+                        onScroll = screenshotState::onImageScroll
+                    )
                 }
             }
 
-            FadeVisibility(viewModel.showHighlighter) {
-                Highlighter()
+            FadeVisibility(screenshotState.showHighlighter) {
+                Highlighter(
+                    offset = screenshotState.highlighterOffset,
+                    size = screenshotState.highlighterSize,
+                    strokeWidth = screenshotState.highlighterStrokeWidth
+                )
             }
         }
     }
@@ -74,7 +89,11 @@ fun ScreenshotLayer(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Screenshot(
-    viewModel: AppViewModel = koinInject(),
+    bitmap: ImageBitmap,
+    onSizeChanged: (IntSize) -> Unit,
+    onGesture: (Offset, Offset, Float, Float) -> Unit,
+    onTap: (Offset, CoroutineContext) -> Unit,
+    onScroll: (PointerEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // The context of this coroutine scope is needed for scrolling in the view model.
@@ -86,25 +105,22 @@ fun Screenshot(
     }
 
     Image(
-        bitmap = viewModel.imageBitmap,
+        bitmap = bitmap,
         contentDescription = null,
         modifier = modifier
-            .onSizeChanged(onSizeChanged = viewModel::onImageSizeChanged)
+            .onSizeChanged(onSizeChanged = onSizeChanged)
             .pointerInput(Unit) {
-                detectTransformGestures(onGesture = viewModel::onImageGesture)
+                detectTransformGestures(onGesture = onGesture)
             }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { offset ->
-                        viewModel.onImageTap(
-                            offset = offset,
-                            uiCoroutineContext = scope.coroutineContext
-                        )
+                        onTap(offset, scope.coroutineContext)
                     }
                 )
             }
             .onPointerEvent(PointerEventType.Scroll) { event ->
-                viewModel.onImageScroll(event)
+                onScroll(event)
             }
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
     )
@@ -112,15 +128,17 @@ fun Screenshot(
 
 @Composable
 fun Highlighter(
-    viewModel: AppViewModel = koinInject(),
+    offset: Offset,
+    size: Size,
+    strokeWidth: Float,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
         drawRect(
             color = Color.Red,
-            topLeft = viewModel.highlighterOffset,
-            size = viewModel.highlighterSize,
-            style = Stroke(width = viewModel.highlighterStrokeWidth)
+            topLeft = offset,
+            size = size,
+            style = Stroke(width = strokeWidth)
         )
     }
 }

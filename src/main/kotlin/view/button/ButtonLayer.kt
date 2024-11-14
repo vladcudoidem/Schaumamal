@@ -18,14 +18,13 @@ import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
 import viewmodel.ExtractButtonState
+import viewmodel.ScreenshotState
 
 @Composable
 fun ButtonLayer(
     extractButtonState: ExtractButtonState,
     areResizeButtonsEnabled: Boolean,
-    onFitScreenshotToScreen: () -> Unit,
-    onEnlargeScreenshot: () -> Unit,
-    onShrinkScreenshot: () -> Unit,
+    screenshotState: ScreenshotState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -64,19 +63,19 @@ fun ButtonLayer(
         Spacer(modifier = Modifier.weight(1f))
 
         RoundIconButton(
-            onClick = onFitScreenshotToScreen,
+            onClick = screenshotState::onFitScreenshotToScreenButtonPressed,
             enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/fit.svg")
         )
 
         RoundIconButton(
-            onClick = onEnlargeScreenshot,
+            onClick = screenshotState::onEnlargeScreenshotButtonPressed,
             enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/enlarge.svg")
         )
 
         RoundIconButton(
-            onClick = onShrinkScreenshot,
+            onClick = screenshotState::onShrinkScreenshotButtonPressed,
             enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/shrink.svg")
         )

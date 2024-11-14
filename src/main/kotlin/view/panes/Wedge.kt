@@ -15,20 +15,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
-import org.koin.compose.koinInject
 import shared.Colors.wedgeColor
 import shared.Dimensions.smallPadding
 import shared.Dimensions.wedgeLargeDimension
 import shared.Dimensions.wedgeSmallDimension
-import viewmodel.AppViewModel
 import java.awt.Cursor
 
 @Composable
 fun HorizontalWedge(
-    viewModel: AppViewModel = koinInject(),
+    onDrag: (PointerInputChange, Offset) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -36,7 +36,7 @@ fun HorizontalWedge(
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    viewModel.onHorizontalWedgeDrag(change, dragAmount)
+                    onDrag(change, dragAmount)
                 }
             }
             .padding(smallPadding)
@@ -69,7 +69,7 @@ fun HorizontalWedge(
 
 @Composable
 fun VerticalWedge(
-    viewModel: AppViewModel = koinInject(),
+    onDrag: (PointerInputChange, Offset) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -77,7 +77,7 @@ fun VerticalWedge(
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    viewModel.onVerticalWedgeDrag(change, dragAmount)
+                    onDrag(change, dragAmount)
                 }
             }
             .padding(smallPadding)
