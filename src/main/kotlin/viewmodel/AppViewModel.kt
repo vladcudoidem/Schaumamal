@@ -54,9 +54,13 @@ import kotlin.math.min
 class AppViewModel(
     private val layoutInspector: LayoutInspector,
     private val coroutineManager: CoroutineManager,
-    val notificationManager: NotificationManager,
-    val extractButtonState: ExtractButtonState
+    val notificationManager: NotificationManager
 ) {
+    val extractButtonState = ExtractButtonState(
+        getInspectorState = { layoutInspector.state },
+        extract = layoutInspector::extractLayout,
+        notificationManager = notificationManager
+    )
 
     /* Screenshot Layer */
 

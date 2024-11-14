@@ -7,11 +7,9 @@ import oldModel.extractionManagers.getExtractionManager
 import oldModel.notification.NotificationManager
 import org.koin.dsl.module
 import viewmodel.AppViewModel
-import viewmodel.ExtractButtonState
 
 val viewModelModule = module {
-    single { AppViewModel(get(), get(), get(), get()) }
-    single { ExtractButtonState(get(), get()) }
+    single { AppViewModel(get(), get(), get()) }
 }
 
 val notificationModule = module {

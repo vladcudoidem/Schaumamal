@@ -1,29 +1,27 @@
 package viewmodel
 
 import oldModel.InspectorState
-import oldModel.LayoutInspector
 import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
 import kotlin.time.Duration.Companion.milliseconds
 
 class ExtractButtonState(
-    private val layoutInspector: LayoutInspector,
+    private val getInspectorState: () -> InspectorState,
+    private val extract: (onException: (Exception) -> Unit) -> Unit,
     private val notificationManager: NotificationManager
 ) {
-    val isEnabled get() = layoutInspector.state != InspectorState.WAITING
+    val isEnabled get() = getInspectorState() != InspectorState.WAITING
     val text
-        get() = when (layoutInspector.state) {
+        get() = when (getInspectorState()) {
             InspectorState.WAITING -> "Dumping..."
             else -> "Smash the red button to dump."
         }
 
-    fun onButtonPressed() = layoutInspector.extractLayout(
-        onException = {
-            val exceptionNotification = Notification(
-                description = "Dump failed.",
-                timeout = 4000.milliseconds
-            )
-            notificationManager.notify(exceptionNotification)
-        }
-    )
+    fun onButtonPressed() = extract {
+        val exceptionNotification = Notification(
+            description = "Dump failed.",
+            timeout = 4000.milliseconds
+        )
+        notificationManager.notify(exceptionNotification)
+    }
 }
