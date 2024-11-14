@@ -49,7 +49,7 @@ class PaneState(
     private val flatXmlTreeMap
         get() = getDataRoot().getFlatXmlTreeMap(
             selectedNode = getSelectedNode(),
-            onNodeTreeLineClicked = ::onNodeTreeLineClicked
+            onNodeTreeLineClicked = { node: Node -> selectNode(node) }
         )
     val flatXmlTree get() = flatXmlTreeMap.values.toList()
 
@@ -112,6 +112,4 @@ class PaneState(
             maximumValue = getPanesConstraint().width - minimumPaneDimension
         )
     }
-
-    private fun onNodeTreeLineClicked(node: Node) = selectNode(node)
 }
