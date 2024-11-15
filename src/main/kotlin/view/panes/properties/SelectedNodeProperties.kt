@@ -2,7 +2,6 @@ package view.panes.properties
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.HorizontalScrollbar
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -28,19 +28,20 @@ import java.awt.Cursor
 @Composable
 fun SelectedNodeProperties(
     selectedNodePropertyMap: LinkedHashMap<String, String>,
-    verticalScrollState: ScrollState,
-    horizontalScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-    val verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScrollState)
-    val horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScrollState)
+    val lowerPaneVerticalScrollState = rememberScrollState(initial = 0)
+    val lowerPaneHorizontalScrollState = rememberScrollState(initial = 0)
+
+    val verticalScrollbarAdapter = rememberScrollbarAdapter(lowerPaneVerticalScrollState)
+    val horizontalScrollbarAdapter = rememberScrollbarAdapter(lowerPaneHorizontalScrollState)
 
     Box(modifier = modifier.fillMaxSize()) {
 
         Column(
             modifier = Modifier
-                .verticalScroll(verticalScrollState)
-                .horizontalScroll(horizontalScrollState)
+                .verticalScroll(lowerPaneVerticalScrollState)
+                .horizontalScroll(lowerPaneHorizontalScrollState)
                 .padding(
                     top = mediumPadding,
                     bottom = mediumPadding * 4 + scrollbarThickness,

@@ -20,6 +20,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import shared.Colors.wedgeColor
 import shared.Dimensions.smallPadding
 import shared.Dimensions.wedgeLargeDimension
@@ -28,15 +29,17 @@ import java.awt.Cursor
 
 @Composable
 fun HorizontalWedge(
-    onDrag: (PointerInputChange, Offset) -> Unit,
+    onDrag: (PointerInputChange, Offset, Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current.density
+
     Box(
         modifier = modifier
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    onDrag(change, dragAmount)
+                    onDrag(change, dragAmount, density)
                 }
             }
             .padding(smallPadding)
@@ -69,15 +72,17 @@ fun HorizontalWedge(
 
 @Composable
 fun VerticalWedge(
-    onDrag: (PointerInputChange, Offset) -> Unit,
+    onDrag: (PointerInputChange, Offset, Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current.density
+
     Box(
         modifier = modifier
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    onDrag(change, dragAmount)
+                    onDrag(change, dragAmount, density)
                 }
             }
             .padding(smallPadding)

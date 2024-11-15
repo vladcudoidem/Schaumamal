@@ -4,16 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import org.koin.compose.koinInject
+import shared.Colors.backgroundColor
 import view.button.ButtonLayer
+import view.notification.NotificationLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
-import shared.Colors.backgroundColor
-import view.notification.NotificationLayer
 import viewmodel.AppViewModel
 
 @Composable
@@ -21,10 +20,8 @@ fun MainScreen(
     viewModel: AppViewModel = koinInject(),
     modifier: Modifier = Modifier
 ) {
-    val density = LocalDensity.current.density
-
-    LaunchedEffect(density) {
-        viewModel.onNewDensity(density)
+    val uiLayoutState = remember {
+        UiLayoutState(getScreenshotComposableSize = { viewModel.screenshotState.screenshotComposableSize })
     }
 
     Box(
@@ -33,21 +30,20 @@ fun MainScreen(
             .background(backgroundColor)
     ) {
         ScreenshotLayer(
+            uiLayoutState = uiLayoutState,
             screenshotState = viewModel.screenshotState,
             modifier = Modifier.align(Alignment.CenterStart)
         )
 
         ButtonLayer(
-            extractButtonState = viewModel.extractButtonState,
-            areResizeButtonsEnabled = viewModel.areResizeButtonsEnabled,
-            screenshotState = viewModel.screenshotState,
+            uiLayoutState = uiLayoutState,
+            extractButtonState = viewModel.buttonState,
             modifier = Modifier.align(Alignment.TopStart)
         )
 
         PaneLayer(
+            uiLayoutState = uiLayoutState,
             paneState = viewModel.paneState,
-            onWidthConstraintChanged = viewModel::onPanesWidthConstraintChanged,
-            onHeightConstraintChanged = viewModel::onPanesHeightConstraintChanged,
             modifier = Modifier.align(Alignment.CenterEnd)
         )
 

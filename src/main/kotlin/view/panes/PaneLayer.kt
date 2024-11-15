@@ -1,7 +1,6 @@
 package view.panes
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,11 +19,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.paneBorderColor
@@ -33,6 +29,7 @@ import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.paneBorderWidth
 import view.FadeVisibility
+import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 import viewmodel.PaneState
@@ -40,9 +37,8 @@ import viewmodel.XmlTreeLine
 
 @Composable
 fun PaneLayer(
+    uiLayoutState: UiLayoutState,
     paneState: PaneState,
-    onWidthConstraintChanged: (Dp) -> Unit,
-    onHeightConstraintChanged: (Dp) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
@@ -52,11 +48,11 @@ fun PaneLayer(
     ) {
 
         LaunchedEffect(maxWidth) {
-            onWidthConstraintChanged(maxWidth)
+            uiLayoutState.onPanesWidthConstraintChanged(maxWidth)
         }
 
         LaunchedEffect(maxHeight) {
-            onHeightConstraintChanged(maxHeight)
+            uiLayoutState.onPanesHeightConstraintChanged(maxHeight)
         }
 
         Row(
@@ -66,7 +62,7 @@ fun PaneLayer(
                 .padding(mediumPadding)
         ) {
             VerticalWedge(
-                onDrag = paneState::onVerticalWedgeDrag
+                onDrag = uiLayoutState::onVerticalWedgeDrag
             )
 
             Column(
@@ -75,26 +71,24 @@ fun PaneLayer(
                 UpperPane(
                     showXmlTree = paneState.showXmlTree,
                     flatXmlTree = paneState.flatXmlTree,
-                    lazyListState = paneState.upperPaneLazyListState,
-                    horizontalScrollState = paneState.upperPaneHorizontalScrollState,
+                    selectedNodeIndex = paneState.selectedNodeIndex,
+                    activateScroll = paneState.activateScroll,
+                    upperPaneHeight = uiLayoutState.upperPaneHeight,
                     modifier = Modifier
-                        .height(paneState.upperPaneHeight)
-                        .width(paneState.paneWidth)
+                        .height(uiLayoutState.upperPaneHeight)
+                        .width(uiLayoutState.paneWidth)
                 )
 
                 HorizontalWedge(
-                    onDrag = paneState::onHorizontalWedgeDrag
+                    onDrag = uiLayoutState::onHorizontalWedgeDrag
                 )
 
                 LowerPane(
                     showSelectedNodeProperties = paneState.showSelectedNodeProperties,
-                    onSizeChanged = paneState::onLowerPaneSizeChanged,
                     selectedNodePropertyMap = paneState.selectedNodePropertyMap,
-                    verticalScrollState = paneState.lowerPaneVerticalScrollState,
-                    horizontalScrollState = paneState.lowerPaneHorizontalScrollState,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(paneState.paneWidth)
+                        .width(uiLayoutState.paneWidth)
                 )
             }
         }
@@ -105,8 +99,9 @@ fun PaneLayer(
 fun UpperPane(
     showXmlTree: Boolean,
     flatXmlTree: List<XmlTreeLine>,
-    lazyListState: LazyListState,
-    horizontalScrollState: ScrollState,
+    selectedNodeIndex: Int,
+    activateScroll: Boolean,
+    upperPaneHeight: Dp,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -123,8 +118,9 @@ fun UpperPane(
         FadeVisibility(showXmlTree) {
             XmlTree(
                 flatXmlTree = flatXmlTree,
-                lazyListState = lazyListState,
-                horizontalScrollState = horizontalScrollState
+                selectedNodeIndex = selectedNodeIndex,
+                activateScroll = activateScroll,
+                upperPaneHeight = upperPaneHeight
             )
         }
 
@@ -146,10 +142,7 @@ fun UpperPane(
 @Composable
 fun LowerPane(
     showSelectedNodeProperties: Boolean,
-    onSizeChanged: (IntSize) -> Unit,
     selectedNodePropertyMap: LinkedHashMap<String, String>,
-    verticalScrollState: ScrollState,
-    horizontalScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -162,15 +155,10 @@ fun LowerPane(
                 shape = RoundedCornerShape(largeCornerRadius)
             )
             .background(elevatedBackgroundColor)
-            .onSizeChanged { size ->
-                onSizeChanged(size)
-            }
     ) {
         FadeVisibility(showSelectedNodeProperties) {
             SelectedNodeProperties(
-                selectedNodePropertyMap = selectedNodePropertyMap,
-                verticalScrollState = verticalScrollState,
-                horizontalScrollState = horizontalScrollState
+                selectedNodePropertyMap = selectedNodePropertyMap
             )
         }
 
