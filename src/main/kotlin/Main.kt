@@ -31,8 +31,7 @@ fun main() = application {
             onCloseRequest = {
                 viewModel.teardown()
                 exitApplication()
-            },
-            onKeyEvent = viewModel::onWindowKeyEvent
+            }
         ) {
             // This seems to be density-independent (i.e. values behave like Dp).
             window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)

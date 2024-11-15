@@ -9,7 +9,7 @@ import org.koin.dsl.module
 import viewmodel.AppViewModel
 
 val viewModelModule = module {
-    single { AppViewModel(get(), get(), get()) }
+    single { AppViewModel(get(), get()) }
 }
 
 val notificationModule = module {
