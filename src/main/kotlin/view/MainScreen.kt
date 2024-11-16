@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import shared.Colors.backgroundColor
@@ -17,12 +16,9 @@ import viewmodel.AppViewModel
 @Composable
 fun MainScreen(
     viewModel: AppViewModel,
+    uiLayoutState: UiLayoutState,
     modifier: Modifier = Modifier
 ) {
-    val uiLayoutState = remember {
-        UiLayoutState(getScreenshotComposableSize = { viewModel.screenshotState.screenshotComposableSize })
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -36,7 +32,7 @@ fun MainScreen(
 
         ButtonLayer(
             uiLayoutState = uiLayoutState,
-            extractButtonState = viewModel.buttonState,
+            buttonState = viewModel.buttonState,
             modifier = Modifier.align(Alignment.TopStart)
         )
 
