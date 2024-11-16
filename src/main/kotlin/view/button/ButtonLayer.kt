@@ -24,7 +24,7 @@ import viewmodel.ButtonState
 @Composable
 fun ButtonLayer(
     uiLayoutState: UiLayoutState,
-    extractButtonState: ButtonState,
+    buttonState: ButtonState,
     modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current.density
@@ -40,12 +40,12 @@ fun ButtonLayer(
         ) {
             HorizontalPill(modifier = modifier) {
                 ExtractionButton(
-                    isExtractButtonEnabled = extractButtonState.isExtractButtonEnabled,
-                    onExtractButtonPressed = extractButtonState::onExtractButtonPressed
+                    isExtractButtonEnabled = buttonState.isExtractButtonEnabled,
+                    onExtractButtonPressed = buttonState::onExtractButtonPressed
                 )
 
                 Text(
-                    text = extractButtonState.extractButtonText,
+                    text = buttonState.extractButtonText,
                     color = discreteTextColor,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
@@ -66,19 +66,19 @@ fun ButtonLayer(
 
         RoundIconButton(
             onClick = { uiLayoutState.onFitScreenshotToScreenButtonPressed(density) },
-            enabled = extractButtonState.areResizeButtonsEnabled,
+            enabled = buttonState.areResizeButtonsEnabled,
             iconPainter = painterResource("icons/fit.svg")
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onEnlargeScreenshotButtonPressed,
-            enabled = extractButtonState.areResizeButtonsEnabled,
+            enabled = buttonState.areResizeButtonsEnabled,
             iconPainter = painterResource("icons/enlarge.svg")
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onShrinkScreenshotButtonPressed,
-            enabled = extractButtonState.areResizeButtonsEnabled,
+            enabled = buttonState.areResizeButtonsEnabled,
             iconPainter = painterResource("icons/shrink.svg")
         )
     }
