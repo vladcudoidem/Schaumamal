@@ -37,7 +37,7 @@ fun main() = application {
             window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
 
             MaterialTheme {
-                MainScreen()
+                MainScreen(viewModel = viewModel)
             }
         }
     }
