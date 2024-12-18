@@ -7,42 +7,44 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
-import viewmodel.ButtonState
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun onWindowKeyEvent(
     event: KeyEvent,
-    buttonState: ButtonState,
-    uiLayoutState: UiLayoutState,
-    density: Float
+    isExtractButtonEnabled: Boolean,
+    onExtractButtonPressed: () -> Unit,
+    areResizeButtonsEnabled: Boolean,
+    onEnlargeScreenshotButtonPressed: () -> Unit,
+    onShrinkScreenshotButtonPressed: () -> Unit,
+    onFitScreenshotToScreenButtonPressed: () -> Unit
 ) =
     when {
         event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
             when (event.key) {
                 Key.D -> {
-                    if (buttonState.isExtractButtonEnabled) {
-                        buttonState.onExtractButtonPressed()
+                    if (isExtractButtonEnabled) {
+                        onExtractButtonPressed()
                     }
                     true
                 }
 
                 Key.Period -> {
-                    if (buttonState.areResizeButtonsEnabled) {
-                        uiLayoutState.onEnlargeScreenshotButtonPressed()
+                    if (areResizeButtonsEnabled) {
+                        onEnlargeScreenshotButtonPressed()
                     }
                     true
                 }
 
                 Key.Comma -> {
-                    if (buttonState.areResizeButtonsEnabled) {
-                        uiLayoutState.onShrinkScreenshotButtonPressed()
+                    if (areResizeButtonsEnabled) {
+                        onShrinkScreenshotButtonPressed()
                     }
                     true
                 }
 
                 Key.M -> {
-                    if (buttonState.areResizeButtonsEnabled) {
-                        uiLayoutState.onFitScreenshotToScreenButtonPressed(density)
+                    if (areResizeButtonsEnabled) {
+                        onFitScreenshotToScreenButtonPressed()
                     }
                     true
                 }

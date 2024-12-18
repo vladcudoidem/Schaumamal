@@ -1,29 +1,42 @@
 package viewmodel
 
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import oldModel.InspectorState
+import oldModel.LayoutData
 import oldModel.parser.xmlElements.Node
-import oldModel.parser.xmlElements.System
 import viewmodel.extraUiLogic.getFlatXmlTreeMap
 import viewmodel.extraUiLogic.propertyMap
 
 class PaneState(
-    private val getInspectorState: () -> InspectorState,
-    private val getDataRoot: () -> System,
-    private val isNodeSelected: () -> Boolean,
-    private val getSelectedNode: () -> Node,
-    private val selectNode: (Node) -> Unit
+    inspectorState: StateFlow<InspectorState>,
+    data: StateFlow<LayoutData>,
+    isNodeSelected: StateFlow<Boolean>,
+    selectedNode: StateFlow<Node>,
+    selectNode: (Node) -> Unit
 ) {
-    val showXmlTree get() = getInspectorState() == InspectorState.POPULATED
-    private val flatXmlTreeMap
-        get() = getDataRoot().getFlatXmlTreeMap(
-            selectedNode = getSelectedNode(),
-            onNodeTreeLineClicked = { node: Node -> selectNode(node) }
-        )
-    val flatXmlTree get() = flatXmlTreeMap.values.toList()
 
-    val selectedNodeIndex get() = flatXmlTreeMap.keys.indexOf(getSelectedNode())
-    val activateScroll get() = getInspectorState() == InspectorState.POPULATED && isNodeSelected()
+    val showXmlTree = inspectorState.map { it == InspectorState.POPULATED }
+    private val flatXmlTreeMap = combine(data, selectedNode) { dataRoot, selectedNode ->
+        dataRoot
+            .root
+            .getFlatXmlTreeMap(
+                selectedNode = selectedNode,
+                onNodeTreeLineClicked = { node: Node -> selectNode(node) }
+            )
+    }
+    val flatXmlTree = flatXmlTreeMap.map { it.values.toList() }
 
-    val showSelectedNodeProperties get() = showXmlTree && isNodeSelected()
-    val selectedNodePropertyMap get() = getSelectedNode().propertyMap
+    val selectedNodeIndex = combine(flatXmlTreeMap, selectedNode) { flatXmlTreeMap, selectedNode ->
+        flatXmlTreeMap.keys.indexOf(selectedNode)
+    }
+    val activateScroll = combine(inspectorState, isNodeSelected) { inspectorState, isNodeSelected ->
+        inspectorState == InspectorState.POPULATED && isNodeSelected
+    }
+
+    val showSelectedNodeProperties = combine(showXmlTree, isNodeSelected) { showXmlTree, isNodeSelected ->
+        showXmlTree && isNodeSelected
+    }
+    val selectedNodePropertyMap = selectedNode.map { it.propertyMap }
 }

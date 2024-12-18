@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -37,6 +39,7 @@ import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
+import viewmodel.Graphics
 import viewmodel.ScreenshotState
 import viewmodel.toPx
 import java.awt.Cursor
@@ -48,6 +51,17 @@ fun ScreenshotLayer(
     screenshotState: ScreenshotState,
     modifier: Modifier = Modifier
 ) {
+    val showScreenshot by screenshotState.showScreenshot.collectAsState(initial = false)
+    val imageBitmap by screenshotState.imageBitmap.collectAsState(
+        initial = ImageBitmap(0, 0)
+    )
+    val showHighlighter by screenshotState.showHighlighter.collectAsState(initial = false)
+    val selectedNodeDisplayGraphics by screenshotState.selectedNodeDisplayGraphics.collectAsState(
+        initial = Graphics.Unspecified
+    )
+    val screenshotLayerOffset by uiLayoutState.screenshotLayerOffset.collectAsState()
+    val screenshotLayerScale by uiLayoutState.screenshotLayerScale.collectAsState()
+
     // This is the Box that places the next Box correctly on the screen.
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -61,17 +75,17 @@ fun ScreenshotLayer(
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    scaleX = uiLayoutState.screenshotLayerScale
-                    scaleY = uiLayoutState.screenshotLayerScale
+                    scaleX = screenshotLayerScale
+                    scaleY = screenshotLayerScale
 
-                    translationX = uiLayoutState.screenshotLayerOffset.x
-                    translationY = uiLayoutState.screenshotLayerOffset.y
+                    translationX = screenshotLayerOffset.x
+                    translationY = screenshotLayerOffset.y
                 }
         ) {
-            FadeVisibility(screenshotState.showScreenshot) {
+            FadeVisibility(showScreenshot) {
                 WithTouchSlop(minimalTouchSlop) {
                     Screenshot(
-                        bitmap = screenshotState.imageBitmap,
+                        bitmap = imageBitmap,
                         onSizeChanged = screenshotState::onImageSizeChanged,
                         onGesture = uiLayoutState::onImageGesture,
                         onTap = screenshotState::onImageTap,
@@ -82,12 +96,12 @@ fun ScreenshotLayer(
 
             val density = LocalDensity.current.density
             val highlighterStrokeWidth =
-                (defaultHighlighterStrokeWidth / uiLayoutState.screenshotLayerScale).toPx(density)
+                (defaultHighlighterStrokeWidth / screenshotLayerScale).toPx(density)
 
-            FadeVisibility(screenshotState.showHighlighter) {
+            FadeVisibility(showHighlighter) {
                 Highlighter(
-                    offset = screenshotState.selectedNodeDisplayGraphics.offset,
-                    size = screenshotState.selectedNodeDisplayGraphics.size,
+                    offset = selectedNodeDisplayGraphics.offset,
+                    size = selectedNodeDisplayGraphics.size,
                     strokeWidth = highlighterStrokeWidth
                 )
             }

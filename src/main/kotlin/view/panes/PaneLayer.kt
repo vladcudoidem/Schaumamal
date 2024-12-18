@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,16 @@ fun PaneLayer(
     paneState: PaneState,
     modifier: Modifier = Modifier
 ) {
+    val showXmlTree by paneState.showXmlTree.collectAsState(initial = false)
+    val flatXmlTree by paneState.flatXmlTree.collectAsState(initial = emptyList())
+    val selectedNodeIndex by paneState.selectedNodeIndex.collectAsState(initial = 0)
+    val activateScroll by paneState.activateScroll.collectAsState(initial = false)
+    val showSelectedNodeProperties by paneState.showSelectedNodeProperties.collectAsState(initial = false)
+    val selectedNodePropertyMap by paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
+        // using an empty linked hash map as initial value
+    val paneWidth by uiLayoutState.paneWidth.collectAsState()
+    val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
+
     // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
     // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
     BoxWithConstraints(
@@ -69,14 +81,14 @@ fun PaneLayer(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 UpperPane(
-                    showXmlTree = paneState.showXmlTree,
-                    flatXmlTree = paneState.flatXmlTree,
-                    selectedNodeIndex = paneState.selectedNodeIndex,
-                    activateScroll = paneState.activateScroll,
-                    upperPaneHeight = uiLayoutState.upperPaneHeight,
+                    showXmlTree = showXmlTree,
+                    flatXmlTree = flatXmlTree,
+                    selectedNodeIndex = selectedNodeIndex,
+                    activateScroll = activateScroll,
+                    upperPaneHeight = upperPaneHeight,
                     modifier = Modifier
-                        .height(uiLayoutState.upperPaneHeight)
-                        .width(uiLayoutState.paneWidth)
+                        .height(upperPaneHeight)
+                        .width(paneWidth)
                 )
 
                 HorizontalWedge(
@@ -84,11 +96,11 @@ fun PaneLayer(
                 )
 
                 LowerPane(
-                    showSelectedNodeProperties = paneState.showSelectedNodeProperties,
-                    selectedNodePropertyMap = paneState.selectedNodePropertyMap,
+                    showSelectedNodeProperties = showSelectedNodeProperties,
+                    selectedNodePropertyMap = selectedNodePropertyMap,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(uiLayoutState.paneWidth)
+                        .width(paneWidth)
                 )
             }
         }

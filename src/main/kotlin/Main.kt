@@ -1,4 +1,6 @@
 import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -21,7 +23,6 @@ fun main() = application {
             modules(
                 viewModelModule,
                 notificationModule,
-                inspectorModule,
                 coroutineModule,
                 extractionModule
             )
@@ -31,8 +32,11 @@ fun main() = application {
 
         val viewModel: AppViewModel = koinInject()
         val uiLayoutState = remember {
-            UiLayoutState(getScreenshotComposableSize = { viewModel.screenshotState.screenshotComposableSize })
+            UiLayoutState(screenshotComposableSize = viewModel.screenshotState.screenshotComposableSize)
         }
+
+        val isExtractButtonEnabled by viewModel.buttonState.isExtractButtonEnabled.collectAsState(initial = true)
+        val areResizeButtonsEnabled by viewModel.buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
 
         Window(
             title = "Schaumamal",
@@ -44,9 +48,14 @@ fun main() = application {
             onKeyEvent = {
                 onWindowKeyEvent(
                     event = it,
-                    buttonState = viewModel.buttonState,
-                    uiLayoutState = uiLayoutState,
-                    density = density
+                    isExtractButtonEnabled = isExtractButtonEnabled,
+                    onExtractButtonPressed = viewModel.buttonState::onExtractButtonPressed,
+                    areResizeButtonsEnabled = areResizeButtonsEnabled,
+                    onEnlargeScreenshotButtonPressed = uiLayoutState::onEnlargeScreenshotButtonPressed,
+                    onShrinkScreenshotButtonPressed = uiLayoutState::onShrinkScreenshotButtonPressed,
+                    onFitScreenshotToScreenButtonPressed = {
+                        uiLayoutState.onFitScreenshotToScreenButtonPressed(density)
+                    },
                 )
             }
         ) {
