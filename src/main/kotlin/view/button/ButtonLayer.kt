@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -29,6 +31,11 @@ fun ButtonLayer(
 ) {
     val density = LocalDensity.current.density
 
+    val areResizeButtonsEnabled by buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
+    val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
+    val extractButtonText by buttonState.extractButtonText.collectAsState(initial = "...")
+        // Todo: is the "..." ok?
+
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(mediumPadding),
@@ -40,12 +47,12 @@ fun ButtonLayer(
         ) {
             HorizontalPill(modifier = modifier) {
                 ExtractionButton(
-                    isExtractButtonEnabled = buttonState.isExtractButtonEnabled,
+                    isExtractButtonEnabled = isExtractButtonEnabled,
                     onExtractButtonPressed = buttonState::onExtractButtonPressed
                 )
 
                 Text(
-                    text = buttonState.extractButtonText,
+                    text = extractButtonText,
                     color = discreteTextColor,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
@@ -66,19 +73,19 @@ fun ButtonLayer(
 
         RoundIconButton(
             onClick = { uiLayoutState.onFitScreenshotToScreenButtonPressed(density) },
-            enabled = buttonState.areResizeButtonsEnabled,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/fit.svg")
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onEnlargeScreenshotButtonPressed,
-            enabled = buttonState.areResizeButtonsEnabled,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/enlarge.svg")
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onShrinkScreenshotButtonPressed,
-            enabled = buttonState.areResizeButtonsEnabled,
+            enabled = areResizeButtonsEnabled,
             iconPainter = painterResource("icons/shrink.svg")
         )
     }
