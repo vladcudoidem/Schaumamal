@@ -17,6 +17,7 @@ val notificationModule = module {
 
 val coroutineModule = module {
     factory { CoroutineScope(Dispatchers.IO + Job()) }
+        // Todo: why use Dispatchers.IO here?
     factory { CoroutineManager(get()) }
 }
 
