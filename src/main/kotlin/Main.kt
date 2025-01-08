@@ -14,6 +14,9 @@ import view.MainScreen
 import view.UiLayoutState
 import view.onWindowKeyEvent
 import viewmodel.AppViewModel
+import viewmodel.ButtonState
+import viewmodel.PaneState
+import viewmodel.ScreenshotState
 import java.awt.Dimension
 
 fun main() = application {
@@ -28,15 +31,39 @@ fun main() = application {
             )
         }
     ) {
-        val density = LocalDensity.current.density
-
         val viewModel: AppViewModel = koinInject()
+        val buttonState = remember {
+            ButtonState(
+                inspectorState = viewModel.state,
+                extract = viewModel::extractLayout,
+                notificationManager = viewModel.notificationManager
+            )
+        }
+        val paneState = remember {
+            PaneState(
+                inspectorState = viewModel.state,
+                data = viewModel.data,
+                isNodeSelected = viewModel.isNodeSelected,
+                selectedNode = viewModel.selectedNode,
+                selectNode = viewModel::selectNode
+            )
+        }
+        val screenshotState = remember {
+            ScreenshotState(
+                inspectorState = viewModel.state,
+                isNodeSelected = viewModel.isNodeSelected,
+                selectedNode = viewModel.selectedNode,
+                data = viewModel.data,
+                selectNode = viewModel::selectNode
+            )
+        }
         val uiLayoutState = remember {
-            UiLayoutState(screenshotComposableSize = viewModel.screenshotState.screenshotComposableSize)
+            UiLayoutState(screenshotComposableSize = screenshotState.screenshotComposableSize)
         }
 
-        val isExtractButtonEnabled by viewModel.buttonState.isExtractButtonEnabled.collectAsState(initial = true)
-        val areResizeButtonsEnabled by viewModel.buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
+        val density = LocalDensity.current.density
+        val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
+        val areResizeButtonsEnabled by buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
 
         Window(
             title = "Schaumamal",
@@ -49,7 +76,7 @@ fun main() = application {
                 onWindowKeyEvent(
                     event = it,
                     isExtractButtonEnabled = isExtractButtonEnabled,
-                    onExtractButtonPressed = viewModel.buttonState::onExtractButtonPressed,
+                    onExtractButtonPressed = buttonState::onExtractButtonPressed,
                     areResizeButtonsEnabled = areResizeButtonsEnabled,
                     onEnlargeScreenshotButtonPressed = uiLayoutState::onEnlargeScreenshotButtonPressed,
                     onShrinkScreenshotButtonPressed = uiLayoutState::onShrinkScreenshotButtonPressed,
@@ -64,8 +91,11 @@ fun main() = application {
 
             MaterialTheme {
                 MainScreen(
-                    viewModel = viewModel,
-                    uiLayoutState = uiLayoutState
+                    screenshotState = screenshotState,
+                    buttonState = buttonState,
+                    paneState = paneState,
+                    uiLayoutState = uiLayoutState,
+                    notificationManager = viewModel.notificationManager
                 )
             }
         }

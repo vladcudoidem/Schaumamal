@@ -7,7 +7,7 @@ import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
 import kotlin.time.Duration.Companion.milliseconds
 
-class ButtonState (
+class ButtonState(
     inspectorState: StateFlow<InspectorState>,
     private val extract: (onException: (Exception) -> Unit) -> Unit,
     private val notificationManager: NotificationManager

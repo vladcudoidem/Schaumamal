@@ -16,8 +16,6 @@ class AppViewModel(
     private val extractionManager: ExtractionManager,
     val notificationManager: NotificationManager
 ) {
-    // Todo: delete LayoutInspector.kt
-
     private val _state = MutableStateFlow(InspectorState.EMPTY)
     val state get() = _state.asStateFlow()
 
@@ -67,30 +65,6 @@ class AppViewModel(
         // Shows selected node only after refreshing the data.
         _isNodeSelected.value = true
     }
-
-    // Todo: move this:
-
-    val buttonState = ButtonState(
-        inspectorState = state,
-        extract = ::extractLayout,
-        notificationManager = notificationManager
-    )
-
-    val paneState = PaneState(
-        inspectorState = state,
-        data = data,
-        isNodeSelected = isNodeSelected,
-        selectedNode = selectedNode,
-        selectNode = ::selectNode
-    )
-
-    val screenshotState = ScreenshotState(
-        inspectorState = state,
-        isNodeSelected = isNodeSelected,
-        selectedNode = selectedNode,
-        data = data,
-        selectNode = ::selectNode
-    )
 
     fun teardown() {
         coroutineManager.teardown()
