@@ -30,7 +30,7 @@ class AppViewModel(
 
     fun extractLayout(onException: (Exception) -> Unit = { }) {
         // Save previous state so that we can return to it in case the extraction fails.
-        val previousStateValue = _state.value  // Todo: use update()
+        val previousStateValue = _state.value // Todo: use update()
         _state.value = InspectorState.WAITING
 
         coroutineManager.launch {
