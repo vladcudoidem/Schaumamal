@@ -1,6 +1,6 @@
 package oldModel.extractionManagers
 
-import oldModel.on
+import model.on
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
