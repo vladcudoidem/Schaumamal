@@ -1,4 +1,4 @@
-package model.dataClasses
+package model.repository
 
 import kotlinx.serialization.Serializable
 

@@ -1,9 +1,6 @@
-package model
+package model.repository
 
 import kotlinx.serialization.json.Json
-import model.dataClasses.Content
-import model.dataClasses.Dump
-import model.dataClasses.Settings
 import model.platform.PlatformInformationProvider
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi

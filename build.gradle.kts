@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.android.adblib)
 }
 
 compose.desktop {
