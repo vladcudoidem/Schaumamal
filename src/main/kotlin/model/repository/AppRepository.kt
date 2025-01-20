@@ -14,6 +14,9 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
+// Do not remove! This is needed.
+import kotlinx.serialization.encodeToString
+
 class AppRepository(
     platformInformationProvider: PlatformInformationProvider
 ) {

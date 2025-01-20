@@ -1,7 +1,7 @@
 [versions]
 kotlinxCoroutines = "1.6.0"
 koin = "4.0.0"
-serialization = "1.8.0"
+serialization = "1.6.0"
 adblib = "8.8.0"
 
 [libraries]
