@@ -44,7 +44,9 @@ class Dumper(
     @OptIn(ExperimentalPathApi::class)
     fun dump(content: Content): Dump = runBlocking(timeout = dumpTimeout) {
 
-        // Todo: check that system health is retained if dump process is interrupted at any point
+        // Todo:
+        //  - check that system health is retained if dump process is interrupted at any point
+        //  - split up this method into multiple methods
 
         // Dynamically retrieve any device
         val device = withTimeoutOrNull(shortTimeout) {
@@ -105,16 +107,16 @@ class Dumper(
             ).stdout
 
         val dumpOutput = tempDirectoryPath.resolve(dumpFileName).readText()
-        val dumpDisplays = // Todo: move this to resolveDisplays()
-            dumpOutput.extractAll(
-                pattern = """<display id="(\d+)">""".toRegex(RegexOption.DOT_MATCHES_ALL)
-            ) {
-                DumpDisplay(
-                    dumpId = it.component1()
-                )
-            }
 
-        TODO("Continue with the resolved displays.")
+        // Contains the connections between the dump IDs and the screenshot IDs.
+        val resolvedDisplays = resolveDisplays(
+            api = api,
+            flingerOutput = flingerOutput,
+            getDisplaysOutput = getDisplaysOutput,
+            dumpOutput = dumpOutput
+        )
+
+        TODO("continue here")
     } ?: error("Dump took too long. Aborting.")
 
     @Suppress("DuplicatedCode")
@@ -152,7 +154,8 @@ class Dumper(
 
                 val cmdDisplays =
                     getDisplaysOutput.extractAll(
-                        pattern = """Display id (\d+).*?type (\w+).*?uniqueId ".*?:(\d+)"""".toRegex(RegexOption.DOT_MATCHES_ALL)
+                        pattern = """Display id (\d+).*?type (\w+).*?uniqueId ".*?:(\d+)""""
+                            .toRegex(RegexOption.DOT_MATCHES_ALL)
                     ) {
                         CmdDisplay(
                             dumpId = it.component1(),
@@ -164,19 +167,19 @@ class Dumper(
                 // Whether to resolve an equal number of virtual displays in flingerDisplays and cmdDisplays by assuming
                 // that they are listed in the same order. If this is false, virtual displays are resolved only if there
                 // is exactly one in flingerDisplays and one in cmdDisplays.
-                val resolveMultipleVirtualDisplays = false // Todo: add option to set the algorithm
+                val resolveMultipleVirtualDisplays = false // Todo: add option to select the algorithm
 
                 val flingerVirtuals = flingerDisplays.filter { it.isVirtual }
                 val cmdVirtuals = cmdDisplays.filter { it.isVirtual }
                 val virtualDumpToScreenshotMap: Map<String, String> =
                     if (resolveMultipleVirtualDisplays) {
-                        if (flingerVirtuals.size == 1 && cmdVirtuals.size == 1) {
+                        if (flingerVirtuals.size == cmdVirtuals.size) {
                             (cmdVirtuals.map { it.dumpId }) zipMap (flingerVirtuals.map { it.screenshotId })
                         } else {
                             emptyMap()
                         }
                     } else {
-                        if (flingerVirtuals.size == cmdVirtuals.size) {
+                        if (flingerVirtuals.size == 1 && cmdVirtuals.size == 1) {
                             (cmdVirtuals.map { it.dumpId }) zipMap (flingerVirtuals.map { it.screenshotId })
                         } else {
                             emptyMap()
