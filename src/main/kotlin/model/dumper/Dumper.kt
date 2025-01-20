@@ -117,12 +117,15 @@ class Dumper(
         TODO("Continue with the resolved displays.")
     } ?: error("Dump took too long. Aborting.")
 
+    @Suppress("DuplicatedCode")
     private fun resolveDisplays(
         api: Int,
         flingerOutput: String,
         getDisplaysOutput: String,
         dumpOutput: String
     ): List<ResolvedDisplay> {
+
+        // Todo: maybe use classes to offer different implementations
 
         val dumpDisplays =
             dumpOutput.extractAll(
@@ -133,37 +136,111 @@ class Dumper(
                 )
             }
 
+        // This when statement partly contains duplicated code.
         val resolvedDisplays: List<ResolvedDisplay> = when (api) {
+
             35 -> {
-                TODO()
+                val flingerDisplays =
+                    flingerOutput.extractAll(
+                        pattern = """(\w*)\s?Display (\d+)\s""".toRegex(RegexOption.DOT_MATCHES_ALL)
+                    ) {
+                        FlingerDisplay(
+                            isVirtual = it.component1().equals("Virtual", ignoreCase = true),
+                            screenshotId = it.component2()
+                        )
+                    }
+
+                val cmdDisplays =
+                    getDisplaysOutput.extractAll(
+                        pattern = """Display id (\d+).*?type (\w+).*?uniqueId ".*?:(\d+)"""".toRegex(RegexOption.DOT_MATCHES_ALL)
+                    ) {
+                        CmdDisplay(
+                            dumpId = it.component1(),
+                            isVirtual = it.component2().equals("VIRTUAL", ignoreCase = true),
+                            screenshotId = it.component3()
+                        )
+                    }
+
+                // Whether to resolve an equal number of virtual displays in flingerDisplays and cmdDisplays by assuming
+                // that they are listed in the same order. If this is false, virtual displays are resolved only if there
+                // is exactly one in flingerDisplays and one in cmdDisplays.
+                val resolveMultipleVirtualDisplays = false // Todo: add option to set the algorithm
+
+                val flingerVirtuals = flingerDisplays.filter { it.isVirtual }
+                val cmdVirtuals = cmdDisplays.filter { it.isVirtual }
+                val virtualDumpToScreenshotMap: Map<String, String> =
+                    if (resolveMultipleVirtualDisplays) {
+                        if (flingerVirtuals.size == 1 && cmdVirtuals.size == 1) {
+                            (cmdVirtuals.map { it.dumpId }) zipMap (flingerVirtuals.map { it.screenshotId })
+                        } else {
+                            emptyMap()
+                        }
+                    } else {
+                        if (flingerVirtuals.size == cmdVirtuals.size) {
+                            (cmdVirtuals.map { it.dumpId }) zipMap (flingerVirtuals.map { it.screenshotId })
+                        } else {
+                            emptyMap()
+                        }
+                    }
+
+                val nonVirtualCmdDisplays = cmdDisplays.filter { !it.isVirtual }
+                val dumpToScreenshotMap =
+                    nonVirtualCmdDisplays.associate { it.dumpId to it.screenshotId } + virtualDumpToScreenshotMap
+
+                // return
+                dumpDisplays.map {
+                    ResolvedDisplay(
+                        screenshotId = dumpToScreenshotMap[it.dumpId],
+                        dumpId = it.dumpId
+                    )
+                }
             }
 
-            34 -> {
-                TODO()
+            34, 33 -> {
+                val cmdDisplays =
+                    getDisplaysOutput.extractAll(
+                        pattern = """Display id (\d+).*?type (\w+).*?uniqueId ".*?:(\d+)""""
+                            .toRegex(RegexOption.DOT_MATCHES_ALL)
+                    ) {
+                        CmdDisplay(
+                            dumpId = it.component1(),
+                            isVirtual = it.component2().equals("VIRTUAL", ignoreCase = true),
+                            screenshotId = it.component3()
+                        )
+                    }
+
+                val nonVirtualCmdDisplays = cmdDisplays.filter { !it.isVirtual }
+                val dumpToScreenshotMap = nonVirtualCmdDisplays.associate { it.dumpId to it.screenshotId }
+
+                // return
+                dumpDisplays.map {
+                    ResolvedDisplay(
+                        screenshotId = dumpToScreenshotMap[it.dumpId],
+                        dumpId = it.dumpId
+                    )
+                }
             }
 
-            33 -> {
-                TODO()
-            }
-
-            32 -> {
-                TODO()
-            }
-
-            31 -> {
-                TODO()
+            32, 31 -> {
+                // return
+                dumpDisplays.map {
+                    ResolvedDisplay(
+                        screenshotId = it.dumpId,
+                        dumpId = it.dumpId
+                    )
+                }
             }
 
             else -> error("Devices with API $api is not supported.")
         }
 
-        resolvedDisplays
+        return resolvedDisplays
     }
 }
 
 // Todo: move these to separate file
 
-private suspend fun ConnectedDevicesTracker.waitForAnyDevice(): ConnectedDevice {
+suspend fun ConnectedDevicesTracker.waitForAnyDevice(): ConnectedDevice {
     // Do a quick scan on the current state first (more efficient), then wait on the StateFlow.
     return connectedDevices.value.firstOrNull() ?: run {
         connectedDevices.transform { devices ->
@@ -190,3 +267,6 @@ fun <T> String.extractAll(
     val results = pattern.findAll(this)
     return results.toList().map { it.destructured }.map(transform)
 }
+
+infix fun <T, R> Iterable<T>.zipMap(other: Iterable<R>): Map<T, R> =
+    zip(other).toMap()
