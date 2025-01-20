@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Dump(
     val directoryName: String,
     val nickname: String,
-    val milliseconds: Long,
+    val timeMilliseconds: Long,
     val xmlTreeFileName: String,
     val displays: List<Display>
 )

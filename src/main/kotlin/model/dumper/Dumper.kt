@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import model.hash
-import model.repository.Content
-import model.repository.Dump
 import model.platform.PlatformInformationProvider
+import model.repository.Content
+import model.repository.Display
+import model.repository.Dump
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
@@ -28,12 +29,14 @@ import kotlin.time.toJavaDuration
 
 class Dumper(
     platformInformationProvider: PlatformInformationProvider,
-    private val adbSession: AdbSession
+    private val adbSession: AdbSession,
+    private val nicknameProvider: NicknameProvider
 ) {
     private val shortTimeout = 4.seconds
     private val dumpTimeout = 20.seconds
 
     private val remoteDumpFilePath = "/sdcard/dump.xml"
+    private fun remoteScreenshotFilePath(name: String) = "/sdcard/$name"
 
     private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
 
@@ -43,10 +46,19 @@ class Dumper(
 
     @OptIn(ExperimentalPathApi::class)
     fun dump(content: Content): Dump = runBlocking(timeout = dumpTimeout) {
+        // Todo: should I always pass Content and Settings or just the necessary fields?
+
+        // Todo: make sure that all command exit codes are handled
 
         // Todo:
         //  - check that system health is retained if dump process is interrupted at any point
         //  - split up this method into multiple methods
+
+        // Record the exact time of the dump
+        val timeMilliseconds = System.currentTimeMillis()
+
+        val lastNickname = content.dumps.first().nickname
+        val nextNickname = nicknameProvider.getNext(current = lastNickname)
 
         // Dynamically retrieve any device
         val device = withTimeoutOrNull(shortTimeout) {
@@ -116,7 +128,51 @@ class Dumper(
             dumpOutput = dumpOutput
         )
 
-        TODO("continue here")
+        val displays = mutableListOf<Display>()
+        for (resolvedDisplay in resolvedDisplays) {
+            if (resolvedDisplay.screenshotId == null) continue
+
+            val screenshotFileName = "scr_${hash()}.png"
+            val remoteScreenshotFilePath = remoteScreenshotFilePath(screenshotFileName)
+
+            val screenshotOutput =
+                deviceShell.executeAsText(
+                    commandTimeout = shortTimeout.toJavaDuration(),
+                    command = "screencap -d ${resolvedDisplay.screenshotId} $remoteScreenshotFilePath"
+                )
+            // Continue if the screenshot taking process was problematic (e.g. invalid ID).
+            if (screenshotOutput.exitCode != 0) continue
+
+            // Todo: look into what is needed for exitCode to work as expected
+
+            // Pull screenshot file from device
+            deviceFileSystem.receiveFile(
+                remoteFilePath = remoteScreenshotFilePath,
+                destinationPath = tempDirectoryPath.resolve(screenshotFileName)
+            )
+
+            // Remove the screenshot file from the device
+            deviceShell.executeAsText(
+                commandTimeout = shortTimeout.toJavaDuration(),
+                command = "rm $remoteScreenshotFilePath"
+            )
+
+            displays.add(
+                Display(
+                    id = resolvedDisplay.dumpId,
+                    screenshotFileName = screenshotFileName
+                )
+            )
+        }
+
+        // return
+        Dump(
+            directoryName = "",
+            nickname = nextNickname,
+            timeMilliseconds = timeMilliseconds,
+            xmlTreeFileName = dumpFileName,
+            displays = displays
+        )
     } ?: error("Dump took too long. Aborting.")
 
     @Suppress("DuplicatedCode")
