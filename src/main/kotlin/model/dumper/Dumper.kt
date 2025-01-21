@@ -4,6 +4,7 @@ import com.android.adblib.AdbSession
 import com.android.adblib.ConnectedDevice
 import com.android.adblib.ConnectedDevicesTracker
 import com.android.adblib.ShellCommandOutput
+import com.android.adblib.ShellManager
 import com.android.adblib.connectedDevicesTracker
 import com.android.adblib.fileSystem
 import com.android.adblib.rootAndWait
@@ -25,7 +26,6 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.readText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 class Dumper(
     platformInformationProvider: PlatformInformationProvider,
@@ -76,13 +76,15 @@ class Dumper(
         tempDirectoryPath.createDirectories()
 
         // Dump the UI
-        deviceShell.executeAsText(
-            commandTimeout = shortTimeout.toJavaDuration(),
-            command = "uiautomator dump --windows $remoteDumpFilePath"
-        ).ifNonZeroExit { return@runBlocking DumpResult.Error("Root process took too long.") }
+        deviceShell.executeWithTimeout(
+            command = "uiautomator dump --windows $remoteDumpFilePath",
+            commandTimeout = shortTimeout,
+            timeoutAction = { return@runBlocking DumpResult.Error("XML Dump process took too long.") }
+        )
+            .ifNonZeroExit { return@runBlocking DumpResult.Error("XML Dump failed.") }
 
         // Pull the dump file from the device
-        val dumpFileName = "dump_${hash()}"
+        val dumpFileName = "dump_${hash()}.xml"
         try {
             deviceFileSystem.receiveFile(
                 remoteFilePath = remoteDumpFilePath,
@@ -93,24 +95,36 @@ class Dumper(
         }
 
         // Remove the dump file from the device
-        deviceShell.executeAsText(
-            commandTimeout = shortTimeout.toJavaDuration(),
-            command = "rm $remoteDumpFilePath"
+        deviceShell.executeWithTimeout(
+            command = "rm $remoteDumpFilePath",
+            commandTimeout = shortTimeout,
+            timeoutAction = {
+                return@runBlocking DumpResult.Error("Removing the dump file from device took too long.")
+            }
         )
 
         val api =
-            deviceShell.executeAsText(
-                commandTimeout = shortTimeout.toJavaDuration(),
-                command = "getprop ro.build.version.sdk"
+            deviceShell.executeWithTimeout(
+                command = "getprop ro.build.version.sdk",
+                commandTimeout = shortTimeout,
+                timeoutAction = {
+                    return@runBlocking DumpResult.Error("Getting the device API level took too long.")
+                }
             )
                 .ifNonZeroExit { return@runBlocking DumpResult.Error("Could not retrieve device API level.") }
                 .stdout
+                .trim()
                 .toInt()
 
         val flingerOutput =
-            deviceShell.executeAsText(
-                commandTimeout = shortTimeout.toJavaDuration(),
-                command = "dumpsys SurfaceFlinger --displays"
+            deviceShell.executeWithTimeout(
+                command = "dumpsys SurfaceFlinger --displays",
+                commandTimeout = shortTimeout,
+                timeoutAction = {
+                    return@runBlocking DumpResult.Error(
+                        "Getting the display IDs (SurfaceFlinger) took too long."
+                    )
+                }
             )
                 .ifNonZeroExit {
                     return@runBlocking DumpResult.Error(
@@ -120,14 +134,15 @@ class Dumper(
                 .stdout
 
         val getDisplaysOutput =
-            deviceShell.executeAsText(
-                commandTimeout = shortTimeout.toJavaDuration(),
-                command = "cmd display get-displays"
+            deviceShell.executeWithTimeout(
+                command = "cmd display get-displays",
+                commandTimeout = shortTimeout,
+                timeoutAction = {
+                    return@runBlocking DumpResult.Error("Getting the display IDs (get-displays) took too long.")
+                }
             )
                 .ifNonZeroExit {
-                    return@runBlocking DumpResult.Error(
-                        "Could not retrieve display IDs (get-displays failed)."
-                    )
+                    return@runBlocking DumpResult.Error("Could not retrieve display IDs (get-displays failed).")
                 }
                 .stdout
 
@@ -139,7 +154,9 @@ class Dumper(
             flingerOutput = flingerOutput,
             getDisplaysOutput = getDisplaysOutput,
             dumpOutput = dumpOutput
-        )
+        ) ?: return@runBlocking DumpResult.Error("Devices with API $api are not supported.")
+
+        println(resolvedDisplays)
 
         val displays = mutableListOf<Display>()
         for (resolvedDisplay in resolvedDisplays) {
@@ -149,9 +166,14 @@ class Dumper(
             val remoteScreenshotFilePath = remoteScreenshotFilePath(screenshotFileName)
 
             val screenshotOutput =
-                deviceShell.executeAsText(
-                    commandTimeout = shortTimeout.toJavaDuration(),
-                    command = "screencap -d ${resolvedDisplay.screenshotId} $remoteScreenshotFilePath"
+                deviceShell.executeWithTimeout(
+                    command = "screencap -d ${resolvedDisplay.screenshotId} $remoteScreenshotFilePath",
+                    commandTimeout = shortTimeout,
+                    timeoutAction = {
+                        return@runBlocking DumpResult.Error(
+                            "Taking a screenshot (id ${resolvedDisplay.screenshotId}) took too long."
+                        )
+                    }
                 )
             // Continue if the screenshot taking process was problematic (e.g. invalid ID).
             if (screenshotOutput.exitCode != 0) continue
@@ -169,9 +191,15 @@ class Dumper(
             }
 
             // Remove the screenshot file from the device
-            deviceShell.executeAsText(
-                commandTimeout = shortTimeout.toJavaDuration(),
-                command = "rm $remoteScreenshotFilePath"
+            deviceShell.executeWithTimeout(
+                command = "rm $remoteScreenshotFilePath",
+                commandTimeout = shortTimeout,
+                timeoutAction = {
+                    return@runBlocking DumpResult.Error(
+                        "Removing the screenshot file (id ${resolvedDisplay.screenshotId}) from device took " +
+                                "too long."
+                    )
+                }
             )
 
             displays.add(
@@ -192,7 +220,7 @@ class Dumper(
 
         // return
         DumpResult.Success(dump)
-    } ?: error("Dump took too long. Aborting.")
+    } ?: DumpResult.Error("Dump process took too long (more than $dumpTimeout).")
 
     @Suppress("DuplicatedCode")
     private fun resolveDisplays(
@@ -200,7 +228,7 @@ class Dumper(
         flingerOutput: String,
         getDisplaysOutput: String,
         dumpOutput: String
-    ): List<ResolvedDisplay> {
+    ): List<ResolvedDisplay>? {
 
         // Todo: maybe use classes to offer different implementations
 
@@ -214,7 +242,7 @@ class Dumper(
             }
 
         // This when statement partly contains duplicated code.
-        val resolvedDisplays: List<ResolvedDisplay> = when (api) {
+        val resolvedDisplays: List<ResolvedDisplay>? = when (api) {
 
             35 -> {
                 val flingerDisplays =
@@ -309,7 +337,7 @@ class Dumper(
                 }
             }
 
-            else -> error("Devices with API $api is not supported.")
+            else -> null
         }
 
         return resolvedDisplays
@@ -351,3 +379,12 @@ infix fun <T, R> Iterable<T>.zipMap(other: Iterable<R>): Map<T, R> =
 
 inline fun ShellCommandOutput.ifNonZeroExit(action: () -> Unit) =
     apply { if (exitCode != 0) action() }
+
+suspend inline fun ShellManager.executeWithTimeout(
+    command: String,
+    commandTimeout: Duration,
+    timeoutAction: () -> Nothing
+): ShellCommandOutput =
+    withTimeoutOrNull(commandTimeout) {
+        executeAsText(command)
+    } ?: timeoutAction()
