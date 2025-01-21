@@ -60,7 +60,7 @@ class AppRepository(
         Path(content.dumpsDirectoryName).createDirectories()
     }
 
-    fun registerNewDump(dump: Dump, content: Content, settings: Settings): Content {
+    fun registerNewDump(dump: Dump, content: Content, settings: Settings): DumpRegisterResult {
         val tempDirectoryPath = appDirectoryPath.resolve(content.tempDirectoryName)
 
         val currentDumpCount = content.dumps.size
@@ -75,8 +75,12 @@ class AppRepository(
                     .resolve(currentDumpCount.inc().toString())
             }
 
-        // Also clears the destination and temp directories.
-        tempDirectoryPath.moveContents(destinationDirectoryPath)
+        try {
+            // Also clears the destination and temp directories.
+            tempDirectoryPath.moveContents(destinationDirectoryPath)
+        } catch (e: Exception) {
+            return DumpRegisterResult.Error("Failed to register dump.")
+        }
 
         val updatedDump = dump.copy(directoryName = destinationDirectoryPath.name)
         val updatedDumps =
@@ -87,7 +91,7 @@ class AppRepository(
                 .toList()
         val updatedContent = content.copy(dumps = updatedDumps)
 
-        return updatedContent
+        return DumpRegisterResult.Success(updatedContent)
     }
 
     @OptIn(ExperimentalPathApi::class)

@@ -3,6 +3,7 @@ package model.dumper
 import com.android.adblib.AdbSession
 import com.android.adblib.ConnectedDevice
 import com.android.adblib.ConnectedDevicesTracker
+import com.android.adblib.ShellCommandOutput
 import com.android.adblib.connectedDevicesTracker
 import com.android.adblib.fileSystem
 import com.android.adblib.rootAndWait
@@ -45,10 +46,12 @@ class Dumper(
     }
 
     @OptIn(ExperimentalPathApi::class)
-    fun dump(content: Content): Dump = runBlocking(timeout = dumpTimeout) {
+    fun dump(content: Content): DumpResult = runBlocking(timeout = dumpTimeout) {
         // Todo: should I always pass Content and Settings or just the necessary fields?
 
         // Todo: make sure that all command exit codes are handled
+
+        // Todo: use custom exceptions? Or no exceptions at all and objects instead?
 
         // Todo:
         //  - check that system health is retained if dump process is interrupted at any point
@@ -63,12 +66,12 @@ class Dumper(
         // Dynamically retrieve any device
         val device = withTimeoutOrNull(shortTimeout) {
             adbSession.connectedDevicesTracker.waitForAnyDevice()
-        } ?: error("Could not find a connected device.")
+        } ?: return@runBlocking DumpResult.Error("No device connected.")
 
         // Attempt to root device
         withTimeoutOrNull(shortTimeout) {
             device.rootAndWait()
-        } ?: error("Root process took too long..")
+        } ?: return@runBlocking DumpResult.Error("Root process took too long.")
 
         val deviceShell = device.shell
         val deviceFileSystem = device.fileSystem
@@ -82,14 +85,18 @@ class Dumper(
         deviceShell.executeAsText(
             commandTimeout = shortTimeout.toJavaDuration(),
             command = "uiautomator dump --windows $remoteDumpFilePath"
-        )
+        ).ifNonZeroExit { return@runBlocking DumpResult.Error("Root process took too long.") }
 
         // Pull the dump file from the device
         val dumpFileName = "dump_${hash()}"
-        deviceFileSystem.receiveFile(
-            remoteFilePath = remoteDumpFilePath,
-            destinationPath = tempDirectoryPath.resolve(dumpFileName)
-        )
+        try {
+            deviceFileSystem.receiveFile(
+                remoteFilePath = remoteDumpFilePath,
+                destinationPath = tempDirectoryPath.resolve(dumpFileName)
+            )
+        } catch (e: Exception) {
+            return@runBlocking DumpResult.Error("Could not pull dump file from device.")
+        }
 
         // Remove the dump file from the device
         deviceShell.executeAsText(
@@ -102,7 +109,7 @@ class Dumper(
                 commandTimeout = shortTimeout.toJavaDuration(),
                 command = "getprop ro.build.version.sdk"
             )
-                .apply { require(exitCode == 0) { "Could not retrieve device API level." } }
+                .ifNonZeroExit { return@runBlocking DumpResult.Error("Could not retrieve device API level.") }
                 .stdout
                 .toInt()
 
@@ -110,13 +117,25 @@ class Dumper(
             deviceShell.executeAsText(
                 commandTimeout = shortTimeout.toJavaDuration(),
                 command = "dumpsys SurfaceFlinger --displays"
-            ).stdout
+            )
+                .ifNonZeroExit {
+                    return@runBlocking DumpResult.Error(
+                        "Could not retrieve display IDs (SurfaceFlinger failed)."
+                    )
+                }
+                .stdout
 
         val getDisplaysOutput =
             deviceShell.executeAsText(
                 commandTimeout = shortTimeout.toJavaDuration(),
                 command = "cmd display get-displays"
-            ).stdout
+            )
+                .ifNonZeroExit {
+                    return@runBlocking DumpResult.Error(
+                        "Could not retrieve display IDs (get-displays failed)."
+                    )
+                }
+                .stdout
 
         val dumpOutput = tempDirectoryPath.resolve(dumpFileName).readText()
 
@@ -145,11 +164,15 @@ class Dumper(
 
             // Todo: look into what is needed for exitCode to work as expected
 
-            // Pull screenshot file from device
-            deviceFileSystem.receiveFile(
-                remoteFilePath = remoteScreenshotFilePath,
-                destinationPath = tempDirectoryPath.resolve(screenshotFileName)
-            )
+            try {
+                // Pull screenshot file from device
+                deviceFileSystem.receiveFile(
+                    remoteFilePath = remoteScreenshotFilePath,
+                    destinationPath = tempDirectoryPath.resolve(screenshotFileName)
+                )
+            } catch (e: Exception) {
+                continue
+            }
 
             // Remove the screenshot file from the device
             deviceShell.executeAsText(
@@ -165,14 +188,16 @@ class Dumper(
             )
         }
 
-        // return
-        Dump(
+        val dump = Dump(
             directoryName = "",
             nickname = nextNickname,
             timeMilliseconds = timeMilliseconds,
             xmlTreeFileName = dumpFileName,
             displays = displays
         )
+
+        // return
+        DumpResult.Success(dump)
     } ?: error("Dump took too long. Aborting.")
 
     @Suppress("DuplicatedCode")
@@ -329,3 +354,6 @@ fun <T> String.extractAll(
 
 infix fun <T, R> Iterable<T>.zipMap(other: Iterable<R>): Map<T, R> =
     zip(other).toMap()
+
+inline fun ShellCommandOutput.ifNonZeroExit(action: () -> Unit) =
+    apply { if (exitCode != 0) action() }
