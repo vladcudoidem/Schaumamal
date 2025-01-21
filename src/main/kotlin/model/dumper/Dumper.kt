@@ -16,7 +16,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import model.hash
 import model.platform.PlatformInformationProvider
-import model.repository.Content
 import model.repository.Display
 import model.repository.Dump
 import kotlin.io.path.ExperimentalPathApi
@@ -46,12 +45,8 @@ class Dumper(
     }
 
     @OptIn(ExperimentalPathApi::class)
-    fun dump(content: Content): DumpResult = runBlocking(timeout = dumpTimeout) {
-        // Todo: should I always pass Content and Settings or just the necessary fields?
-
+    fun dump(lastNickname: String, tempDirectoryName: String): DumpResult = runBlocking(timeout = dumpTimeout) {
         // Todo: make sure that all command exit codes are handled
-
-        // Todo: use custom exceptions? Or no exceptions at all and objects instead?
 
         // Todo:
         //  - check that system health is retained if dump process is interrupted at any point
@@ -60,7 +55,6 @@ class Dumper(
         // Record the exact time of the dump
         val timeMilliseconds = System.currentTimeMillis()
 
-        val lastNickname = content.dumps.first().nickname
         val nextNickname = nicknameProvider.getNext(current = lastNickname)
 
         // Dynamically retrieve any device
@@ -77,7 +71,7 @@ class Dumper(
         val deviceFileSystem = device.fileSystem
 
         // Make sure that the temporary directory exists and clear its contents
-        val tempDirectoryPath = appDirectoryPath.resolve(content.tempDirectoryName)
+        val tempDirectoryPath = appDirectoryPath.resolve(tempDirectoryName)
         tempDirectoryPath.deleteRecursively()
         tempDirectoryPath.createDirectories()
 

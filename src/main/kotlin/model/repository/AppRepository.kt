@@ -60,11 +60,11 @@ class AppRepository(
         Path(content.dumpsDirectoryName).createDirectories()
     }
 
-    fun registerNewDump(dump: Dump, content: Content, settings: Settings): DumpRegisterResult {
+    fun registerNewDump(dump: Dump, content: Content, maxDumps: Int): DumpRegisterResult {
         val tempDirectoryPath = appDirectoryPath.resolve(content.tempDirectoryName)
 
         val currentDumpCount = content.dumps.size
-        val maxDumpsReached = currentDumpCount >= settings.maxDumps
+        val maxDumpsReached = currentDumpCount >= maxDumps
         val destinationDirectoryPath =
             if (maxDumpsReached) {
                 appDirectoryPath
