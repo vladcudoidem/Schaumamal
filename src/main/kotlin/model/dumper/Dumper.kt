@@ -32,8 +32,8 @@ class Dumper(
     private val adbSession: AdbSession,
     private val nicknameProvider: NicknameProvider
 ) {
-    private val shortTimeout = 4.seconds
-    private val dumpTimeout = 20.seconds
+    private val shortTimeout = 8.seconds
+    private val dumpTimeout = 40.seconds
 
     private val remoteDumpFilePath = "/sdcard/dump.xml"
     private fun remoteScreenshotFilePath(name: String) = "/sdcard/$name"
@@ -156,8 +156,6 @@ class Dumper(
             dumpOutput = dumpOutput
         ) ?: return@runBlocking DumpResult.Error("Devices with API $api are not supported.")
 
-        println(resolvedDisplays)
-
         val displays = mutableListOf<Display>()
         for (resolvedDisplay in resolvedDisplays) {
             if (resolvedDisplay.screenshotId == null) continue
@@ -218,8 +216,7 @@ class Dumper(
             displays = displays
         )
 
-        // return
-        DumpResult.Success(dump)
+        return@runBlocking DumpResult.Success(dump)
     } ?: DumpResult.Error("Dump process took too long (more than $dumpTimeout).")
 
     @Suppress("DuplicatedCode")
@@ -270,7 +267,7 @@ class Dumper(
                 // Whether to resolve an equal number of virtual displays in flingerDisplays and cmdDisplays by assuming
                 // that they are listed in the same order. If this is false, virtual displays are resolved only if there
                 // is exactly one in flingerDisplays and one in cmdDisplays.
-                val resolveMultipleVirtualDisplays = false // Todo: add option to select the algorithm
+                val resolveMultipleVirtualDisplays = true // Todo: add option to select the algorithm
 
                 val flingerVirtuals = flingerDisplays.filter { it.isVirtual }
                 val cmdVirtuals = cmdDisplays.filter { it.isVirtual }
