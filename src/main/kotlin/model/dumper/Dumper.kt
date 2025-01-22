@@ -9,11 +9,9 @@ import com.android.adblib.connectedDevicesTracker
 import com.android.adblib.fileSystem
 import com.android.adblib.rootAndWait
 import com.android.adblib.shell
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import model.hash
 import model.platform.PlatformInformationProvider
@@ -45,9 +43,10 @@ class Dumper(
     }
 
     @OptIn(ExperimentalPathApi::class)
-    fun dump(lastNickname: String, tempDirectoryName: String): DumpResult = runBlocking(timeout = dumpTimeout) {
-        // Todo: make sure that all command exit codes are handled
-
+    suspend fun dump(
+        lastNickname: String,
+        tempDirectoryName: String
+    ): DumpResult = withTimeoutOrNull(dumpTimeout) {
         // Todo:
         //  - check that system health is retained if dump process is interrupted at any point
         //  - split up this method into multiple methods
@@ -60,12 +59,12 @@ class Dumper(
         // Dynamically retrieve any device
         val device = withTimeoutOrNull(shortTimeout) {
             adbSession.connectedDevicesTracker.waitForAnyDevice()
-        } ?: return@runBlocking DumpResult.Error("No device connected.")
+        } ?: return@withTimeoutOrNull DumpResult.Error("No device connected.")
 
         // Attempt to root device
         withTimeoutOrNull(shortTimeout) {
             device.rootAndWait()
-        } ?: return@runBlocking DumpResult.Error("Root process took too long.")
+        } ?: return@withTimeoutOrNull DumpResult.Error("Root process took too long.")
 
         val deviceShell = device.shell
         val deviceFileSystem = device.fileSystem
@@ -79,9 +78,9 @@ class Dumper(
         deviceShell.executeWithTimeout(
             command = "uiautomator dump --windows $remoteDumpFilePath",
             commandTimeout = shortTimeout,
-            timeoutAction = { return@runBlocking DumpResult.Error("XML Dump process took too long.") }
+            timeoutAction = { return@withTimeoutOrNull DumpResult.Error("XML Dump process took too long.") }
         )
-            .ifNonZeroExit { return@runBlocking DumpResult.Error("XML Dump failed.") }
+            .ifNonZeroExit { return@withTimeoutOrNull DumpResult.Error("XML Dump failed.") }
 
         // Pull the dump file from the device
         val dumpFileName = "dump_${hash()}.xml"
@@ -91,7 +90,7 @@ class Dumper(
                 destinationPath = tempDirectoryPath.resolve(dumpFileName)
             )
         } catch (e: Exception) {
-            return@runBlocking DumpResult.Error("Could not pull dump file from device.")
+            return@withTimeoutOrNull DumpResult.Error("Could not pull dump file from device.")
         }
 
         // Remove the dump file from the device
@@ -99,7 +98,7 @@ class Dumper(
             command = "rm $remoteDumpFilePath",
             commandTimeout = shortTimeout,
             timeoutAction = {
-                return@runBlocking DumpResult.Error("Removing the dump file from device took too long.")
+                return@withTimeoutOrNull DumpResult.Error("Removing the dump file from device took too long.")
             }
         )
 
@@ -108,10 +107,10 @@ class Dumper(
                 command = "getprop ro.build.version.sdk",
                 commandTimeout = shortTimeout,
                 timeoutAction = {
-                    return@runBlocking DumpResult.Error("Getting the device API level took too long.")
+                    return@withTimeoutOrNull DumpResult.Error("Getting the device API level took too long.")
                 }
             )
-                .ifNonZeroExit { return@runBlocking DumpResult.Error("Could not retrieve device API level.") }
+                .ifNonZeroExit { return@withTimeoutOrNull DumpResult.Error("Could not retrieve device API level.") }
                 .stdout
                 .trim()
                 .toInt()
@@ -121,13 +120,13 @@ class Dumper(
                 command = "dumpsys SurfaceFlinger --displays",
                 commandTimeout = shortTimeout,
                 timeoutAction = {
-                    return@runBlocking DumpResult.Error(
+                    return@withTimeoutOrNull DumpResult.Error(
                         "Getting the display IDs (SurfaceFlinger) took too long."
                     )
                 }
             )
                 .ifNonZeroExit {
-                    return@runBlocking DumpResult.Error(
+                    return@withTimeoutOrNull DumpResult.Error(
                         "Could not retrieve display IDs (SurfaceFlinger failed)."
                     )
                 }
@@ -138,11 +137,11 @@ class Dumper(
                 command = "cmd display get-displays",
                 commandTimeout = shortTimeout,
                 timeoutAction = {
-                    return@runBlocking DumpResult.Error("Getting the display IDs (get-displays) took too long.")
+                    return@withTimeoutOrNull DumpResult.Error("Getting the display IDs (get-displays) took too long.")
                 }
             )
                 .ifNonZeroExit {
-                    return@runBlocking DumpResult.Error("Could not retrieve display IDs (get-displays failed).")
+                    return@withTimeoutOrNull DumpResult.Error("Could not retrieve display IDs (get-displays failed).")
                 }
                 .stdout
 
@@ -154,7 +153,7 @@ class Dumper(
             flingerOutput = flingerOutput,
             getDisplaysOutput = getDisplaysOutput,
             dumpOutput = dumpOutput
-        ) ?: return@runBlocking DumpResult.Error("Devices with API $api are not supported.")
+        ) ?: return@withTimeoutOrNull DumpResult.Error("Devices with API $api are not supported.")
 
         val displays = mutableListOf<Display>()
         for (resolvedDisplay in resolvedDisplays) {
@@ -168,7 +167,7 @@ class Dumper(
                     command = "screencap -d ${resolvedDisplay.screenshotId} $remoteScreenshotFilePath",
                     commandTimeout = shortTimeout,
                     timeoutAction = {
-                        return@runBlocking DumpResult.Error(
+                        return@withTimeoutOrNull DumpResult.Error(
                             "Taking a screenshot (id ${resolvedDisplay.screenshotId}) took too long."
                         )
                     }
@@ -193,7 +192,7 @@ class Dumper(
                 command = "rm $remoteScreenshotFilePath",
                 commandTimeout = shortTimeout,
                 timeoutAction = {
-                    return@runBlocking DumpResult.Error(
+                    return@withTimeoutOrNull DumpResult.Error(
                         "Removing the screenshot file (id ${resolvedDisplay.screenshotId}) from device took " +
                                 "too long."
                     )
@@ -216,7 +215,7 @@ class Dumper(
             displays = displays
         )
 
-        return@runBlocking DumpResult.Success(dump)
+        return@withTimeoutOrNull DumpResult.Success(dump)
     } ?: DumpResult.Error("Dump process took too long (more than $dumpTimeout).")
 
     @Suppress("DuplicatedCode")
@@ -351,17 +350,6 @@ suspend fun ConnectedDevicesTracker.waitForAnyDevice(): ConnectedDevice {
         }.filterNotNull().first()
     }
 }
-
-fun <T> runBlocking(
-    timeout: Duration,
-    block: suspend CoroutineScope.() -> T
-): T? =
-    runBlocking {
-        withTimeoutOrNull(
-            timeout = timeout,
-            block = block
-        )
-    }
 
 fun <T> String.extractAll(
     pattern: Regex,
