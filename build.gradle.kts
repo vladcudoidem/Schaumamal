@@ -22,10 +22,11 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
 
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutinesCore)
+    implementation(libs.kotlinx.coroutinesSwing)
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serializationJson)
     implementation(libs.android.adblib)
 }
 
