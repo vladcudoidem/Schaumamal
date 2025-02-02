@@ -28,6 +28,8 @@ class AppRepository(
     private val contentJsonFilePath = appDirectoryPath.resolve("content.json")
     private val settingsFilePath = appDirectoryPath.resolve("settings.json")
 
+    private val json = Json { prettyPrint = true }
+
     fun existsContentJson(): Boolean = contentJsonFilePath.exists()
 
     fun readContentJson() = contentJsonFilePath.readJson<Content>()
@@ -44,13 +46,13 @@ class AppRepository(
         require(exists()) { "$name does not exist and thus cannot be read." }
 
         val jsonString = readText()
-        val jsonObject = Json.decodeFromString<T>(jsonString)
+        val jsonObject = json.decodeFromString<T>(jsonString)
 
         return jsonObject
     }
 
     private inline fun <reified T> Path.writeJson(jsonObject: T) {
-        val jsonString = Json.encodeToString(jsonObject)
+        val jsonString = json.encodeToString(jsonObject)
         writeText(jsonString)
     }
 
@@ -78,7 +80,6 @@ class AppRepository(
                     .resolve(content.dumpsDirectoryName)
                     .resolve(currentDumpCount.inc().toString())
             }
-        println(destinationDirectoryPath)
 
         try {
             // Also clears the destination and temp directories.
