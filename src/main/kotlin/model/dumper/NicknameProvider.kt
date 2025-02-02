@@ -1,7 +1,9 @@
 package model.dumper
 
 class NicknameProvider {
-    fun getNext(current: String): String {
+    fun getNext(current: String?): String {
+        current ?: return nicknames.first()
+
         val currentIndex = nicknames.indexOf(current)
             .also {
                 if (it == -1) return nicknames.first()

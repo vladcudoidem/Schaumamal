@@ -7,47 +7,39 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import oldModel.parser.xmlElements.Display
-import oldModel.parser.xmlElements.Node
-import oldModel.parser.xmlElements.System
-import oldModel.parser.xmlElements.Window
-import oldModel.parser.xmlElements.XmlElement
+import model.parser.xmlElements.DisplayNode
+import model.parser.xmlElements.GenericNode
+import model.parser.xmlElements.WindowNode
+import model.parser.xmlElements.Node
 import shared.Colors
 import shared.Colors.accentColor
 import viewmodel.XmlTreeLine
 
-fun System.getFlatXmlTreeMap(
-    selectedNode: Node,
-    onNodeTreeLineClicked: (Node) -> Unit
-): LinkedHashMap<XmlElement, XmlTreeLine> {
-    val result: LinkedHashMap<XmlElement, XmlTreeLine> = linkedMapOf()
+fun DisplayNode.getFlatXmlTreeMap(
+    selectedNode: GenericNode,
+    onNodeTreeLineClicked: (GenericNode) -> Unit
+): LinkedHashMap<Node, XmlTreeLine> {
+    val result: LinkedHashMap<Node, XmlTreeLine> = linkedMapOf()
 
     forThisAndDescendants { element, depth ->
 
         result += when (element) {
 
-            is System -> element to XmlTreeLine(
+            is DisplayNode -> element to XmlTreeLine(
                 text = element.displayText,
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
                 onClickText = { }
             )
 
-            is Display -> element to XmlTreeLine(
+            is WindowNode -> element to XmlTreeLine(
                 text = element.displayText,
                 textBackgroundColor = Color.Transparent,
                 depth = depth,
                 onClickText = { }
             )
 
-            is Window -> element to XmlTreeLine(
-                text = element.displayText,
-                textBackgroundColor = Color.Transparent,
-                depth = depth,
-                onClickText = { }
-            )
-
-            is Node -> element to XmlTreeLine(
+            is GenericNode -> element to XmlTreeLine(
                 text = element.displayText,
                 textBackgroundColor = if (selectedNode === element) {
                     accentColor
@@ -66,20 +58,10 @@ fun System.getFlatXmlTreeMap(
     return result
 }
 
-private val XmlElement.displayText: AnnotatedString
+private val Node.displayText: AnnotatedString
     get() = when (this) {
 
-        is System -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Colors.discreteTextColor)) {
-                append("System")
-
-                append(" {")
-                append(" displays=${children.size}")
-                append(" }")
-            }
-        }
-
-        is Display -> buildAnnotatedString {
+        is DisplayNode -> buildAnnotatedString {
             withStyle(style = SpanStyle(color = Colors.discreteTextColor)) {
                 append("Display")
 
@@ -90,7 +72,7 @@ private val XmlElement.displayText: AnnotatedString
             }
         }
 
-        is Window -> buildAnnotatedString {
+        is WindowNode -> buildAnnotatedString {
             withStyle(style = SpanStyle(color = Colors.discreteTextColor)) {
                 append("($index)")
                 append(" Window")
@@ -103,7 +85,7 @@ private val XmlElement.displayText: AnnotatedString
             }
         }
 
-        is Node -> buildAnnotatedString {
+        is GenericNode -> buildAnnotatedString {
             append("($index)")
             val formattedClassName = className.split(".").last()
             append(" $formattedClassName")
@@ -135,9 +117,9 @@ private val XmlElement.displayText: AnnotatedString
         else -> error("displayText template not specified for this XmlElement subtype.")
     }
 
-private fun XmlElement.forThisAndDescendants(
+private fun Node.forThisAndDescendants(
     depth: Int = 0,
-    action: (element: XmlElement, depth: Int) -> Unit
+    action: (element: Node, depth: Int) -> Unit
 ) {
     action(this, depth)
 

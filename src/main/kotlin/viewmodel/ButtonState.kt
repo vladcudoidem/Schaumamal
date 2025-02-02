@@ -2,14 +2,12 @@ package viewmodel
 
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import oldModel.InspectorState
-import oldModel.notification.Notification
+import model.InspectorState
 import oldModel.notification.NotificationManager
-import kotlin.time.Duration.Companion.milliseconds
 
 class ButtonState(
     inspectorState: StateFlow<InspectorState>,
-    private val extract: (onException: (Exception) -> Unit) -> Unit,
+    private val extract: () -> Unit,
     private val notificationManager: NotificationManager
 ) {
 
@@ -24,12 +22,6 @@ class ButtonState(
     }
 
     fun onExtractButtonPressed() {
-        extract {
-            val exceptionNotification = Notification(
-                description = "Dump failed.",
-                timeout = 4000.milliseconds
-            )
-            notificationManager.notify(exceptionNotification)
-        }
+        extract()
     }
 }

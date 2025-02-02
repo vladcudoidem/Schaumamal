@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import oldModel.InspectorState
-import oldModel.LayoutData
-import oldModel.parser.xmlElements.Node
+import model.DisplayData
+import model.InspectorState
+import model.parser.xmlElements.GenericNode
 import viewmodel.extraUiLogic.extractDisplayGraphics
 import viewmodel.extraUiLogic.forFirstNodeUnder
 import viewmodel.extraUiLogic.getNodesOrderedByDepth
@@ -28,15 +28,15 @@ import kotlin.coroutines.CoroutineContext
 class ScreenshotState(
     inspectorState: StateFlow<InspectorState>,
     isNodeSelected: StateFlow<Boolean>,
-    selectedNode: StateFlow<Node>,
-    private val data: StateFlow<LayoutData>,
-    private val selectNode: (Node) -> Unit
+    selectedNode: StateFlow<GenericNode>,
+    private val data: StateFlow<DisplayData>,
+    private val selectNode: (GenericNode) -> Unit
 ) {
     val showScreenshot = inspectorState.map { it == InspectorState.POPULATED }
     val imageBitmap = data.map {
         withContext(Dispatchers.IO) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
             val defaultBitmap = ImageBitmap(0, 0)
-            val actualBitmap = if (it != LayoutData.Empty) {
+            val actualBitmap = if (it != DisplayData.Empty) {
                 loadImageBitmap(FileInputStream(it.screenshotFile))
             } else {
                 defaultBitmap
@@ -47,7 +47,7 @@ class ScreenshotState(
                 screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
             }
         }
-    } // Todo: this was using "derivedStateOf"
+    } // Todo: this was using "derivedStateOf". Is the current implementation good?
 
     // This does not to be a state as it does not have to trigger any recomposition. It is initialized when the model
     // updates the data and thus the imageBitmap.
@@ -83,7 +83,7 @@ class ScreenshotState(
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
         // Extract node list with the first nodes being the deepest ones.
-        val flatNodeListByDepth = data.value.root.getNodesOrderedByDepth(deepNodesFirst = true)
+        val flatNodeListByDepth = data.value.displayNode.getNodesOrderedByDepth(deepNodesFirst = true)
 
         flatNodeListByDepth.forFirstNodeUnder(
             offset = offset,

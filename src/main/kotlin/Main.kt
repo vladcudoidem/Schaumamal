@@ -24,10 +24,7 @@ fun main() = application {
     KoinApplication(
         application = {
             modules(
-                viewModelModule,
-                notificationModule,
-                coroutineModule,
-                extractionModule
+                viewModelModule
             )
         }
     ) {
@@ -35,7 +32,7 @@ fun main() = application {
         val buttonState = remember {
             ButtonState(
                 inspectorState = viewModel.state,
-                extract = viewModel::extractLayout,
+                extract = viewModel::extract,
                 notificationManager = viewModel.notificationManager
             )
         }
@@ -48,6 +45,7 @@ fun main() = application {
                 selectNode = viewModel::selectNode
             )
         }
+        // Todo: take layout stuff out of ScreenshotState and split UiLayoutState into two state holders
         val screenshotState = remember {
             ScreenshotState(
                 inspectorState = viewModel.state,
@@ -69,7 +67,6 @@ fun main() = application {
             title = "Schaumamal",
             icon = painterResource("appIcons/icon.png"),
             onCloseRequest = {
-                viewModel.teardown()
                 exitApplication()
             },
             onKeyEvent = {

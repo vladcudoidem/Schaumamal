@@ -1,9 +1,9 @@
 package viewmodel.extraUiLogic
 
-import oldModel.parser.PropertyName
-import oldModel.parser.xmlElements.Node
+import model.parser.PropertyName
+import model.parser.xmlElements.GenericNode
 
-val Node.propertyMap
+val GenericNode.propertyMap
     get() = linkedMapOf(
         PropertyName.Node.INDEX to index.toString(),
         PropertyName.Node.TEXT to text,

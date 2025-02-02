@@ -1,13 +1,13 @@
 package viewmodel.extraUiLogic
 
 import androidx.compose.ui.geometry.Offset
-import oldModel.parser.xmlElements.Node
-import oldModel.parser.xmlElements.System
+import model.parser.xmlElements.DisplayNode
+import model.parser.xmlElements.GenericNode
 
-fun List<Node>.forFirstNodeUnder(
+fun List<GenericNode>.forFirstNodeUnder(
     offset: Offset,
     displayPixelConversionFactor: Float,
-    action: (Node) -> Unit
+    action: (GenericNode) -> Unit
 ) {
     val firstMatchingNode = firstOrNull { node ->
         val (nodeOffset, nodeSize) = node.extractDisplayGraphics(displayPixelConversionFactor)
@@ -22,15 +22,13 @@ fun List<Node>.forFirstNodeUnder(
 }
 
 // Only returns simple nodes.
-fun System.getNodesOrderedByDepth(deepNodesFirst: Boolean = false): List<Node> {
+fun DisplayNode.getNodesOrderedByDepth(deepNodesFirst: Boolean = false): List<GenericNode> {
     // The index of the list represents how many levels of parent nodes its (i.e. the list's) nodes have.
-    val layeredMap = mutableMapOf<Int, MutableList<Node>>()
+    val layeredMap = mutableMapOf<Int, MutableList<GenericNode>>()
 
-    children.forEach { display ->
-        display.children.forEach { window ->
-            window.children.forEach { rootNode ->
-                layeredMap.insertAllNodesUnder(node = rootNode)
-            }
+    children.forEach { window ->
+        window.children.forEach { rootNode ->
+            layeredMap.insertAllNodesUnder(node = rootNode)
         }
     }
 
@@ -46,8 +44,8 @@ fun System.getNodesOrderedByDepth(deepNodesFirst: Boolean = false): List<Node> {
 }
 
 // This method inserts all children (children of children as well) into the layered map (keys are depth levels).
-private fun MutableMap<Int, MutableList<Node>>.insertAllNodesUnder(
-    node: Node,
+private fun MutableMap<Int, MutableList<GenericNode>>.insertAllNodesUnder(
+    node: GenericNode,
     depth: Int = 0
 ) {
     getOrPut(depth) { mutableListOf() }.add(node)

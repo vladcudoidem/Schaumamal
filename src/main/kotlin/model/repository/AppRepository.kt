@@ -22,10 +22,6 @@ class AppRepository(
 ) {
     private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
 
-    init {
-        appDirectoryPath.createDirectories()
-    }
-
     private val contentJsonFilePath = appDirectoryPath.resolve("content.json")
     private val settingsFilePath = appDirectoryPath.resolve("settings.json")
 
@@ -53,6 +49,10 @@ class AppRepository(
     private inline fun <reified T> Path.writeJson(jsonObject: T) {
         val jsonString = Json.encodeToString(jsonObject)
         writeText(jsonString)
+    }
+
+    fun createAppDirectory() {
+        appDirectoryPath.createDirectories()
     }
 
     fun createContentDirectories(content: Content) {

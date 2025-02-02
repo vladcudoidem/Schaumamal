@@ -1,6 +1,6 @@
-package oldModel.parser.xmlElements
+package model.parser.xmlElements
 
-data class Node(
+data class GenericNode(
     val index: Int,
     val text: String,
     val resourceId: String,
@@ -18,11 +18,11 @@ data class Node(
     val password: Boolean,
     val selected: Boolean,
     val bounds: String,
-    override val children: List<Node>
-) : XmlElement {
+    override val children: List<GenericNode>
+) : Node {
 
     companion object {
-        val Empty = Node(
+        val Empty = GenericNode(
             index = -1,
             text = "",
             resourceId = "",

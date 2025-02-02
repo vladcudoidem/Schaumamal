@@ -1,8 +1,8 @@
-package oldModel.parser.xmlElements
+package model.parser.xmlElements
 
-data class Window(
+data class WindowNode(
     val index: Int,
-    val id: Int,
+    val id: String,
     val title: String,
     val bounds: String,
     val active: Boolean,
@@ -10,5 +10,5 @@ data class Window(
     val layer: Int,
     val focused: Boolean,
     val accessibilityFocused: Boolean,
-    override val children: List<Node>
-) : XmlElement
+    override val children: List<GenericNode>
+) : Node

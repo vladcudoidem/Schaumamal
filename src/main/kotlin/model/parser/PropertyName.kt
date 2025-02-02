@@ -1,4 +1,6 @@
-package oldModel.parser
+package model.parser
+
+// Todo: move these to the respective data classes.
 
 object PropertyName {
 
