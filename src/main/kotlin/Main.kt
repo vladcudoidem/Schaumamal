@@ -12,11 +12,10 @@ import shared.Dimensions.minimumWindowHeight
 import shared.Dimensions.minimumWindowWidth
 import view.MainScreen
 import view.UiLayoutState
-import view.onWindowKeyEvent
 import viewmodel.AppViewModel
-import viewmodel.ButtonState
-import viewmodel.PaneState
-import viewmodel.ScreenshotState
+import view.button.ButtonState
+import view.panes.PaneState
+import view.screenshot.ScreenshotState
 import java.awt.Dimension
 
 fun main() = application {
@@ -32,8 +31,7 @@ fun main() = application {
         val buttonState = remember {
             ButtonState(
                 inspectorState = viewModel.state,
-                extract = viewModel::extract,
-                notificationManager = viewModel.notificationManager
+                extract = viewModel::extract
             )
         }
         val paneState = remember {

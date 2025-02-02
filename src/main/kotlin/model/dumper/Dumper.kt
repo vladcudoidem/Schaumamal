@@ -16,10 +16,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import model.hash
+import model.dumper.dataClasses.CmdDisplay
+import model.dumper.dataClasses.DumpDisplay
+import model.dumper.dataClasses.FlingerDisplay
+import model.dumper.dataClasses.ResolvedDisplay
 import model.platform.PlatformInformationProvider
-import model.repository.Display
-import model.repository.Dump
+import model.repository.dataClasses.Display
+import model.repository.dataClasses.Dump
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories

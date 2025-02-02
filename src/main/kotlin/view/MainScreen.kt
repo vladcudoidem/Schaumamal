@@ -12,9 +12,9 @@ import view.button.ButtonLayer
 import view.notification.NotificationLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
-import viewmodel.ButtonState
-import viewmodel.PaneState
-import viewmodel.ScreenshotState
+import view.button.ButtonState
+import view.panes.PaneState
+import view.screenshot.ScreenshotState
 
 @Composable
 fun MainScreen(

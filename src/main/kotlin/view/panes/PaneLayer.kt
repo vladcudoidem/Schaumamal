@@ -34,8 +34,6 @@ import view.FadeVisibility
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
-import viewmodel.PaneState
-import viewmodel.XmlTreeLine
 
 @Composable
 fun PaneLayer(

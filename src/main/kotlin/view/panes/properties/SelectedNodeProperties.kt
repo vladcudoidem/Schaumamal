@@ -22,7 +22,7 @@ import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
-import view.CustomScrollbarStyle
+import view.panes.CustomScrollbarStyle
 import java.awt.Cursor
 
 @Composable

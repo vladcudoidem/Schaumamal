@@ -22,7 +22,7 @@ import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
-import viewmodel.XmlTreeLine
+import view.panes.XmlTreeLine
 import java.awt.Cursor
 
 @Composable

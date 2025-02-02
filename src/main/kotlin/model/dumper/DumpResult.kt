@@ -1,6 +1,6 @@
 package model.dumper
 
-import model.repository.Dump
+import model.repository.dataClasses.Dump
 
 sealed class DumpResult {
     data class Error(val reason: String) : DumpResult()

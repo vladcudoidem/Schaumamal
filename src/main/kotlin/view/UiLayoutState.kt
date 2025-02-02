@@ -22,8 +22,8 @@ import shared.Values.keyboardZoomFactor
 import shared.Values.maxScreenshotScale
 import shared.Values.minScreenshotScale
 import shared.Values.scrollZoomFactor
-import viewmodel.toDp
-import viewmodel.toPx
+import view.utils.toDp
+import view.utils.toPx
 import kotlin.math.min
 
 class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {

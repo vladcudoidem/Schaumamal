@@ -1,5 +1,5 @@
 import com.android.adblib.AdbSessionHost
-import model.DisplayDataResolver
+import model.displayDataResolver.DisplayDataResolver
 import model.dumper.Dumper
 import model.dumper.NicknameProvider
 import model.parser.XmlParser

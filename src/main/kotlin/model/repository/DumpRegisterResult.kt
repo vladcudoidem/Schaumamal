@@ -1,5 +1,7 @@
 package model.repository
 
+import model.repository.dataClasses.Content
+
 sealed class DumpRegisterResult {
     data class Error(val reason: String) : DumpRegisterResult()
 

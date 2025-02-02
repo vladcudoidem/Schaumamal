@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
 import view.UiLayoutState
-import viewmodel.ButtonState
+import view.button.displayControl.DisplayControlPill
+import view.button.extraction.ExtractionButton
 
 @Composable
 fun ButtonLayer(

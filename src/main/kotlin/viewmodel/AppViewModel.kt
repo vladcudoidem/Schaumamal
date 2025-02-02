@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
-import model.DisplayData
-import model.DisplayDataResolver
+import model.displayDataResolver.DisplayData
+import model.displayDataResolver.DisplayDataResolver
 import model.InspectorState
 import model.dumper.DumpResult
 import model.dumper.Dumper
-import model.parser.xmlElements.GenericNode
+import model.parser.dataClasses.GenericNode
 import model.repository.AppRepository
-import model.repository.Content
+import model.repository.dataClasses.Content
 import model.repository.DumpRegisterResult
-import model.repository.Settings
+import model.repository.dataClasses.Settings
 import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
 
@@ -30,7 +30,7 @@ class AppViewModel(
     private val appRepository: AppRepository,
     private val displayDataResolver: DisplayDataResolver,
     private val viewModelScope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    private val stateCollectionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    stateCollectionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) {
     init {
         appRepository.createAppDirectory()

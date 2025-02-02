@@ -13,6 +13,9 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import model.repository.dataClasses.Content
+import model.repository.dataClasses.Dump
+import model.repository.dataClasses.Settings
 
 // Do not remove! This is needed.
 import kotlinx.serialization.encodeToString

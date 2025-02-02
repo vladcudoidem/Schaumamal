@@ -1,8 +1,8 @@
 package model.parser
 
-import model.parser.xmlElements.DisplayNode
-import model.parser.xmlElements.GenericNode
-import model.parser.xmlElements.WindowNode
+import model.parser.dataClasses.DisplayNode
+import model.parser.dataClasses.GenericNode
+import model.parser.dataClasses.WindowNode
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
 import java.io.File
