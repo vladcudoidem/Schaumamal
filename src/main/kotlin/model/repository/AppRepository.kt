@@ -68,12 +68,14 @@ class AppRepository(
         val destinationDirectoryPath =
             if (maxDumpsReached) {
                 appDirectoryPath
+                    .resolve(content.dumpsDirectoryName)
                     .resolve(content.dumps.last().directoryName)
             } else {
                 appDirectoryPath
                     .resolve(content.dumpsDirectoryName)
                     .resolve(currentDumpCount.inc().toString())
             }
+        println(destinationDirectoryPath)
 
         try {
             // Also clears the destination and temp directories.
@@ -100,8 +102,10 @@ class AppRepository(
         destination.createDirectories()
 
         // This only works for destinations that contain regular files and no further directories.
-        this.forEachDirectoryEntry {
-            it.moveTo(destination)
+        this.forEachDirectoryEntry { absoluteOriginPath ->
+            val relativePath = this.relativize(absoluteOriginPath)
+            val absoluteDestinationPath = destination.resolve(relativePath)
+            absoluteOriginPath.moveTo(absoluteDestinationPath)
         }
 
         this.deleteRecursively()

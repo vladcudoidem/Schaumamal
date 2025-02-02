@@ -8,7 +8,7 @@ data class Settings(
 ) {
     companion object {
         val DefaultEmpty = Settings(
-            maxDumps = 10
+            maxDumps = 3
         )
     }
 }

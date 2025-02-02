@@ -134,6 +134,9 @@ class AppViewModel(
                 is DumpRegisterResult.Success -> registerResult.content
             }
 
+            appRepository.writeContentJson(newContent)
+            content.value = newContent
+
             _isNodeSelected.value = false
             _selectedNode.value = GenericNode.Empty
 
