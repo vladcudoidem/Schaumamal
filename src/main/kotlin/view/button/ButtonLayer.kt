@@ -37,6 +37,8 @@ fun ButtonLayer(
     val extractButtonText by buttonState.extractButtonText.collectAsState(initial = "...")
         // Todo: is the "..." ok?
 
+    val displayCounter by buttonState.displayCounter.collectAsState(initial = "-/-")
+
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(mediumPadding),
@@ -66,7 +68,11 @@ fun ButtonLayer(
                 )
             }
 
-            DisplayControlPill()
+            DisplayControlPill(
+                displayCounter = displayCounter,
+                onNextDisplayButtonPressed = buttonState::onNextDisplayButtonPressed,
+                onPreviousDisplayButtonPressed = buttonState::onPreviousDisplayButtonPressed
+            )
         }
 
         // This is needed for the elements that follow to be as low on the screen as possible.
