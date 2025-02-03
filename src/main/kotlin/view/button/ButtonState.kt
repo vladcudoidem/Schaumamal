@@ -23,9 +23,14 @@ class ButtonState(
         }
     }
 
+    val areDisplayControlButtonsEnabled = inspectorState.map { it == InspectorState.POPULATED }
     val displayCounter =
-        combine(displayIndex, displayCount) { displayIndex, displayCount ->
-            "${displayIndex + 1}/$displayCount"
+        combine(displayIndex, displayCount, inspectorState) { displayIndex, displayCount, inspectorState ->
+            if (inspectorState == InspectorState.POPULATED) {
+                "${displayIndex + 1}/$displayCount"
+            } else {
+                "?/?"
+            }
         }
 
     fun onExtractButtonPressed() {

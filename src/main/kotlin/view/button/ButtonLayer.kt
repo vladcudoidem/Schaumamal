@@ -37,7 +37,8 @@ fun ButtonLayer(
     val extractButtonText by buttonState.extractButtonText.collectAsState(initial = "...")
         // Todo: is the "..." ok?
 
-    val displayCounter by buttonState.displayCounter.collectAsState(initial = "-/-")
+    val areDisplayControlButtonsEnabled by buttonState.areDisplayControlButtonsEnabled.collectAsState(initial = false)
+    val displayCounter by buttonState.displayCounter.collectAsState(initial = "?/?")
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -69,6 +70,7 @@ fun ButtonLayer(
             }
 
             DisplayControlPill(
+                areDisplayControlButtonsEnabled = areDisplayControlButtonsEnabled,
                 displayCounter = displayCounter,
                 onNextDisplayButtonPressed = buttonState::onNextDisplayButtonPressed,
                 onPreviousDisplayButtonPressed = buttonState::onPreviousDisplayButtonPressed

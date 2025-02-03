@@ -20,6 +20,7 @@ import view.button.RoundIconButton
 
 @Composable
 fun DisplayControlPill(
+    areDisplayControlButtonsEnabled: Boolean,
     displayCounter: String,
     onNextDisplayButtonPressed: () -> Unit,
     onPreviousDisplayButtonPressed: () -> Unit,
@@ -29,7 +30,8 @@ fun DisplayControlPill(
         RoundIconButton(
             onClick = onPreviousDisplayButtonPressed,
             iconPainter = painterResource("icons/arrow_backward.svg"),
-            iconModifier = Modifier.padding(end = 2.dp)
+            iconModifier = Modifier.padding(end = 2.dp),
+            enabled = areDisplayControlButtonsEnabled
         )
 
         Text(
@@ -55,7 +57,8 @@ fun DisplayControlPill(
         RoundIconButton(
             onClick = onNextDisplayButtonPressed,
             iconPainter = painterResource("icons/arrow_forward.svg"),
-            iconModifier = Modifier.padding(start = 2.dp)
+            iconModifier = Modifier.padding(start = 2.dp),
+            enabled = areDisplayControlButtonsEnabled
         )
     }
 }

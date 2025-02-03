@@ -172,14 +172,37 @@ class AppViewModel(
     }
 
     fun switchDisplay(direction: Direction) {
-        _isNodeSelected.value = false
-        _selectedNode.value = GenericNode.Empty
+        var changed = false
 
-        when (direction) {
-            Direction.NEXT ->
-                _displayIndex.update { it.inc().coerceAtMost(displayCount.value - 1) }
+        _displayIndex.update {
+            when (direction) {
+                Direction.PREVIOUS -> {
+                    val newValue = it.dec()
 
-            Direction.PREVIOUS -> _displayIndex.update { it.dec().coerceAtLeast(0) }
+                    if (it > 0) {
+                        changed = true
+                        newValue
+                    } else {
+                        it
+                    }
+                }
+
+                Direction.NEXT -> {
+                    val newValue = it.inc()
+
+                    if (it < displayCount.value - 1) {
+                        changed = true
+                        newValue
+                    } else {
+                        it
+                    }
+                }
+            }
+        }
+
+        if (changed) {
+            _isNodeSelected.value = false
+            _selectedNode.value = GenericNode.Empty
         }
     }
 }
