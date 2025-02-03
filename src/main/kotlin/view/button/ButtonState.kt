@@ -25,7 +25,7 @@ class ButtonState(
 
     val displayCounter =
         combine(displayIndex, displayCount) { displayIndex, displayCount ->
-            "$displayIndex/$displayCount"
+            "${displayIndex + 1}/$displayCount"
         }
 
     fun onExtractButtonPressed() {

@@ -45,14 +45,12 @@ class ScreenshotState(
 
             actualBitmap.apply {
                 // Store the screenshot file size as soon as possible.
-                screenshotFileSize = Size(height = height.toFloat(), width = width.toFloat())
+                screenshotFileSize.value = Size(height = height.toFloat(), width = width.toFloat())
             }
         }
     } // Todo: this was using "derivedStateOf". Is the current implementation good?
 
-    // This does not to be a state as it does not have to trigger any recomposition. It is initialized when the model
-    // updates the data and thus the imageBitmap.
-    private var screenshotFileSize = Size.Irrelevant
+    private val screenshotFileSize = MutableStateFlow(Size.Irrelevant)
 
     // size of the image composable
     private val _screenshotComposableSize = MutableStateFlow(Size.Irrelevant)
@@ -60,15 +58,13 @@ class ScreenshotState(
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
     private val displayPixelConversionFactor: StateFlow<Float> =
-        _screenshotComposableSize
-            .map {
-                it.height / screenshotFileSize.height
-            }
-            .stateIn(
-                scope = CoroutineScope(Dispatchers.Default),
-                started = SharingStarted.Eagerly,
-                initialValue = 1.0f // Todo: is this a fitting initial value?
-            )
+        combine(_screenshotComposableSize, screenshotFileSize) { _screenshotComposableSize, screenshotFileSize ->
+            _screenshotComposableSize.height / screenshotFileSize.height
+        }.stateIn(
+            scope = CoroutineScope(Dispatchers.Default),
+            started = SharingStarted.Eagerly,
+            initialValue = 1.0f // Todo: is this a fitting initial value?
+        )
 
     val showHighlighter = combine(showScreenshot, isNodeSelected) { showScreenshot, isNodeSelected ->
         showScreenshot && isNodeSelected

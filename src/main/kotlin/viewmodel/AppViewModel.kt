@@ -172,6 +172,9 @@ class AppViewModel(
     }
 
     fun switchDisplay(direction: Direction) {
+        _isNodeSelected.value = false
+        _selectedNode.value = GenericNode.Empty
+
         when (direction) {
             Direction.NEXT ->
                 _displayIndex.update { it.inc().coerceAtMost(displayCount.value - 1) }
