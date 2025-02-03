@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -44,6 +46,14 @@ class AppViewModel(
     private val content = MutableStateFlow(Content.DefaultEmpty)
 
     init {
+        CoroutineScope(Dispatchers.Default).launch {
+            content.collect {
+                println("1 content=${content.value}")
+            }
+        }
+    }
+
+    init {
         if (appRepository.existsContentJson()) {
             content.value = appRepository.readContentJson()
             _state.value = InspectorState.POPULATED
@@ -53,8 +63,6 @@ class AppViewModel(
 
         appRepository.createContentDirectories(content.value)
     }
-
-    private val dumpsDirectoryName = content.map { it.dumpsDirectoryName }
 
     private val settings = MutableStateFlow(Settings.DefaultEmpty)
 
@@ -66,20 +74,33 @@ class AppViewModel(
         }
     }
 
-    private val selectedDump = content.transform {
+    private val dumpDisplaysData = content
+        .filter {
+            it.dumps.isNotEmpty() && it.dumps.first().displays.isNotEmpty()
+        }
+        .map {
+            println("content=${content.value}")
+            val dumpsDirectoryName = it.dumpsDirectoryName
+
+            // Todo: offer option to choose older dumps.
+            val selectedDump = it.dumps.first()
+
+            println("dumpsDirectoryName=$dumpsDirectoryName, selectedDump=$selectedDump")
+            displayDataResolver.resolve(dumpsDirectoryName, selectedDump)
+        }
+
+    private val dumpDaisplaysData = content.transform {
+        println("content=${content.value}")
+        val dumpsDirectoryName = it.dumpsDirectoryName
+
         // Todo: offer option to choose older dumps.
         val selectedDump = it.dumps.firstOrNull()
 
         if (selectedDump != null && selectedDump.displays.isNotEmpty()) {
-            emit(selectedDump)
-        }
-    }
-
-    private val dumpDisplaysData =
-        combineTransform(dumpsDirectoryName, selectedDump) { dumpsDirectoryName, selectedDump ->
             println("dumpsDirectoryName=$dumpsDirectoryName, selectedDump=$selectedDump")
             emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
         }
+    }
 
     private val _displayIndex = MutableStateFlow(0)
     val displayIndex get() = _displayIndex.asStateFlow()
