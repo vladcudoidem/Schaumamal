@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
@@ -77,9 +76,12 @@ class AppViewModel(
 
     private val dumpDisplaysData =
         combineTransform(dumpsDirectoryName, selectedDump) { dumpsDirectoryName, selectedDump ->
-            println("dumpsDirectoryName=$dumpsDirectoryName, selectedDump=$selectedDump")
             emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
-        }
+        }.stateIn(
+            scope = stateCollectionScope,
+            started = SharingStarted.Eagerly,
+            initialValue = listOf()
+        )
 
     private val _displayIndex = MutableStateFlow(0)
     val displayIndex get() = _displayIndex.asStateFlow()
@@ -95,8 +97,8 @@ class AppViewModel(
 
     // Todo: refactor to "selctedDisplayData"
     val data =
-        combine(dumpDisplaysData, _displayIndex) { dumpDisplaysData, _displayIndex ->
-            dumpDisplaysData[_displayIndex]
+        combineTransform(dumpDisplaysData, _displayIndex) { dumpDisplaysData, _displayIndex ->
+            if (dumpDisplaysData.isNotEmpty()) emit(dumpDisplaysData[_displayIndex])
         }.stateIn(
             scope = stateCollectionScope,
             started = SharingStarted.Eagerly,
