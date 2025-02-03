@@ -37,10 +37,10 @@ class ScreenshotState(
     val imageBitmap = data.map {
         withContext(Dispatchers.IO) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
             val defaultBitmap = ImageBitmap(0, 0)
-            val actualBitmap = if (it == DisplayData.Empty) {
-                defaultBitmap
-            } else {
+            val actualBitmap = if (it != DisplayData.Empty) {
                 loadImageBitmap(FileInputStream(it.screenshotFile))
+            } else {
+                defaultBitmap
             }
 
             actualBitmap.apply {

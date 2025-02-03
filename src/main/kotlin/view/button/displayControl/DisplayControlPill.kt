@@ -19,15 +19,10 @@ import view.button.HorizontalPill
 import view.button.RoundIconButton
 
 @Composable
-fun DisplayControlPill(
-    displayCounter: String,
-    onNextDisplayButtonPressed: () -> Unit,
-    onPreviousDisplayButtonPressed: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun DisplayControlPill(modifier: Modifier = Modifier) {
     HorizontalPill(modifier = modifier) {
         RoundIconButton(
-            onClick = onPreviousDisplayButtonPressed,
+            onClick = { },
             iconPainter = painterResource("icons/arrow_backward.svg"),
             iconModifier = Modifier.padding(end = 2.dp)
         )
@@ -46,14 +41,14 @@ fun DisplayControlPill(
                 .size(height = 25.dp, width = 40.dp)
         ) {
             Text(
-                text = displayCounter,
+                text = "2/3",
                 color = elevatedBackgroundColor,
                 fontFamily = FontFamily.SansSerif
             )
         }
 
         RoundIconButton(
-            onClick = onNextDisplayButtonPressed,
+            onClick = { },
             iconPainter = painterResource("icons/arrow_forward.svg"),
             iconModifier = Modifier.padding(start = 2.dp)
         )

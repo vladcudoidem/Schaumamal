@@ -31,9 +31,6 @@ fun main() = application {
         val buttonState = remember {
             ButtonState(
                 inspectorState = viewModel.state,
-                displayIndex = viewModel.displayIndex,
-                displayCount = viewModel.displayCount,
-                switchDisplay = viewModel::switchDisplay,
                 extract = viewModel::extract
             )
         }
