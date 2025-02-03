@@ -5,21 +5,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.displayDataResolver.DisplayDataResolver
-import model.InspectorState
 import model.dumper.DumpResult
 import model.dumper.Dumper
 import model.parser.dataClasses.GenericNode
 import model.repository.AppRepository
-import model.repository.dataClasses.Content
 import model.repository.DumpRegisterResult
+import model.repository.dataClasses.Content
 import model.repository.dataClasses.Settings
 import oldModel.notification.Notification
 import oldModel.notification.NotificationManager
@@ -40,9 +42,11 @@ class AppViewModel(
     val state get() = _state.asStateFlow()
 
     private val content = MutableStateFlow(Content.DefaultEmpty)
+
     init {
         if (appRepository.existsContentJson()) {
             content.value = appRepository.readContentJson()
+            _state.value = InspectorState.POPULATED
         } else {
             appRepository.writeContentJson(content.value)
         }
@@ -53,6 +57,7 @@ class AppViewModel(
     private val dumpsDirectoryName = content.map { it.dumpsDirectoryName }
 
     private val settings = MutableStateFlow(Settings.DefaultEmpty)
+
     init {
         if (appRepository.existsSettingsJson()) {
             settings.value = appRepository.readSettingsJson()
@@ -61,31 +66,42 @@ class AppViewModel(
         }
     }
 
-    private val _displayIndex = MutableStateFlow(0)
-    val displayIndex get() = _displayIndex.asStateFlow()
-
     private val selectedDump = content.transform {
         // Todo: offer option to choose older dumps.
         val selectedDump = it.dumps.firstOrNull()
 
-        if (selectedDump != null) emit(selectedDump)
+        if (selectedDump != null && selectedDump.displays.isNotEmpty()) {
+            emit(selectedDump)
+        }
     }
 
     private val dumpDisplaysData =
         combineTransform(dumpsDirectoryName, selectedDump) { dumpsDirectoryName, selectedDump ->
-            if (selectedDump.displays.isEmpty()) return@combineTransform
+            println("dumpsDirectoryName=$dumpsDirectoryName, selectedDump=$selectedDump")
             emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
         }
 
-    // Todo: refactor to "selctedDisplayData"
-    val data =
+    private val _displayIndex = MutableStateFlow(0)
+    val displayIndex get() = _displayIndex.asStateFlow()
+
+    val displayCount =
         dumpDisplaysData
-            .map { it[_displayIndex.value] }
+            .map { it.size }
             .stateIn(
                 scope = stateCollectionScope,
                 started = SharingStarted.Eagerly,
-                initialValue = DisplayData.Empty
+                initialValue = 0
             )
+
+    // Todo: refactor to "selctedDisplayData"
+    val data =
+        combine(dumpDisplaysData, _displayIndex) { dumpDisplaysData, _displayIndex ->
+            dumpDisplaysData[_displayIndex]
+        }.stateIn(
+            scope = stateCollectionScope,
+            started = SharingStarted.Eagerly,
+            initialValue = DisplayData.Empty
+        )
 
     private val _isNodeSelected = MutableStateFlow(false)
     val isNodeSelected get() = _isNodeSelected.asStateFlow()
@@ -134,11 +150,13 @@ class AppViewModel(
                 is DumpRegisterResult.Success -> registerResult.content
             }
 
-            appRepository.writeContentJson(newContent)
-            content.value = newContent
-
             _isNodeSelected.value = false
             _selectedNode.value = GenericNode.Empty
+
+            _displayIndex.value = 0
+
+            appRepository.writeContentJson(newContent)
+            content.value = newContent
 
             // At the end, show the data.
             _state.value = InspectorState.POPULATED
@@ -149,5 +167,14 @@ class AppViewModel(
         _selectedNode.value = node
         // Shows selected node only after refreshing the data.
         _isNodeSelected.value = true
+    }
+
+    fun switchDisplay(direction: Direction) {
+        when (direction) {
+            Direction.NEXT ->
+                _displayIndex.update { it.inc().coerceAtMost(displayCount.value - 1) }
+
+            Direction.PREVIOUS -> _displayIndex.update { it.dec().coerceAtLeast(0) }
+        }
     }
 }
