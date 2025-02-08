@@ -34,6 +34,11 @@ compose.desktop {
     application {
         mainClass = "MainKt"
 
+        buildTypes.release.proguard {
+            obfuscate = true
+            configurationFiles.from(project.file("rules.pro"))
+        }
+
         nativeDistributions {
             targetFormats(
                 TargetFormat.Deb,
@@ -48,6 +53,8 @@ compose.desktop {
             description = "The second coming of UiAutomatorViewer."
             copyright = "Copyright (c) 2024 Alexandru-Vlad Vamoș"
             licenseFile.set(project.file("LICENSE"))
+
+            modules("java.instrument", "jdk.unsupported")
 
             macOS {
                 iconFile.set(project.file("src/main/resources/appIcons/icon.icns"))

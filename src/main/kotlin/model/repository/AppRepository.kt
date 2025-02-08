@@ -61,8 +61,8 @@ class AppRepository(
     }
 
     fun createContentDirectories(content: Content) {
-        Path(content.tempDirectoryName).createDirectories()
-        Path(content.dumpsDirectoryName).createDirectories()
+        appDirectoryPath.resolve(content.tempDirectoryName).createDirectories()
+        appDirectoryPath.resolve(content.dumpsDirectoryName).createDirectories()
     }
 
     fun registerNewDump(dump: Dump, content: Content, maxDumps: Int): DumpRegisterResult {
