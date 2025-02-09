@@ -1,4 +1,4 @@
-package oldModel.notification
+package viewmodel.notification
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import oldModel.notification.Notification
+import viewmodel.notification.Notification
 import kotlin.time.Duration.Companion.milliseconds
 
 class NotificationState(

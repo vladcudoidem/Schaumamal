@@ -5,7 +5,7 @@ import model.dumper.NicknameProvider
 import model.parser.XmlParser
 import model.platform.PlatformInformationProvider
 import model.repository.AppRepository
-import oldModel.notification.NotificationManager
+import viewmodel.notification.NotificationManager
 import org.koin.dsl.module
 import viewmodel.AppViewModel
 

@@ -23,8 +23,8 @@ import model.repository.AppRepository
 import model.repository.DumpRegisterResult
 import model.repository.dataClasses.Content
 import model.repository.dataClasses.Settings
-import oldModel.notification.Notification
-import oldModel.notification.NotificationManager
+import viewmodel.notification.Notification
+import viewmodel.notification.NotificationManager
 
 class AppViewModel(
     val notificationManager: NotificationManager,
