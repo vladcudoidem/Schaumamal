@@ -2,6 +2,7 @@ package viewmodel
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -204,5 +205,9 @@ class AppViewModel(
             _isNodeSelected.value = false
             _selectedNode.value = GenericNode.Empty
         }
+    }
+
+    fun cleanup() {
+        viewModelScope.cancel()
     }
 }

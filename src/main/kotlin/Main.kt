@@ -72,6 +72,7 @@ fun main() = application {
             title = "Schaumamal",
             icon = painterResource("appIcons/icon.png"),
             onCloseRequest = {
+                viewModel.cleanup()
                 exitApplication()
             },
             onKeyEvent = {
