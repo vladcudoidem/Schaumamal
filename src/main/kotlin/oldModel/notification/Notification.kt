@@ -8,8 +8,6 @@ data class Notification(
     val timeout: Duration = 3000.milliseconds
 ) {
     companion object {
-        val Empty = Notification(
-            description = ""
-        )
+        val Empty = Notification(description = "")
     }
 }

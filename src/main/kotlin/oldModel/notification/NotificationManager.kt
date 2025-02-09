@@ -1,47 +1,22 @@
 package oldModel.notification
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
-
-// Todo: refactor this whole notification thing.
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.withContext
 
 class NotificationManager {
-    var active by mutableStateOf(false)
-    var latestNotification by mutableStateOf(Notification.Empty)
 
-    private var dispatching = false
-    private var queue = mutableListOf<Notification>()
+    private val _notifications = MutableSharedFlow<Notification>(
+        extraBufferCapacity = 10, // Todo: raise this after testing.
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val notifications = _notifications.asSharedFlow()
 
-    private val timeoutBetweenNotifications = 500.milliseconds
-
-    // Todo: inject and clean up
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
-
-    fun notify(notification: Notification) {
-        queue.add(notification)
-
-        if (!dispatching) {
-            dispatching = true
-            coroutineScope.launch { dispatch() }
+    suspend fun notify(notification: Notification) {
+        withContext(Dispatchers.Default) {
+            _notifications.emit(notification)
         }
-    }
-
-    private suspend fun dispatch() {
-        while (queue.isNotEmpty()) {
-            latestNotification = queue.removeFirst()
-            active = true
-            delay(latestNotification.timeout)
-
-            active = false
-            delay(timeoutBetweenNotifications)
-        }
-
-        dispatching = false
     }
 }

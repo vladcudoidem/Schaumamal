@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import oldModel.notification.NotificationManager
 import shared.Colors.backgroundColor
 import view.button.ButtonLayer
 import view.notification.NotificationLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
 import view.button.ButtonState
+import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
 
@@ -22,7 +22,7 @@ fun MainScreen(
     buttonState: ButtonState,
     paneState: PaneState,
     uiLayoutState: UiLayoutState,
-    notificationManager: NotificationManager,
+    notificationState: NotificationState,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -49,7 +49,7 @@ fun MainScreen(
         )
 
         NotificationLayer(
-            notificationManager = notificationManager
+            notificationState = notificationState
         )
     }
 }

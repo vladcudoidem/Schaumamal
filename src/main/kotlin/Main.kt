@@ -14,6 +14,7 @@ import view.MainScreen
 import view.UiLayoutState
 import viewmodel.AppViewModel
 import view.button.ButtonState
+import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
 import java.awt.Dimension
@@ -59,6 +60,9 @@ fun main() = application {
         val uiLayoutState = remember {
             UiLayoutState(screenshotComposableSize = screenshotState.screenshotComposableSize)
         }
+        val notificationState = NotificationState(
+            notifications = viewModel.notificationManager.notifications
+        )
 
         val density = LocalDensity.current.density
         val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
@@ -93,7 +97,7 @@ fun main() = application {
                     buttonState = buttonState,
                     paneState = paneState,
                     uiLayoutState = uiLayoutState,
-                    notificationManager = viewModel.notificationManager
+                    notificationState = notificationState
                 )
             }
         }
