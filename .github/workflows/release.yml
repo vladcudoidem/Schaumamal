@@ -16,7 +16,9 @@ jobs:
             release_suffix: macos-arm64
           - os: windows-latest
             release_suffix: windows-x64
+
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
