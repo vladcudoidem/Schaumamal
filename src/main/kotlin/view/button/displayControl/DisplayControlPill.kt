@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
@@ -50,7 +51,8 @@ fun DisplayControlPill(
             Text(
                 text = displayCounter,
                 color = elevatedBackgroundColor,
-                fontFamily = FontFamily.SansSerif
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold
             )
         }
 

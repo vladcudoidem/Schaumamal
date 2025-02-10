@@ -1,9 +1,12 @@
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.koin.compose.KoinApplication
@@ -93,13 +96,22 @@ fun main() = application {
             window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
 
             MaterialTheme {
-                MainScreen(
-                    screenshotState = screenshotState,
-                    buttonState = buttonState,
-                    paneState = paneState,
-                    uiLayoutState = uiLayoutState,
-                    notificationState = notificationState
+                val customTextStyle = LocalTextStyle.current.copy(
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both
+                    )
                 )
+
+                CompositionLocalProvider(LocalTextStyle provides customTextStyle) {
+                    MainScreen(
+                        screenshotState = screenshotState,
+                        buttonState = buttonState,
+                        paneState = paneState,
+                        uiLayoutState = uiLayoutState,
+                        notificationState = notificationState
+                    )
+                }
             }
         }
     }
