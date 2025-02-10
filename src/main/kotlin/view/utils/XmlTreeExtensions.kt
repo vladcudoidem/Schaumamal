@@ -9,8 +9,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
-import model.parser.dataClasses.WindowNode
 import model.parser.dataClasses.Node
+import model.parser.dataClasses.WindowNode
 import shared.Colors
 import shared.Colors.accentColor
 import view.panes.XmlTreeLine
@@ -92,7 +92,12 @@ private val Node.displayText: AnnotatedString
 
             if (resourceId.isNotEmpty()) {
                 val formattedResourceId = resourceId.split(":").last()
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)) {
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Italic
+                    )
+                ) {
                     append(" $formattedResourceId")
                 }
             }
