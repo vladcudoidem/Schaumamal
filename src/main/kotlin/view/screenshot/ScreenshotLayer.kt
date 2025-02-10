@@ -39,9 +39,7 @@ import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
-import viewmodel.Graphics
-import viewmodel.ScreenshotState
-import viewmodel.toPx
+import view.utils.toPx
 import java.awt.Cursor
 import kotlin.coroutines.CoroutineContext
 

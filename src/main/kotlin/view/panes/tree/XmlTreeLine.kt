@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,7 +22,7 @@ import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
-import viewmodel.XmlTreeLine
+import view.panes.XmlTreeLine
 import java.awt.Cursor
 
 @Composable
@@ -31,7 +31,7 @@ fun XmlTreeLine(
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val indication = rememberRipple(color = accentColor)
+    val indication = ripple(color = accentColor)
 
     Row(modifier = modifier) {
         Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))

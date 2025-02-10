@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
 import view.UiLayoutState
-import viewmodel.ButtonState
+import view.button.displayControl.DisplayControlPill
+import view.button.extraction.ExtractionButton
 
 @Composable
 fun ButtonLayer(
@@ -35,6 +36,9 @@ fun ButtonLayer(
     val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
     val extractButtonText by buttonState.extractButtonText.collectAsState(initial = "...")
         // Todo: is the "..." ok?
+
+    val areDisplayControlButtonsEnabled by buttonState.areDisplayControlButtonsEnabled.collectAsState(initial = false)
+    val displayCounter by buttonState.displayCounter.collectAsState(initial = "?/?")
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -65,7 +69,12 @@ fun ButtonLayer(
                 )
             }
 
-            DisplayControlPill()
+            DisplayControlPill(
+                areDisplayControlButtonsEnabled = areDisplayControlButtonsEnabled,
+                displayCounter = displayCounter,
+                onNextDisplayButtonPressed = buttonState::onNextDisplayButtonPressed,
+                onPreviousDisplayButtonPressed = buttonState::onPreviousDisplayButtonPressed
+            )
         }
 
         // This is needed for the elements that follow to be as low on the screen as possible.

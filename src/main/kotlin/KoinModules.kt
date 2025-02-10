@@ -1,26 +1,24 @@
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import oldModel.CoroutineManager
-import oldModel.extractionManagers.getExtractionManager
-import oldModel.notification.NotificationManager
+import com.android.adblib.AdbSessionHost
+import model.displayDataResolver.DisplayDataResolver
+import model.dumper.Dumper
+import model.dumper.NicknameProvider
+import model.parser.XmlParser
+import model.platform.PlatformInformationProvider
+import model.repository.AppRepository
+import viewmodel.notification.NotificationManager
 import org.koin.dsl.module
 import viewmodel.AppViewModel
 
 val viewModelModule = module {
-    single { AppViewModel(get(), get(), get()) }
-}
-
-val notificationModule = module {
+    single { AppViewModel(get(), get(), get(), get()) }
     single { NotificationManager() }
-}
+    single { Dumper(get(), get(), get()) }
+    single { AppRepository(get()) }
+    single { DisplayDataResolver(get(), get()) }
 
-val coroutineModule = module {
-    factory { CoroutineScope(Dispatchers.IO + Job()) }
-        // Todo: why use Dispatchers.IO here?
-    factory { CoroutineManager(get()) }
-}
+    single { PlatformInformationProvider.current() }
+    single { AdbSessionHost() }
+    single { NicknameProvider() }
 
-val extractionModule = module {
-    single { getExtractionManager() }
+    single { XmlParser() }
 }

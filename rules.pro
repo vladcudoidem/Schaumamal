@@ -1,0 +1,2 @@
+-keep class kotlinx.coroutines.internal.MainDispatcherFactory { *; }
+-keep class kotlinx.coroutines.swing.SwingDispatcherFactory { *; }

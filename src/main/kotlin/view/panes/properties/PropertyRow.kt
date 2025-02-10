@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +45,7 @@ fun PropertyRow(
     val clipboard = LocalClipboardManager.current
 
     val interactionSource = remember { MutableInteractionSource() }
-    val indication = rememberRipple(color = accentColor)
+    val indication = ripple(color = accentColor)
 
     val scope = rememberCoroutineScope()
     DisposableEffect(Unit) {

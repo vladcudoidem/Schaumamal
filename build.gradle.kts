@@ -3,6 +3,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 group = "com.vladvamos.schaumamal"
@@ -21,14 +23,22 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
 
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutinesCore)
+    implementation(libs.kotlinx.coroutinesSwing)
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
+    implementation(libs.kotlinx.serializationJson)
+    implementation(libs.android.adblib)
 }
 
 compose.desktop {
     application {
         mainClass = "MainKt"
+
+        buildTypes.release.proguard {
+            obfuscate = true
+            configurationFiles.from(project.file("rules.pro"))
+        }
 
         nativeDistributions {
             targetFormats(
@@ -44,6 +54,8 @@ compose.desktop {
             description = "The second coming of UiAutomatorViewer."
             copyright = "Copyright (c) 2024 Alexandru-Vlad Vamoș"
             licenseFile.set(project.file("LICENSE"))
+
+            modules("java.instrument", "jdk.unsupported")
 
             macOS {
                 iconFile.set(project.file("src/main/resources/appIcons/icon.icns"))
