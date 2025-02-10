@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
@@ -38,7 +39,8 @@ fun DisplayControlPill(
         Text(
             text = "Display",
             color = primaryTextColor,
-            fontFamily = FontFamily.SansSerif
+            fontFamily = FontFamily.SansSerif,
+            modifier = Modifier.padding(bottom = 2.dp)
         )
 
         Box(
@@ -52,7 +54,8 @@ fun DisplayControlPill(
                 text = displayCounter,
                 color = elevatedBackgroundColor,
                 fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 1.dp, end = 1.dp)
             )
         }
 

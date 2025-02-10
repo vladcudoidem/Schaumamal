@@ -60,7 +60,7 @@ fun ButtonLayer(
                     color = discreteTextColor,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
-                        .padding(end = mediumPadding + 3.dp)
+                        .padding(bottom = 2.dp, end = mediumPadding + 3.dp)
                         .animateContentSize(
                             animationSpec = spring(
                                 stiffness = Spring.StiffnessMediumLow
