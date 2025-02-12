@@ -22,6 +22,8 @@ jobs:
       with:
         distribution: 'jetbrains'
         java-version: '17'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build with Gradle
       run: ./gradlew build
