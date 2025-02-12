@@ -23,10 +23,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Set up JDK 17 (Zulu)
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'jetbrains'
           java-version: '17'
 
       - name: Build
