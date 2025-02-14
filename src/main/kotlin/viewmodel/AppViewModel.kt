@@ -75,7 +75,7 @@ class AppViewModel(
         }
     }
 
-    private val dumpDisplaysData =
+    private val displayDataList =
         combineTransform(dumpsDirectoryName, selectedDump) { dumpsDirectoryName, selectedDump ->
             emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
         }.stateIn(
@@ -88,7 +88,7 @@ class AppViewModel(
     val displayIndex get() = _displayIndex.asStateFlow()
 
     val displayCount =
-        dumpDisplaysData
+        displayDataList
             .map { it.size }
             .stateIn(
                 scope = stateCollectionScope,
@@ -96,9 +96,8 @@ class AppViewModel(
                 initialValue = 0
             )
 
-    // Todo: refactor to "selctedDisplayData"
-    val data =
-        combineTransform(dumpDisplaysData, _displayIndex) { dumpDisplaysData, _displayIndex ->
+    val selectedDisplayData =
+        combineTransform(displayDataList, _displayIndex) { dumpDisplaysData, _displayIndex ->
             if (dumpDisplaysData.isNotEmpty()) emit(dumpDisplaysData[_displayIndex])
         }.stateIn(
             scope = stateCollectionScope,

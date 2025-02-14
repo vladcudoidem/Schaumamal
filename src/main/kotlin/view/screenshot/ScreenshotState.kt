@@ -30,11 +30,11 @@ class ScreenshotState(
     inspectorState: StateFlow<InspectorState>,
     isNodeSelected: StateFlow<Boolean>,
     selectedNode: StateFlow<GenericNode>,
-    private val data: StateFlow<DisplayData>,
+    private val displayData: StateFlow<DisplayData>,
     private val selectNode: (GenericNode) -> Unit
 ) {
     val showScreenshot = inspectorState.map { it == InspectorState.POPULATED }
-    val imageBitmap = data.map {
+    val imageBitmap = displayData.map {
         withContext(Dispatchers.IO) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
             val defaultBitmap = ImageBitmap(0, 0)
             val actualBitmap = if (it == DisplayData.Empty) {
@@ -80,7 +80,7 @@ class ScreenshotState(
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
         // Extract node list with the first nodes being the deepest ones.
-        val flatNodeListByDepth = data.value.displayNode.getNodesOrderedByDepth(deepNodesFirst = true)
+        val flatNodeListByDepth = displayData.value.displayNode.getNodesOrderedByDepth(deepNodesFirst = true)
 
         flatNodeListByDepth.forFirstNodeUnder(
             offset = offset,

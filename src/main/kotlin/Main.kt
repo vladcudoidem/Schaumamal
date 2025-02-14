@@ -45,7 +45,7 @@ fun main() = application {
         val paneState = remember {
             PaneState(
                 inspectorState = viewModel.state,
-                data = viewModel.data,
+                displayData = viewModel.selectedDisplayData,
                 isNodeSelected = viewModel.isNodeSelected,
                 selectedNode = viewModel.selectedNode,
                 selectNode = viewModel::selectNode
@@ -57,7 +57,7 @@ fun main() = application {
                 inspectorState = viewModel.state,
                 isNodeSelected = viewModel.isNodeSelected,
                 selectedNode = viewModel.selectedNode,
-                data = viewModel.data,
+                displayData = viewModel.selectedDisplayData,
                 selectNode = viewModel::selectNode
             )
         }

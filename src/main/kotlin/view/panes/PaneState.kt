@@ -11,14 +11,14 @@ import view.utils.propertyMap
 
 class PaneState(
     inspectorState: StateFlow<InspectorState>,
-    data: StateFlow<DisplayData>,
+    displayData: StateFlow<DisplayData>,
     isNodeSelected: StateFlow<Boolean>,
     selectedNode: StateFlow<GenericNode>,
     selectNode: (GenericNode) -> Unit
 ) {
 
     val showXmlTree = inspectorState.map { it == InspectorState.POPULATED }
-    private val flatXmlTreeMap = combine(data, selectedNode) { dataRoot, selectedNode ->
+    private val flatXmlTreeMap = combine(displayData, selectedNode) { dataRoot, selectedNode ->
         dataRoot
             .displayNode
             .getFlatXmlTreeMap(
