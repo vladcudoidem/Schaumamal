@@ -12,6 +12,8 @@ import view.notification.NotificationLayer
 import view.panes.PaneLayer
 import view.screenshot.ScreenshotLayer
 import view.button.ButtonState
+import view.floatingWindow.FloatingWindowLayer
+import view.floatingWindow.FloatingWindowState
 import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
@@ -22,6 +24,7 @@ fun MainScreen(
     buttonState: ButtonState,
     paneState: PaneState,
     uiLayoutState: UiLayoutState,
+    floatingWindowState: FloatingWindowState,
     notificationState: NotificationState,
     modifier: Modifier = Modifier
 ) {
@@ -46,6 +49,10 @@ fun MainScreen(
             uiLayoutState = uiLayoutState,
             paneState = paneState,
             modifier = Modifier.align(Alignment.CenterEnd)
+        )
+
+        FloatingWindowLayer(
+            floatingWindowState = floatingWindowState
         )
 
         NotificationLayer(

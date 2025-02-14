@@ -11,8 +11,8 @@ import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.Node
 import model.parser.dataClasses.WindowNode
-import shared.Colors
 import shared.Colors.accentColor
+import shared.Colors.discreteTextColor
 import view.panes.XmlTreeLine
 
 fun DisplayNode.getFlatXmlTreeMap(
@@ -62,7 +62,7 @@ private val Node.displayText: AnnotatedString
     get() = when (this) {
 
         is DisplayNode -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Colors.discreteTextColor)) {
+            withStyle(style = SpanStyle(color = discreteTextColor)) {
                 append("Display")
 
                 append(" {")
@@ -73,7 +73,7 @@ private val Node.displayText: AnnotatedString
         }
 
         is WindowNode -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Colors.discreteTextColor)) {
+            withStyle(style = SpanStyle(color = discreteTextColor)) {
                 append("($index)")
                 append(" Window")
 

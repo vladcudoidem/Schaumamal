@@ -40,6 +40,8 @@ class ScreenshotState(
             val actualBitmap = if (it == DisplayData.Empty) {
                 defaultBitmap
             } else {
+                // Todo: refactor deprecated code.
+                // Todo: use FileImageInputStream?
                 loadImageBitmap(FileInputStream(it.screenshotFile))
             }
 

@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import shared.Colors.discreteTextColor
@@ -142,7 +141,6 @@ fun UpperPane(
             Text(
                 text = "Missing layout.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier
@@ -180,7 +178,6 @@ fun LowerPane(
             Text(
                 text = "No node selected.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier

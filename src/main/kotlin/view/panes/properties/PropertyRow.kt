@@ -23,7 +23,6 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,7 +62,6 @@ fun PropertyRow(
     ) {
         Text(
             text = property,
-            fontFamily = FontFamily.SansSerif,
             color = primaryTextColor,
             modifier = Modifier.width(propertyNameWidth)
         )
@@ -71,7 +69,6 @@ fun PropertyRow(
         Text(
             text = value,
             color = primaryTextColor,
-            fontFamily = FontFamily.SansSerif,
             modifier = Modifier
                 .widthIn(max = maximumPropertyValueWidth)
                 .clip(RoundedCornerShape(smallCornerRadius))
@@ -94,8 +91,7 @@ fun PropertyRow(
         FadeVisibility(copyConfirmationVisible) {
             Text(
                 text = "✓ copied",
-                color = accentColor,
-                fontFamily = FontFamily.SansSerif
+                color = accentColor
             )
         }
     }

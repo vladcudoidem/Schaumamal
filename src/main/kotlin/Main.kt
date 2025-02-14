@@ -18,6 +18,7 @@ import view.MainScreen
 import view.UiLayoutState
 import viewmodel.AppViewModel
 import view.button.ButtonState
+import view.floatingWindow.FloatingWindowState
 import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
@@ -33,13 +34,21 @@ fun main() = application {
         }
     ) {
         val viewModel: AppViewModel = koinInject()
+        val floatingWindowState = remember {
+            FloatingWindowState(
+                resolvedDumpThumbnails = viewModel.resolvedDumpThumbnails,
+                selectDump = viewModel::selectDump
+            )
+        }
         val buttonState = remember {
             ButtonState(
                 inspectorState = viewModel.state,
+                selectedDump = viewModel.selectedDump,
                 displayIndex = viewModel.displayIndex,
                 displayCount = viewModel.displayCount,
+                extract = viewModel::extract,
                 switchDisplay = viewModel::switchDisplay,
-                extract = viewModel::extract
+                openDumpHistory = floatingWindowState::openDumpHistory
             )
         }
         val paneState = remember {
@@ -100,7 +109,7 @@ fun main() = application {
                 val customTextStyle = LocalTextStyle.current.copy(
                     lineHeightStyle = LineHeightStyle(
                         alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.Both
+                        trim = LineHeightStyle.Trim.FirstLineTop
                     ),
                     fontSize = 14.sp
                 )
@@ -111,6 +120,7 @@ fun main() = application {
                         buttonState = buttonState,
                         paneState = paneState,
                         uiLayoutState = uiLayoutState,
+                        floatingWindowState = floatingWindowState,
                         notificationState = notificationState
                     )
                 }

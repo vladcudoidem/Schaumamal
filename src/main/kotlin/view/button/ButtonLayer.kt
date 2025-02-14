@@ -1,14 +1,10 @@
 package view.button
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,13 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.dp
-import shared.Colors.discreteTextColor
 import shared.Dimensions.mediumPadding
 import view.UiLayoutState
 import view.button.displayControl.DisplayControlPill
-import view.button.extraction.ExtractionButton
+import view.button.extraction.ExtractionPill
 
 @Composable
 fun ButtonLayer(
@@ -32,10 +25,18 @@ fun ButtonLayer(
 ) {
     val density = LocalDensity.current.density
 
+    val showDumpSuggestion by buttonState.showDumpSuggestion.collectAsState(initial = true)
+    val dumpSuggestionText = buttonState.dumpSuggestionText
+
+    val showCurrentDump by buttonState.showCurrentDump.collectAsState(initial = false)
+    val currentDumpInfo by buttonState.currentDumpInfo.collectAsState(initial = "...")
+
+    val showDumpProgress by buttonState.showDumpProgress.collectAsState(initial = false)
+    val dumpProgressText = buttonState.dumpProgressText
+
     val areResizeButtonsEnabled by buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
     val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
-    val extractButtonText by buttonState.extractButtonText.collectAsState(initial = "...")
-        // Todo: is the "..." ok?
+    val isOpenDumpHistoryButtonEnabled by buttonState.isOpenDumpHistoryButtonEnabled.collectAsState(initial = false)
 
     val areDisplayControlButtonsEnabled by buttonState.areDisplayControlButtonsEnabled.collectAsState(initial = false)
     val displayCounter by buttonState.displayCounter.collectAsState(initial = "?/?")
@@ -49,25 +50,22 @@ fun ButtonLayer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(mediumPadding)
         ) {
-            HorizontalPill(modifier = modifier) {
-                ExtractionButton(
-                    isExtractButtonEnabled = isExtractButtonEnabled,
-                    onExtractButtonPressed = buttonState::onExtractButtonPressed
-                )
+            ExtractionPill(
+                showDumpSuggestion = showDumpSuggestion,
+                dumpSuggestionText = dumpSuggestionText,
+                showCurrentDump = showCurrentDump,
+                currentDumpInfo = currentDumpInfo,
+                showDumpProgress = showDumpProgress,
+                dumpProgressText = dumpProgressText,
+                isExtractButtonEnabled = isExtractButtonEnabled,
+                onExtractButtonPressed = buttonState::onExtractButtonPressed
+            )
 
-                Text(
-                    text = extractButtonText,
-                    color = discreteTextColor,
-                    fontFamily = FontFamily.SansSerif,
-                    modifier = Modifier
-                        .padding(end = mediumPadding + 3.dp)
-                        .animateContentSize(
-                            animationSpec = spring(
-                                stiffness = Spring.StiffnessMediumLow
-                            )
-                        )
-                )
-            }
+            RoundIconButton(
+                onClick = buttonState::onOpenDumpHistoryButtonPressed,
+                enabled = isOpenDumpHistoryButtonEnabled,
+                iconPainter = painterResource("icons/history.svg")
+            )
 
             DisplayControlPill(
                 areDisplayControlButtonsEnabled = areDisplayControlButtonsEnabled,
