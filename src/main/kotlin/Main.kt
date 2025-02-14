@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.koin.compose.KoinApplication
@@ -100,7 +101,8 @@ fun main() = application {
                     lineHeightStyle = LineHeightStyle(
                         alignment = LineHeightStyle.Alignment.Center,
                         trim = LineHeightStyle.Trim.Both
-                    )
+                    ),
+                    fontSize = 14.sp
                 )
 
                 CompositionLocalProvider(LocalTextStyle provides customTextStyle) {
