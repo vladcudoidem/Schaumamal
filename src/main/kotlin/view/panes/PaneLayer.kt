@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -71,12 +72,14 @@ fun PaneLayer(
                 .fillMaxHeight()
                 .padding(mediumPadding)
         ) {
-            VerticalWedge(
+            Wedge(
+                orientation = WedgeOrientation.VERTICAL,
                 onDrag = uiLayoutState::onVerticalWedgeDrag
             )
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.width(paneWidth)
             ) {
                 UpperPane(
                     showXmlTree = showXmlTree,
@@ -86,10 +89,11 @@ fun PaneLayer(
                     upperPaneHeight = upperPaneHeight,
                     modifier = Modifier
                         .height(upperPaneHeight)
-                        .width(paneWidth)
+                        .fillMaxWidth()
                 )
 
-                HorizontalWedge(
+                Wedge(
+                    orientation = WedgeOrientation.HORIZONTAL,
                     onDrag = uiLayoutState::onHorizontalWedgeDrag
                 )
 
@@ -98,7 +102,7 @@ fun PaneLayer(
                     selectedNodePropertyMap = selectedNodePropertyMap,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(paneWidth)
+                        .fillMaxWidth()
                 )
             }
         }
