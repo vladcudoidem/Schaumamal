@@ -36,6 +36,7 @@ fun main() = application {
         val viewModel: AppViewModel = koinInject()
         val floatingWindowState = remember {
             FloatingWindowState(
+                selectedDump = viewModel.selectedDump,
                 resolvedDumpThumbnails = viewModel.resolvedDumpThumbnails,
                 selectDump = viewModel::selectDump
             )

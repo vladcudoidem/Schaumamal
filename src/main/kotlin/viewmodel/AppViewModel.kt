@@ -211,7 +211,19 @@ class AppViewModel(
     }
 
     fun selectDump(dump: Dump) {
+        // Abort if the selected dump is the same as the current dump.
+        if (dump == _selectedDump.value) return
+
+        // Enter waiting state before switching dumps.
+        _state.value = InspectorState.WAITING
+
         _selectedDump.value = dump
+        _displayIndex.value = 0
+        _isNodeSelected.value = false
+        _selectedNode.value = GenericNode.Empty
+
+        // Show selected dump.
+        _state.value = InspectorState.POPULATED
     }
 
     fun cleanup() {
