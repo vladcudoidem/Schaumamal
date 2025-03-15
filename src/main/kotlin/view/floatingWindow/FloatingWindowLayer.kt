@@ -11,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,8 +61,9 @@ fun DumpHistoryList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(smallPadding)
+        verticalArrangement = Arrangement.spacedBy(smallPadding),
+        contentPadding = PaddingValues(mediumPadding),
+        modifier = modifier
     ) {
         items(historyList) {
             DumpHistoryLine(it)
@@ -182,10 +184,12 @@ fun FloatingWindowLayer(
                         shape = RoundedCornerShape(30.dp)
                     )
             ) {
-                Column(modifier = Modifier.padding(mediumPadding)) {
+                Column {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(mediumPadding)
                     ) {
                         RoundIconButton(
                             onClick = floatingWindowState::closeFloatingWindow,
@@ -219,7 +223,6 @@ fun FloatingWindowLayer(
 
                     Box(
                         modifier = Modifier
-                            .padding(top = mediumPadding, bottom = mediumPadding)
                             .fillMaxWidth()
                             .height(1.dp)
                             .background(
