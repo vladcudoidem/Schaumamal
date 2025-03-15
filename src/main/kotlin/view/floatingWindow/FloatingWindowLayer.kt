@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -149,8 +150,7 @@ fun FloatingWindowLayer(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         AnimatedVisibility(
             visible = showWindow,
@@ -174,7 +174,7 @@ fun FloatingWindowLayer(
                 modifier = Modifier
                     .padding(50.dp)
                     .clip(RoundedCornerShape(30.dp))
-                    .height(500.dp) // Todo: change
+                    .fillMaxHeight(0.7f)
                     .width(400.dp)
                     .background(elevatedBackgroundColor)
                     .clickable(interactionSource = null, indication = null, onClick = { }) // Todo: needed?
