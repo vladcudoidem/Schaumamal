@@ -4,24 +4,31 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import model.InspectorState
+import model.repository.dataClasses.Dump
+import view.utils.getFormattedDate
 import viewmodel.Direction
 
 class ButtonState(
     inspectorState: StateFlow<InspectorState>,
+    selectedDump: StateFlow<Dump>,
     displayIndex: StateFlow<Int>,
     displayCount: StateFlow<Int>,
     private val extract: () -> Unit,
-    private val switchDisplay: (Direction) -> Unit
+    private val switchDisplay: (Direction) -> Unit,
+    private val openDumpHistory: () -> Unit
 ) {
-    val areResizeButtonsEnabled = inspectorState.map { it == InspectorState.POPULATED }
+    val showDumpSuggestion = inspectorState.map { it == InspectorState.EMPTY }
+    val dumpSuggestionText = "Smash the button."
+
+    val showCurrentDump = inspectorState.map { it == InspectorState.POPULATED }
+    val currentDumpInfo = selectedDump.map {
+        "${it.nickname} @ ${getFormattedDate(it.timeMilliseconds)}"
+    }
+
+    val showDumpProgress = inspectorState.map { it == InspectorState.WAITING }
+    val dumpProgressText = "Dumping..."
 
     val isExtractButtonEnabled = inspectorState.map { it != InspectorState.WAITING }
-    val extractButtonText = inspectorState.map {
-        when (it) {
-            InspectorState.WAITING -> "Dumping..."
-            else -> "Smash the red button to dump."
-        }
-    }
 
     val areDisplayControlButtonsEnabled = inspectorState.map { it == InspectorState.POPULATED }
     val displayCounter =
@@ -33,6 +40,10 @@ class ButtonState(
             }
         }
 
+    val areResizeButtonsEnabled = inspectorState.map { it == InspectorState.POPULATED }
+
+    val isOpenDumpHistoryButtonEnabled = inspectorState.map { it == InspectorState.POPULATED }
+
     fun onExtractButtonPressed() {
         extract()
     }
@@ -43,5 +54,9 @@ class ButtonState(
 
     fun onPreviousDisplayButtonPressed() {
         switchDisplay(Direction.PREVIOUS)
+    }
+
+    fun onOpenDumpHistoryButtonPressed() {
+        openDumpHistory()
     }
 }

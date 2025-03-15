@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import model.displayDataResolver.DisplayData
 import model.InspectorState
+import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
-import view.utils.extractDisplayGraphics
-import view.utils.forFirstNodeUnder
-import view.utils.getNodesOrderedByDepth
 import view.utils.Irrelevant
+import view.utils.area
+import view.utils.getGraphics
+import view.utils.getNodesUnder
 import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
 
@@ -30,16 +30,18 @@ class ScreenshotState(
     inspectorState: StateFlow<InspectorState>,
     isNodeSelected: StateFlow<Boolean>,
     selectedNode: StateFlow<GenericNode>,
-    private val data: StateFlow<DisplayData>,
+    private val displayData: StateFlow<DisplayData>,
     private val selectNode: (GenericNode) -> Unit
 ) {
     val showScreenshot = inspectorState.map { it == InspectorState.POPULATED }
-    val imageBitmap = data.map {
+    val imageBitmap = displayData.map {
         withContext(Dispatchers.IO) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
             val defaultBitmap = ImageBitmap(0, 0)
             val actualBitmap = if (it == DisplayData.Empty) {
                 defaultBitmap
             } else {
+                // Todo: refactor deprecated code.
+                // Todo: use FileImageInputStream?
                 loadImageBitmap(FileInputStream(it.screenshotFile))
             }
 
@@ -71,7 +73,7 @@ class ScreenshotState(
     }
     val selectedNodeDisplayGraphics =
         combine(selectedNode, displayPixelConversionFactor) { selectedNode, displayPixelConversionFactor ->
-            selectedNode.extractDisplayGraphics(displayPixelConversionFactor)
+            selectedNode.getGraphics(displayPixelConversionFactor)
         }
 
     fun onImageSizeChanged(size: IntSize) {
@@ -79,15 +81,11 @@ class ScreenshotState(
     }
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
-        // Extract node list with the first nodes being the deepest ones.
-        val flatNodeListByDepth = data.value.displayNode.getNodesOrderedByDepth(deepNodesFirst = true)
+        // Extract nodes that are under the tap location.
+        val nodes = displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
+        val nodeAreas = nodes.map { it.getGraphics().size.area }
 
-        flatNodeListByDepth.forFirstNodeUnder(
-            offset = offset,
-            displayPixelConversionFactor = displayPixelConversionFactor.value
-        ) { matchingNode ->
-            // Update the selected node if a matching node was found.
-            selectNode(matchingNode)
-        }
+        val smallestNode = nodes[nodeAreas.indexOf(nodeAreas.min())]
+        selectNode(smallestNode)
     }
 }

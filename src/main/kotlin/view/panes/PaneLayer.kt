@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import shared.Colors.discreteTextColor
@@ -71,12 +71,14 @@ fun PaneLayer(
                 .fillMaxHeight()
                 .padding(mediumPadding)
         ) {
-            VerticalWedge(
+            Wedge(
+                orientation = WedgeOrientation.VERTICAL,
                 onDrag = uiLayoutState::onVerticalWedgeDrag
             )
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.width(paneWidth)
             ) {
                 UpperPane(
                     showXmlTree = showXmlTree,
@@ -86,10 +88,11 @@ fun PaneLayer(
                     upperPaneHeight = upperPaneHeight,
                     modifier = Modifier
                         .height(upperPaneHeight)
-                        .width(paneWidth)
+                        .fillMaxWidth()
                 )
 
-                HorizontalWedge(
+                Wedge(
+                    orientation = WedgeOrientation.HORIZONTAL,
                     onDrag = uiLayoutState::onHorizontalWedgeDrag
                 )
 
@@ -98,7 +101,7 @@ fun PaneLayer(
                     selectedNodePropertyMap = selectedNodePropertyMap,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(paneWidth)
+                        .fillMaxWidth()
                 )
             }
         }
@@ -138,7 +141,6 @@ fun UpperPane(
             Text(
                 text = "Missing layout.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier
@@ -176,7 +178,6 @@ fun LowerPane(
             Text(
                 text = "No node selected.",
                 color = discreteTextColor,
-                fontFamily = FontFamily.SansSerif,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
                 modifier = Modifier

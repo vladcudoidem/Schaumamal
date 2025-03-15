@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import model.InspectorState
@@ -22,6 +21,7 @@ import model.parser.dataClasses.GenericNode
 import model.repository.AppRepository
 import model.repository.DumpRegisterResult
 import model.repository.dataClasses.Content
+import model.repository.dataClasses.Dump
 import model.repository.dataClasses.Settings
 import viewmodel.notification.Notification
 import viewmodel.notification.NotificationManager
@@ -34,50 +34,25 @@ class AppViewModel(
     private val viewModelScope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     stateCollectionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) {
-    init {
-        appRepository.createAppDirectory()
-    }
-
     private val _state = MutableStateFlow(InspectorState.EMPTY)
     val state get() = _state.asStateFlow()
 
     private val content = MutableStateFlow(Content.DefaultEmpty)
-
-    init {
-        if (appRepository.existsContentJson()) {
-            content.value = appRepository.readContentJson()
-            _state.value = InspectorState.POPULATED
-        } else {
-            appRepository.writeContentJson(content.value)
-        }
-
-        appRepository.createContentDirectories(content.value)
-    }
-
-    private val dumpsDirectoryName = content.map { it.dumpsDirectoryName }
-
     private val settings = MutableStateFlow(Settings.DefaultEmpty)
 
-    init {
-        if (appRepository.existsSettingsJson()) {
-            settings.value = appRepository.readSettingsJson()
-        } else {
-            appRepository.writeSettingsJson(settings.value)
-        }
+    private val dumpsDirectoryName = content.map { it.dumpsDirectoryName }
+    val resolvedDumpThumbnails = content.map {
+        displayDataResolver.resolve(it.dumpsDirectoryName, it.dumps)
     }
 
-    private val selectedDump = content.transform {
-        // Todo: offer option to choose older dumps.
-        val selectedDump = it.dumps.firstOrNull()
+    private val _selectedDump = MutableStateFlow(Dump.Empty)
+    val selectedDump get() = _selectedDump.asStateFlow()
 
-        if (selectedDump != null && selectedDump.displays.isNotEmpty()) {
-            emit(selectedDump)
-        }
-    }
-
-    private val dumpDisplaysData =
-        combineTransform(dumpsDirectoryName, selectedDump) { dumpsDirectoryName, selectedDump ->
-            emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
+    private val displayDataList =
+        combineTransform(dumpsDirectoryName, _selectedDump) { dumpsDirectoryName, selectedDump ->
+            if (selectedDump != Dump.Empty && selectedDump.displays.isNotEmpty()) {
+                emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
+            }
         }.stateIn(
             scope = stateCollectionScope,
             started = SharingStarted.Eagerly,
@@ -88,7 +63,7 @@ class AppViewModel(
     val displayIndex get() = _displayIndex.asStateFlow()
 
     val displayCount =
-        dumpDisplaysData
+        displayDataList
             .map { it.size }
             .stateIn(
                 scope = stateCollectionScope,
@@ -96,9 +71,8 @@ class AppViewModel(
                 initialValue = 0
             )
 
-    // Todo: refactor to "selctedDisplayData"
-    val data =
-        combineTransform(dumpDisplaysData, _displayIndex) { dumpDisplaysData, _displayIndex ->
+    val selectedDisplayData =
+        combineTransform(displayDataList, _displayIndex) { dumpDisplaysData, _displayIndex ->
             if (dumpDisplaysData.isNotEmpty()) emit(dumpDisplaysData[_displayIndex])
         }.stateIn(
             scope = stateCollectionScope,
@@ -111,6 +85,28 @@ class AppViewModel(
 
     private val _selectedNode = MutableStateFlow(GenericNode.Empty)
     val selectedNode get() = _selectedNode.asStateFlow()
+
+    init {
+        appRepository.createAppDirectory()
+
+        // Set up content.
+        if (appRepository.existsContentJson()) {
+            content.value = appRepository.readContentJson()
+            _selectedDump.value = content.value.dumps.first()
+            _state.value = InspectorState.POPULATED
+        } else {
+            appRepository.writeContentJson(content.value)
+        }
+
+        appRepository.createContentDirectories(content.value)
+
+        // Set up settings.
+        if (appRepository.existsSettingsJson()) {
+            settings.value = appRepository.readSettingsJson()
+        } else {
+            appRepository.writeSettingsJson(settings.value)
+        }
+    }
 
     fun extract() {
         viewModelScope.launch {
@@ -153,13 +149,20 @@ class AppViewModel(
                 is DumpRegisterResult.Success -> registerResult.content
             }
 
+            // Remove selected node for new dump.
             _isNodeSelected.value = false
             _selectedNode.value = GenericNode.Empty
 
+            // Always show the first display of new dump.
             _displayIndex.value = 0
 
+            // Update the content JSON.
             appRepository.writeContentJson(newContent)
+
             content.value = newContent
+
+            // Always show the new dump after dumping. (The newest is the first in the list.)
+            _selectedDump.value = content.value.dumps.first()
 
             // At the end, show the data.
             _state.value = InspectorState.POPULATED
@@ -205,6 +208,22 @@ class AppViewModel(
             _isNodeSelected.value = false
             _selectedNode.value = GenericNode.Empty
         }
+    }
+
+    fun selectDump(dump: Dump) {
+        // Abort if the selected dump is the same as the current dump.
+        if (dump == _selectedDump.value) return
+
+        // Enter waiting state before switching dumps.
+        _state.value = InspectorState.WAITING
+
+        _selectedDump.value = dump
+        _displayIndex.value = 0
+        _isNodeSelected.value = false
+        _selectedNode.value = GenericNode.Empty
+
+        // Show selected dump.
+        _state.value = InspectorState.POPULATED
     }
 
     fun cleanup() {

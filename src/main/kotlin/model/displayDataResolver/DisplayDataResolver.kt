@@ -3,6 +3,7 @@ package model.displayDataResolver
 import model.parser.XmlParser
 import model.platform.PlatformInformationProvider
 import model.repository.dataClasses.Dump
+import java.io.File
 import kotlin.io.path.Path
 
 class DisplayDataResolver(
@@ -28,6 +29,19 @@ class DisplayDataResolver(
                 screenshotFile = currentDumpDirectoryPath.resolve(display.screenshotFileName).toFile(),
                 displayNode = displayNodes.first { it.id == display.id }
             )
+        }
+    }
+
+    fun resolve(dumpsDirectoryName: String, dumps: List<Dump>): Map<Dump, File> {
+        return dumps.associateWith { dump ->
+            val thumbnailFile =
+                appDirectoryPath
+                    .resolve(dumpsDirectoryName)
+                    .resolve(dump.directoryName)
+                    .resolve(dump.displays.first().screenshotFileName)
+                    .toFile()
+
+            thumbnailFile
         }
     }
 }

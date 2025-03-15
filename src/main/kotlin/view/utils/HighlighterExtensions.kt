@@ -5,15 +5,15 @@ import androidx.compose.ui.geometry.Size
 import model.parser.dataClasses.GenericNode
 import view.screenshot.Graphics
 
-// "Display" means that the offset and size have already been transformed to screen pixels by multiplying the screenshot
+// "displayPixelConversionFactor" is for transforming the offset and size to screen pixels by multiplying the screenshot
 // pixels with a conversion factor.
-fun GenericNode.extractDisplayGraphics(displayPixelConversionFactor: Float): Graphics {
+fun GenericNode.getGraphics(displayPixelConversionFactor: Float = 1.0f): Graphics {
     val bounds = bounds
         .removeSurrounding("[", "]")
         .split("][", ",")
         .map { it.toFloat() }
 
-    val displayBounds = bounds.map { bound -> bound * displayPixelConversionFactor }
+    val displayBounds = bounds.map { it * displayPixelConversionFactor }
 
     return Graphics(
         offset = Offset(

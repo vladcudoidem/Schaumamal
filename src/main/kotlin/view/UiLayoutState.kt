@@ -7,6 +7,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -123,7 +124,7 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         val bottomVisibleScreenshotAreaBound = panesHeightConstraint
         val startVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
         val endVisibleScreenshotAreaBound =
-            panesWidthConstraint - (wedgeSmallDimension + smallPadding + _paneWidth.value + mediumPadding)
+            panesWidthConstraint - (wedgeSmallDimension + (smallPadding + 3.dp) + _paneWidth.value + mediumPadding)
 
         // We first place the screenshot in the center of the screenshot area.
 

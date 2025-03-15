@@ -1,7 +1,9 @@
 package view.button.displayControl
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,12 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryTextColor
-import view.button.HorizontalPill
+import shared.Dimensions.mediumPadding
 import view.button.RoundIconButton
 
 @Composable
@@ -27,7 +28,13 @@ fun DisplayControlPill(
     onPreviousDisplayButtonPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    HorizontalPill(modifier = modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(mediumPadding),
+        modifier = modifier
+            .clip(RoundedCornerShape(50))
+            .background(elevatedBackgroundColor)
+    ) {
         RoundIconButton(
             onClick = onPreviousDisplayButtonPressed,
             iconPainter = painterResource("icons/arrow_backward.svg"),
@@ -37,8 +44,7 @@ fun DisplayControlPill(
 
         Text(
             text = "Display",
-            color = primaryTextColor,
-            fontFamily = FontFamily.SansSerif
+            color = primaryTextColor
         )
 
         Box(
@@ -51,7 +57,6 @@ fun DisplayControlPill(
             Text(
                 text = displayCounter,
                 color = elevatedBackgroundColor,
-                fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold
             )
         }

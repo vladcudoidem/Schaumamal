@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.koin.compose.KoinApplication
@@ -17,6 +18,7 @@ import view.MainScreen
 import view.UiLayoutState
 import viewmodel.AppViewModel
 import view.button.ButtonState
+import view.floatingWindow.FloatingWindowState
 import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
@@ -32,19 +34,28 @@ fun main() = application {
         }
     ) {
         val viewModel: AppViewModel = koinInject()
+        val floatingWindowState = remember {
+            FloatingWindowState(
+                selectedDump = viewModel.selectedDump,
+                resolvedDumpThumbnails = viewModel.resolvedDumpThumbnails,
+                selectDump = viewModel::selectDump
+            )
+        }
         val buttonState = remember {
             ButtonState(
                 inspectorState = viewModel.state,
+                selectedDump = viewModel.selectedDump,
                 displayIndex = viewModel.displayIndex,
                 displayCount = viewModel.displayCount,
+                extract = viewModel::extract,
                 switchDisplay = viewModel::switchDisplay,
-                extract = viewModel::extract
+                openDumpHistory = floatingWindowState::openDumpHistory
             )
         }
         val paneState = remember {
             PaneState(
                 inspectorState = viewModel.state,
-                data = viewModel.data,
+                displayData = viewModel.selectedDisplayData,
                 isNodeSelected = viewModel.isNodeSelected,
                 selectedNode = viewModel.selectedNode,
                 selectNode = viewModel::selectNode
@@ -56,7 +67,7 @@ fun main() = application {
                 inspectorState = viewModel.state,
                 isNodeSelected = viewModel.isNodeSelected,
                 selectedNode = viewModel.selectedNode,
-                data = viewModel.data,
+                displayData = viewModel.selectedDisplayData,
                 selectNode = viewModel::selectNode
             )
         }
@@ -99,8 +110,9 @@ fun main() = application {
                 val customTextStyle = LocalTextStyle.current.copy(
                     lineHeightStyle = LineHeightStyle(
                         alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.Both
-                    )
+                        trim = LineHeightStyle.Trim.FirstLineTop
+                    ),
+                    fontSize = 14.sp
                 )
 
                 CompositionLocalProvider(LocalTextStyle provides customTextStyle) {
@@ -109,6 +121,7 @@ fun main() = application {
                         buttonState = buttonState,
                         paneState = paneState,
                         uiLayoutState = uiLayoutState,
+                        floatingWindowState = floatingWindowState,
                         notificationState = notificationState
                     )
                 }
