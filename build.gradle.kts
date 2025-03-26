@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.1.0"
+    id("com.diffplug.spotless") version "7.0.2"
 }
 
 group = "com.vladvamos.schaumamal"
@@ -72,5 +73,15 @@ compose.desktop {
                 menuGroup = "Development"
             }
         }
+    }
+}
+
+spotless {
+    kotlin {
+        ktfmt().kotlinlangStyle()
+    }
+
+    kotlinGradle {
+        ktfmt().kotlinlangStyle()
     }
 }
