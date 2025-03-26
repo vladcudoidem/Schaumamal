@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.1.0"
-    id("com.diffplug.spotless") version "7.0.2"
+    alias(libs.plugins.spotless)
 }
 
 group = "com.vladvamos.schaumamal"
@@ -76,7 +76,15 @@ compose.desktop {
 }
 
 spotless {
-    kotlin { ktfmt().kotlinlangStyle() }
+    kotlin {
+        ktfmt().kotlinlangStyle().configure {
+            it.apply {
+                setMaxWidth(100)
+                setContinuationIndent(4)
+                setBlockIndent(4)
+            }
+        }
+    }
 
     kotlinGradle { ktfmt().kotlinlangStyle() }
 }
