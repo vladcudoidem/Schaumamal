@@ -1,7 +1,8 @@
-name: Build Check
+name: Check
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main
@@ -14,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up JDK Zulu 17
+    - name: JDK Setup
       uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
         java-version: '17'
 
-    - name: Build with Gradle
+    - name: Build
       run: ./gradlew build
