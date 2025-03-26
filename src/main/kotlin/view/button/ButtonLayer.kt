@@ -21,7 +21,7 @@ import view.button.extraction.ExtractionPill
 fun ButtonLayer(
     uiLayoutState: UiLayoutState,
     buttonState: ButtonState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current.density
 
@@ -34,21 +34,24 @@ fun ButtonLayer(
     val showDumpProgress by buttonState.showDumpProgress.collectAsState(initial = false)
     val dumpProgressText = buttonState.dumpProgressText
 
-    val areResizeButtonsEnabled by buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
+    val areResizeButtonsEnabled by
+        buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
     val isExtractButtonEnabled by buttonState.isExtractButtonEnabled.collectAsState(initial = true)
-    val isOpenDumpHistoryButtonEnabled by buttonState.isOpenDumpHistoryButtonEnabled.collectAsState(initial = false)
+    val isOpenDumpHistoryButtonEnabled by
+        buttonState.isOpenDumpHistoryButtonEnabled.collectAsState(initial = false)
 
-    val areDisplayControlButtonsEnabled by buttonState.areDisplayControlButtonsEnabled.collectAsState(initial = false)
+    val areDisplayControlButtonsEnabled by
+        buttonState.areDisplayControlButtonsEnabled.collectAsState(initial = false)
     val displayCounter by buttonState.displayCounter.collectAsState(initial = "?/?")
 
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(mediumPadding),
-        modifier = modifier.padding(mediumPadding)
+        modifier = modifier.padding(mediumPadding),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(mediumPadding)
+            horizontalArrangement = Arrangement.spacedBy(mediumPadding),
         ) {
             ExtractionPill(
                 showDumpSuggestion = showDumpSuggestion,
@@ -58,20 +61,20 @@ fun ButtonLayer(
                 showDumpProgress = showDumpProgress,
                 dumpProgressText = dumpProgressText,
                 isExtractButtonEnabled = isExtractButtonEnabled,
-                onExtractButtonPressed = buttonState::onExtractButtonPressed
+                onExtractButtonPressed = buttonState::onExtractButtonPressed,
             )
 
             RoundIconButton(
                 onClick = buttonState::onOpenDumpHistoryButtonPressed,
                 enabled = isOpenDumpHistoryButtonEnabled,
-                iconPainter = painterResource("icons/history.svg")
+                iconPainter = painterResource("icons/history.svg"),
             )
 
             DisplayControlPill(
                 areDisplayControlButtonsEnabled = areDisplayControlButtonsEnabled,
                 displayCounter = displayCounter,
                 onNextDisplayButtonPressed = buttonState::onNextDisplayButtonPressed,
-                onPreviousDisplayButtonPressed = buttonState::onPreviousDisplayButtonPressed
+                onPreviousDisplayButtonPressed = buttonState::onPreviousDisplayButtonPressed,
             )
         }
 
@@ -81,19 +84,19 @@ fun ButtonLayer(
         RoundIconButton(
             onClick = { uiLayoutState.onFitScreenshotToScreenButtonPressed(density) },
             enabled = areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/fit.svg")
+            iconPainter = painterResource("icons/fit.svg"),
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onEnlargeScreenshotButtonPressed,
             enabled = areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/enlarge.svg")
+            iconPainter = painterResource("icons/enlarge.svg"),
         )
 
         RoundIconButton(
             onClick = uiLayoutState::onShrinkScreenshotButtonPressed,
             enabled = areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/shrink.svg")
+            iconPainter = painterResource("icons/shrink.svg"),
         )
     }
 }

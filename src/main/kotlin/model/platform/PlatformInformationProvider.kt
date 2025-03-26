@@ -9,10 +9,11 @@ abstract class PlatformInformationProvider {
         const val REGULAR_LOCAL_APPLICATION_FOLDER = "Schaumamal"
         const val HIDDEN_LOCAL_APPLICATION_FOLDER = ".schaumamal"
 
-        fun current() = on(
-            win = WindowsInformationProvider(),
-            lin = LinuxInformationProvider(),
-            mac = MacosInformationProvider()
-        )
+        fun current() =
+            on(
+                win = WindowsInformationProvider(),
+                lin = LinuxInformationProvider(),
+                mac = MacosInformationProvider(),
+            )
     }
 }

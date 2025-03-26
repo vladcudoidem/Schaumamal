@@ -18,23 +18,21 @@ import shared.Dimensions.notificationPillHeight
 import viewmodel.notification.Notification
 
 @Composable
-fun NotificationPill(
-    notification: Notification,
-    modifier: Modifier = Modifier
-) {
+fun NotificationPill(notification: Notification, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(accentColor)
-            .padding(start = largePadding, end = largePadding)
-            .height(notificationPillHeight)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(50))
+                .background(accentColor)
+                .padding(start = largePadding, end = largePadding)
+                .height(notificationPillHeight),
     ) {
         Text(
             text = notification.description,
             color = primaryTextColor,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

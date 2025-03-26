@@ -16,19 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import java.awt.Cursor
 import shared.Colors.accentColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
 import view.panes.XmlTreeLine
-import java.awt.Cursor
 
 @Composable
-fun XmlTreeLine(
-    line: XmlTreeLine,
-    modifier: Modifier = Modifier
-) {
+fun XmlTreeLine(line: XmlTreeLine, modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
     val indication = ripple(color = accentColor)
 
@@ -38,16 +35,16 @@ fun XmlTreeLine(
         Text(
             text = line.text,
             color = primaryTextColor,
-            modifier = Modifier
-                .clip(RoundedCornerShape(smallCornerRadius))
-                .background(line.textBackgroundColor)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = indication,
-                    onClick = line.onClickText
-                )
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                .padding(smallPadding)
+            modifier =
+                Modifier.clip(RoundedCornerShape(smallCornerRadius))
+                    .background(line.textBackgroundColor)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = indication,
+                        onClick = line.onClickText,
+                    )
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                    .padding(smallPadding),
         )
     }
 }

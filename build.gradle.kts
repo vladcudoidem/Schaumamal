@@ -9,6 +9,7 @@ plugins {
 }
 
 group = "com.vladvamos.schaumamal"
+
 version = "1.0.0"
 
 repositories {
@@ -58,9 +59,7 @@ compose.desktop {
 
             modules("java.instrument", "jdk.unsupported")
 
-            macOS {
-                iconFile.set(project.file("src/main/resources/appIcons/icon.icns"))
-            }
+            macOS { iconFile.set(project.file("src/main/resources/appIcons/icon.icns")) }
 
             windows {
                 iconFile.set(project.file("src/main/resources/appIcons/icon.ico"))
@@ -77,11 +76,7 @@ compose.desktop {
 }
 
 spotless {
-    kotlin {
-        ktfmt().kotlinlangStyle()
-    }
+    kotlin { ktfmt().kotlinlangStyle() }
 
-    kotlinGradle {
-        ktfmt().kotlinlangStyle()
-    }
+    kotlinGradle { ktfmt().kotlinlangStyle() }
 }

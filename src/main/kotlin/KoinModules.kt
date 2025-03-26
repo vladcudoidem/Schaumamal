@@ -5,9 +5,9 @@ import model.dumper.NicknameProvider
 import model.parser.XmlParser
 import model.platform.PlatformInformationProvider
 import model.repository.AppRepository
-import viewmodel.notification.NotificationManager
 import org.koin.dsl.module
 import viewmodel.AppViewModel
+import viewmodel.notification.NotificationManager
 
 val viewModelModule = module {
     single { AppViewModel(get(), get(), get(), get()) }

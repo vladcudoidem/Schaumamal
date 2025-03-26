@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import java.awt.Cursor
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -33,66 +34,52 @@ import shared.Dimensions.propertyNameWidth
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import view.FadeVisibility
-import java.awt.Cursor
 
 @Composable
-fun PropertyRow(
-    property: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
+fun PropertyRow(property: String, value: String, modifier: Modifier = Modifier) {
     val clipboard = LocalClipboardManager.current
 
     val interactionSource = remember { MutableInteractionSource() }
     val indication = ripple(color = accentColor)
 
     val scope = rememberCoroutineScope()
-    DisposableEffect(Unit) {
-        onDispose {
-            scope.cancel()
-        }
-    }
+    DisposableEffect(Unit) { onDispose { scope.cancel() } }
 
     var copyConfirmationVisible by remember { mutableStateOf(false) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(start = smallPadding)
+        modifier = modifier.padding(start = smallPadding),
     ) {
         Text(
             text = property,
             color = primaryTextColor,
-            modifier = Modifier.width(propertyNameWidth)
+            modifier = Modifier.width(propertyNameWidth),
         )
 
         Text(
             text = value,
             color = primaryTextColor,
-            modifier = Modifier
-                .widthIn(max = maximumPropertyValueWidth)
-                .clip(RoundedCornerShape(smallCornerRadius))
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                // It would make little sense to handle this in the view model as the behaviour is always the same.
-                .clickable(interactionSource, indication) {
-                    // Copy value to clipboard.
-                    clipboard.setText(AnnotatedString(value))
+            modifier =
+                Modifier.widthIn(max = maximumPropertyValueWidth)
+                    .clip(RoundedCornerShape(smallCornerRadius))
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                    // It would make little sense to handle this in the view model as the behaviour
+                    // is always the same.
+                    .clickable(interactionSource, indication) {
+                        // Copy value to clipboard.
+                        clipboard.setText(AnnotatedString(value))
 
-                    // Show confirmation text.
-                    copyConfirmationVisible = true
-                    scope.launch {
-                        delay(timeMillis = 1500)
-                        copyConfirmationVisible = false
+                        // Show confirmation text.
+                        copyConfirmationVisible = true
+                        scope.launch {
+                            delay(timeMillis = 1500)
+                            copyConfirmationVisible = false
+                        }
                     }
-                }
-                .padding(smallPadding)
+                    .padding(smallPadding),
         )
 
-        FadeVisibility(copyConfirmationVisible) {
-            Text(
-                text = "✓ copied",
-                color = accentColor
-            )
-        }
+        FadeVisibility(copyConfirmationVisible) { Text(text = "✓ copied", color = accentColor) }
     }
 }

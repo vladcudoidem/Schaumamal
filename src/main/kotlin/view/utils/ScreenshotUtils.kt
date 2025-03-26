@@ -6,7 +6,7 @@ import model.parser.dataClasses.GenericNode
 
 fun DisplayNode.getNodesUnder(
     offset: Offset,
-    displayPixelConversionFactor: Float
+    displayPixelConversionFactor: Float,
 ): List<GenericNode> {
     val nodes = mutableListOf<GenericNode>()
 

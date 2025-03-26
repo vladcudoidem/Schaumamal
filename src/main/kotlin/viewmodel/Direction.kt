@@ -1,5 +1,6 @@
 package viewmodel
 
 enum class Direction {
-    NEXT, PREVIOUS
+    NEXT,
+    PREVIOUS,
 }

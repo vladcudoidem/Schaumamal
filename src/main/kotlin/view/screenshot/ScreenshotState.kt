@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
+import java.io.FileInputStream
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,56 +25,66 @@ import view.utils.Irrelevant
 import view.utils.area
 import view.utils.getGraphics
 import view.utils.getNodesUnder
-import java.io.FileInputStream
-import kotlin.coroutines.CoroutineContext
 
 class ScreenshotState(
     inspectorState: StateFlow<InspectorState>,
     isNodeSelected: StateFlow<Boolean>,
     selectedNode: StateFlow<GenericNode>,
     private val displayData: StateFlow<DisplayData>,
-    private val selectNode: (GenericNode) -> Unit
+    private val selectNode: (GenericNode) -> Unit,
 ) {
     val showScreenshot = inspectorState.map { it == InspectorState.POPULATED }
-    val imageBitmap = displayData.map {
-        withContext(Dispatchers.IO) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
-            val defaultBitmap = ImageBitmap(0, 0)
-            val actualBitmap = if (it == DisplayData.Empty) {
-                defaultBitmap
-            } else {
-                // Todo: refactor deprecated code.
-                // Todo: use FileImageInputStream?
-                loadImageBitmap(FileInputStream(it.screenshotFile))
-            }
+    val imageBitmap =
+        displayData.map {
+            withContext(
+                Dispatchers.IO
+            ) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
+                val defaultBitmap = ImageBitmap(0, 0)
+                val actualBitmap =
+                    if (it == DisplayData.Empty) {
+                        defaultBitmap
+                    } else {
+                        // Todo: refactor deprecated code.
+                        // Todo: use FileImageInputStream?
+                        loadImageBitmap(FileInputStream(it.screenshotFile))
+                    }
 
-            actualBitmap.apply {
-                // Store the screenshot file size as soon as possible.
-                screenshotFileSize.value = Size(height = height.toFloat(), width = width.toFloat())
+                actualBitmap.apply {
+                    // Store the screenshot file size as soon as possible.
+                    screenshotFileSize.value =
+                        Size(height = height.toFloat(), width = width.toFloat())
+                }
             }
-        }
-    } // Todo: this was using "derivedStateOf". Is the current implementation good?
+        } // Todo: this was using "derivedStateOf". Is the current implementation good?
 
     private val screenshotFileSize = MutableStateFlow(Size.Irrelevant)
 
     // size of the image composable
     private val _screenshotComposableSize = MutableStateFlow(Size.Irrelevant)
-    val screenshotComposableSize get() = _screenshotComposableSize.asStateFlow()
+    val screenshotComposableSize
+        get() = _screenshotComposableSize.asStateFlow()
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
     private val displayPixelConversionFactor: StateFlow<Float> =
-        combine(_screenshotComposableSize, screenshotFileSize) { _screenshotComposableSize, screenshotFileSize ->
-            _screenshotComposableSize.height / screenshotFileSize.height
-        }.stateIn(
-            scope = CoroutineScope(Dispatchers.Default),
-            started = SharingStarted.Eagerly,
-            initialValue = 1.0f // Todo: is this a fitting initial value?
-        )
+        combine(_screenshotComposableSize, screenshotFileSize) {
+                _screenshotComposableSize,
+                screenshotFileSize ->
+                _screenshotComposableSize.height / screenshotFileSize.height
+            }
+            .stateIn(
+                scope = CoroutineScope(Dispatchers.Default),
+                started = SharingStarted.Eagerly,
+                initialValue = 1.0f, // Todo: is this a fitting initial value?
+            )
 
-    val showHighlighter = combine(showScreenshot, isNodeSelected) { showScreenshot, isNodeSelected ->
-        showScreenshot && isNodeSelected
-    }
+    val showHighlighter =
+        combine(showScreenshot, isNodeSelected) { showScreenshot, isNodeSelected ->
+            showScreenshot && isNodeSelected
+        }
     val selectedNodeDisplayGraphics =
-        combine(selectedNode, displayPixelConversionFactor) { selectedNode, displayPixelConversionFactor ->
+        combine(selectedNode, displayPixelConversionFactor) {
+            selectedNode,
+            displayPixelConversionFactor ->
             selectedNode.getGraphics(displayPixelConversionFactor)
         }
 
@@ -82,7 +94,8 @@ class ScreenshotState(
 
     fun onImageTap(offset: Offset, uiCoroutineContext: CoroutineContext) {
         // Extract nodes that are under the tap location.
-        val nodes = displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
+        val nodes =
+            displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
         val nodeAreas = nodes.map { it.getGraphics().size.area }
 
         val smallestNode = nodes[nodeAreas.indexOf(nodeAreas.min())]

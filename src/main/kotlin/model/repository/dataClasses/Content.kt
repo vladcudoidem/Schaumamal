@@ -6,13 +6,10 @@ import kotlinx.serialization.Serializable
 data class Content(
     val tempDirectoryName: String,
     val dumpsDirectoryName: String,
-    val dumps: List<Dump>
+    val dumps: List<Dump>,
 ) {
     companion object {
-        val DefaultEmpty = Content(
-            tempDirectoryName = "tmp",
-            dumpsDirectoryName = "dumps",
-            dumps = emptyList()
-        )
+        val DefaultEmpty =
+            Content(tempDirectoryName = "tmp", dumpsDirectoryName = "dumps", dumps = emptyList())
     }
 }

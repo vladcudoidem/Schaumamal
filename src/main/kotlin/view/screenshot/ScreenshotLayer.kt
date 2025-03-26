@@ -31,6 +31,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
+import java.awt.Cursor
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.cancel
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
@@ -40,39 +42,36 @@ import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
 import view.utils.toPx
-import java.awt.Cursor
-import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun ScreenshotLayer(
     uiLayoutState: UiLayoutState,
     screenshotState: ScreenshotState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val showScreenshot by screenshotState.showScreenshot.collectAsState(initial = false)
-    val imageBitmap by screenshotState.imageBitmap.collectAsState(
-        initial = ImageBitmap(0, 0)
-    )
+    val imageBitmap by screenshotState.imageBitmap.collectAsState(initial = ImageBitmap(0, 0))
     val showHighlighter by screenshotState.showHighlighter.collectAsState(initial = false)
-    val selectedNodeDisplayGraphics by screenshotState.selectedNodeDisplayGraphics.collectAsState(
-        initial = Graphics.Unspecified
-    )
+    val selectedNodeDisplayGraphics by
+        screenshotState.selectedNodeDisplayGraphics.collectAsState(initial = Graphics.Unspecified)
     val screenshotLayerOffset by uiLayoutState.screenshotLayerOffset.collectAsState()
     val screenshotLayerScale by uiLayoutState.screenshotLayerScale.collectAsState()
 
     // This is the Box that places the next Box correctly on the screen.
     Box(
         contentAlignment = Alignment.CenterStart,
-        modifier = modifier
-            .padding(largePadding)
-            .widthIn(max = maximumInitialScreenshotWidth)
-            .heightIn(max = maximumInitialScreenshotHeight)
+        modifier =
+            modifier
+                .padding(largePadding)
+                .widthIn(max = maximumInitialScreenshotWidth)
+                .heightIn(max = maximumInitialScreenshotHeight),
     ) {
-        // This is the Box that moves around. It inherits the size of the Image composable (or that of the Canvas if it
+        // This is the Box that moves around. It inherits the size of the Image composable (or that
+        // of the Canvas if it
         // is bigger, but the Canvas cannot get bigger than the Image as of now).
         Box(
-            modifier = Modifier
-                .graphicsLayer {
+            modifier =
+                Modifier.graphicsLayer {
                     scaleX = screenshotLayerScale
                     scaleY = screenshotLayerScale
 
@@ -87,7 +86,7 @@ fun ScreenshotLayer(
                         onSizeChanged = screenshotState::onImageSizeChanged,
                         onGesture = uiLayoutState::onImageGesture,
                         onTap = screenshotState::onImageTap,
-                        onScroll = uiLayoutState::onImageScroll
+                        onScroll = uiLayoutState::onImageScroll,
                     )
                 }
             }
@@ -100,7 +99,7 @@ fun ScreenshotLayer(
                 Highlighter(
                     offset = selectedNodeDisplayGraphics.offset,
                     size = selectedNodeDisplayGraphics.size,
-                    strokeWidth = highlighterStrokeWidth
+                    strokeWidth = highlighterStrokeWidth,
                 )
             }
         }
@@ -115,51 +114,35 @@ fun Screenshot(
     onGesture: (Offset, Offset, Float, Float) -> Unit,
     onTap: (Offset, CoroutineContext) -> Unit,
     onScroll: (PointerEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // The context of this coroutine scope is needed for scrolling in the view model.
     val scope = rememberCoroutineScope()
-    DisposableEffect(Unit) {
-        onDispose {
-            scope.cancel()
-        }
-    }
+    DisposableEffect(Unit) { onDispose { scope.cancel() } }
 
     Image(
         bitmap = bitmap,
         contentDescription = null,
-        modifier = modifier
-            .onSizeChanged(onSizeChanged = onSizeChanged)
-            .pointerInput(Unit) {
-                detectTransformGestures(onGesture = onGesture)
-            }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = { offset ->
-                        onTap(offset, scope.coroutineContext)
-                    }
-                )
-            }
-            .onPointerEvent(PointerEventType.Scroll) { event ->
-                onScroll(event)
-            }
-            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+        modifier =
+            modifier
+                .onSizeChanged(onSizeChanged = onSizeChanged)
+                .pointerInput(Unit) { detectTransformGestures(onGesture = onGesture) }
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { offset -> onTap(offset, scope.coroutineContext) })
+                }
+                .onPointerEvent(PointerEventType.Scroll) { event -> onScroll(event) }
+                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
     )
 }
 
 @Composable
-fun Highlighter(
-    offset: Offset,
-    size: Size,
-    strokeWidth: Float,
-    modifier: Modifier = Modifier
-) {
+fun Highlighter(offset: Offset, size: Size, strokeWidth: Float, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         drawRect(
             color = Color.Red,
             topLeft = offset,
             size = size,
-            style = Stroke(width = strokeWidth)
+            style = Stroke(width = strokeWidth),
         )
     }
 }

@@ -1,7 +1,5 @@
 package model.repository
 
-import kotlinx.serialization.json.Json
-import model.platform.PlatformInformationProvider
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
@@ -13,16 +11,14 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlinx.serialization.encodeToString // Do not remove! This is needed.
+import kotlinx.serialization.json.Json
+import model.platform.PlatformInformationProvider
 import model.repository.dataClasses.Content
 import model.repository.dataClasses.Dump
 import model.repository.dataClasses.Settings
 
-// Do not remove! This is needed.
-import kotlinx.serialization.encodeToString
-
-class AppRepository(
-    platformInformationProvider: PlatformInformationProvider
-) {
+class AppRepository(platformInformationProvider: PlatformInformationProvider) {
     private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
 
     private val contentJsonFilePath = appDirectoryPath.resolve("content.json")

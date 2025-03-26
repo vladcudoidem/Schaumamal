@@ -14,27 +14,18 @@ import androidx.compose.ui.Modifier
 import shared.Dimensions.largePadding
 
 @Composable
-fun NotificationLayer(
-    notificationState: NotificationState,
-    modifier: Modifier = Modifier
-) {
+fun NotificationLayer(notificationState: NotificationState, modifier: Modifier = Modifier) {
     val active by notificationState.active.collectAsState()
     val latestNotification by notificationState.latestNotification.collectAsState()
 
     Box(
         contentAlignment = Alignment.BottomCenter,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(largePadding)
+        modifier = modifier.fillMaxSize().padding(largePadding),
     ) {
         AnimatedVisibility(
             visible = active,
-            enter = slideInVertically(
-                initialOffsetY = { fullHeight -> fullHeight * 2 }
-            ),
-            exit = slideOutVertically(
-                targetOffsetY = { fullHeight -> fullHeight * 2 }
-            )
+            enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight * 2 }),
+            exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight * 2 }),
         ) {
             NotificationPill(latestNotification)
         }

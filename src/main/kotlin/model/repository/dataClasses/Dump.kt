@@ -8,15 +8,16 @@ data class Dump(
     val nickname: String,
     val timeMilliseconds: Long,
     val xmlTreeFileName: String,
-    val displays: List<Display>
+    val displays: List<Display>,
 ) {
     companion object {
-        val Empty = Dump(
-            directoryName = "",
-            nickname = "",
-            timeMilliseconds = -1,
-            xmlTreeFileName = "",
-            displays = emptyList()
-        )
+        val Empty =
+            Dump(
+                directoryName = "",
+                nickname = "",
+                timeMilliseconds = -1,
+                xmlTreeFileName = "",
+                displays = emptyList(),
+            )
     }
 }

@@ -8,5 +8,5 @@ data class DumpHistoryEntry(
     val name: String,
     val date: String,
     val displayCount: Int,
-    val onDumpHistoryEntryClicked: () -> Unit
+    val onDumpHistoryEntryClicked: () -> Unit,
 )
