@@ -1,10 +1,15 @@
-name: Manual Build and Package Release
+name: Manual Package Release
 
 on:
   workflow_dispatch:
 
 jobs:
-  build_and_package:
+  check:
+    uses: ./.github/workflows/check.yml
+
+  package:
+    needs: check
+
     strategy:
       matrix:
         include:
@@ -20,17 +25,14 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
       
-      - name: Set up JDK 17 (Zulu)
+      - name: JDK Setup
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
-
-      - name: Build
-        run: ./gradlew build
 
       - name: Package Release
         run: ./gradlew packageReleaseDistributionForCurrentOS
