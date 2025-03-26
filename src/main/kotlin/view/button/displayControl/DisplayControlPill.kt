@@ -26,38 +26,33 @@ fun DisplayControlPill(
     displayCounter: String,
     onNextDisplayButtonPressed: () -> Unit,
     onPreviousDisplayButtonPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(elevatedBackgroundColor)
+        modifier = modifier.clip(RoundedCornerShape(50)).background(elevatedBackgroundColor),
     ) {
         RoundIconButton(
             onClick = onPreviousDisplayButtonPressed,
             iconPainter = painterResource("icons/arrow_backward.svg"),
             iconModifier = Modifier.padding(end = 2.dp),
-            enabled = areDisplayControlButtonsEnabled
+            enabled = areDisplayControlButtonsEnabled,
         )
 
-        Text(
-            text = "Display",
-            color = primaryTextColor
-        )
+        Text(text = "Display", color = primaryTextColor)
 
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .background(primaryTextColor)
-                .size(height = 25.dp, width = 40.dp)
+            modifier =
+                Modifier.clip(RoundedCornerShape(50))
+                    .background(primaryTextColor)
+                    .size(height = 25.dp, width = 40.dp),
         ) {
             Text(
                 text = displayCounter,
                 color = elevatedBackgroundColor,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
 
@@ -65,7 +60,7 @@ fun DisplayControlPill(
             onClick = onNextDisplayButtonPressed,
             iconPainter = painterResource("icons/arrow_forward.svg"),
             iconModifier = Modifier.padding(start = 2.dp),
-            enabled = areDisplayControlButtonsEnabled
+            enabled = areDisplayControlButtonsEnabled,
         )
     }
 }

@@ -1,17 +1,18 @@
 package model.parser
 
+import java.io.File
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
 import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.WindowNode
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
-import java.io.File
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlParser(
     // Todo: remove default parameter.
-    private val documentBuilder: DocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val documentBuilder: DocumentBuilder =
+        DocumentBuilderFactory.newInstance().newDocumentBuilder()
 ) {
 
     fun parseSystem(file: File): List<DisplayNode> {
@@ -20,10 +21,8 @@ class XmlParser(
 
         val displayNodes = mutableListOf<DisplayNode>()
         val displayElements = document.getElementsByTagName(NodeName.DISPLAY)
-            // deep search for display because displays can only be direct children of a system node
-        displayElements.forEach {
-            displayNodes.add(parseDisplay(it))
-        }
+        // deep search for display because displays can only be direct children of a system node
+        displayElements.forEach { displayNodes.add(parseDisplay(it)) }
 
         return displayNodes
     }
@@ -31,24 +30,24 @@ class XmlParser(
     private fun parseDisplay(element: Element): DisplayNode {
         val windowNodes = mutableListOf<WindowNode>()
         val windowElements = element.getElementsByTagName(NodeName.WINDOW)
-            // deep search for window because windows can only be direct children of a display node
-        windowElements.forEach {
-            windowNodes.add(parseWindow(it))
-        }
+        // deep search for window because windows can only be direct children of a display node
+        windowElements.forEach { windowNodes.add(parseWindow(it)) }
 
         return DisplayNode(
             id = element.getAttribute(PropertyName.Display.ID),
-            children = windowNodes
+            children = windowNodes,
         )
     }
 
     private fun parseWindow(element: Element): WindowNode {
         val genericNodes = mutableListOf<GenericNode>()
         val hierarchyElement = element.getElementsByTagName(NodeName.HIERARCHY).item(0)
-            // There is only one hierarchy tag in a window node (it is its child). The hierarchy tag has a rotation
-            // property that we choose not to represent separately.
+        // There is only one hierarchy tag in a window node (it is its child). The hierarchy tag has
+        // a rotation
+        // property that we choose not to represent separately.
         val nodeElements = hierarchyElement.childNodes
-            // We only search for children with a "node" tag in order to traverse the hierarchy one level at a time.
+        // We only search for children with a "node" tag in order to traverse the hierarchy one
+        // level at a time.
         nodeElements.forEach {
             if (it.tagName == NodeName.NODE) {
                 genericNodes.add(parseNode(it))
@@ -65,15 +64,17 @@ class XmlParser(
                 type = getAttribute(PropertyName.Window.TYPE),
                 layer = getAttribute(PropertyName.Window.LAYER).toInt(),
                 focused = getAttribute(PropertyName.Window.FOCUSED).toBoolean(),
-                accessibilityFocused = getAttribute(PropertyName.Window.ACCESSIBILITY_FOCUSED).toBoolean(),
-                children = genericNodes
+                accessibilityFocused =
+                    getAttribute(PropertyName.Window.ACCESSIBILITY_FOCUSED).toBoolean(),
+                children = genericNodes,
             )
         }
     }
 
     private fun parseNode(element: Element): GenericNode {
         val children = mutableListOf<GenericNode>()
-        // We only search for children with a "node" tag in order to traverse the hierarchy one level at a time.
+        // We only search for children with a "node" tag in order to traverse the hierarchy one
+        // level at a time.
         element.childNodes.forEach {
             if (it.tagName == NodeName.NODE) {
                 children.add(parseNode(it))
@@ -99,7 +100,7 @@ class XmlParser(
                 password = getAttribute(PropertyName.Node.PASSWORD).toBoolean(),
                 selected = getAttribute(PropertyName.Node.SELECTED).toBoolean(),
                 bounds = getAttribute(PropertyName.Node.BOUNDS),
-                children = children
+                children = children,
             )
         }
     }

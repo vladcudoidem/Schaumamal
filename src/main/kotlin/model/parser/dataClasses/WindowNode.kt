@@ -10,5 +10,5 @@ data class WindowNode(
     val layer: Int,
     val focused: Boolean,
     val accessibilityFocused: Boolean,
-    override val children: List<GenericNode>
+    override val children: List<GenericNode>,
 ) : Node

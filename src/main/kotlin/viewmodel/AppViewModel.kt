@@ -32,35 +32,38 @@ class AppViewModel(
     private val appRepository: AppRepository,
     private val displayDataResolver: DisplayDataResolver,
     private val viewModelScope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    stateCollectionScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    stateCollectionScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
 ) {
     private val _state = MutableStateFlow(InspectorState.EMPTY)
-    val state get() = _state.asStateFlow()
+    val state
+        get() = _state.asStateFlow()
 
     private val content = MutableStateFlow(Content.DefaultEmpty)
     private val settings = MutableStateFlow(Settings.DefaultEmpty)
 
     private val dumpsDirectoryName = content.map { it.dumpsDirectoryName }
-    val resolvedDumpThumbnails = content.map {
-        displayDataResolver.resolve(it.dumpsDirectoryName, it.dumps)
-    }
+    val resolvedDumpThumbnails =
+        content.map { displayDataResolver.resolve(it.dumpsDirectoryName, it.dumps) }
 
     private val _selectedDump = MutableStateFlow(Dump.Empty)
-    val selectedDump get() = _selectedDump.asStateFlow()
+    val selectedDump
+        get() = _selectedDump.asStateFlow()
 
     private val displayDataList =
         combineTransform(dumpsDirectoryName, _selectedDump) { dumpsDirectoryName, selectedDump ->
-            if (selectedDump != Dump.Empty && selectedDump.displays.isNotEmpty()) {
-                emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
+                if (selectedDump != Dump.Empty && selectedDump.displays.isNotEmpty()) {
+                    emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
+                }
             }
-        }.stateIn(
-            scope = stateCollectionScope,
-            started = SharingStarted.Eagerly,
-            initialValue = listOf()
-        )
+            .stateIn(
+                scope = stateCollectionScope,
+                started = SharingStarted.Eagerly,
+                initialValue = listOf(),
+            )
 
     private val _displayIndex = MutableStateFlow(0)
-    val displayIndex get() = _displayIndex.asStateFlow()
+    val displayIndex
+        get() = _displayIndex.asStateFlow()
 
     val displayCount =
         displayDataList
@@ -68,23 +71,26 @@ class AppViewModel(
             .stateIn(
                 scope = stateCollectionScope,
                 started = SharingStarted.Eagerly,
-                initialValue = 0
+                initialValue = 0,
             )
 
     val selectedDisplayData =
         combineTransform(displayDataList, _displayIndex) { dumpDisplaysData, _displayIndex ->
-            if (dumpDisplaysData.isNotEmpty()) emit(dumpDisplaysData[_displayIndex])
-        }.stateIn(
-            scope = stateCollectionScope,
-            started = SharingStarted.Eagerly,
-            initialValue = DisplayData.Empty
-        )
+                if (dumpDisplaysData.isNotEmpty()) emit(dumpDisplaysData[_displayIndex])
+            }
+            .stateIn(
+                scope = stateCollectionScope,
+                started = SharingStarted.Eagerly,
+                initialValue = DisplayData.Empty,
+            )
 
     private val _isNodeSelected = MutableStateFlow(false)
-    val isNodeSelected get() = _isNodeSelected.asStateFlow()
+    val isNodeSelected
+        get() = _isNodeSelected.asStateFlow()
 
     private val _selectedNode = MutableStateFlow(GenericNode.Empty)
-    val selectedNode get() = _selectedNode.asStateFlow()
+    val selectedNode
+        get() = _selectedNode.asStateFlow()
 
     init {
         appRepository.createAppDirectory()
@@ -112,42 +118,44 @@ class AppViewModel(
         viewModelScope.launch {
             val previousStateValue = _state.getAndUpdate { InspectorState.WAITING }
 
-            val dumpResult = dumper.dump(
-                lastNickname = content.value.dumps.firstOrNull()?.nickname,
-                tempDirectoryName = content.value.tempDirectoryName,
-            )
+            val dumpResult =
+                dumper.dump(
+                    lastNickname = content.value.dumps.firstOrNull()?.nickname,
+                    tempDirectoryName = content.value.tempDirectoryName,
+                )
 
-            val newDump = when (dumpResult) {
-                is DumpResult.Error -> {
-                    notificationManager.notify(
-                        Notification(description = dumpResult.reason)
-                    )
+            val newDump =
+                when (dumpResult) {
+                    is DumpResult.Error -> {
+                        notificationManager.notify(Notification(description = dumpResult.reason))
 
-                    _state.value = previousStateValue
-                    return@launch
+                        _state.value = previousStateValue
+                        return@launch
+                    }
+
+                    is DumpResult.Success -> dumpResult.dump
                 }
 
-                is DumpResult.Success -> dumpResult.dump
-            }
+            val registerResult =
+                appRepository.registerNewDump(
+                    dump = newDump,
+                    content = content.value,
+                    maxDumps = settings.value.maxDumps,
+                )
 
-            val registerResult = appRepository.registerNewDump(
-                dump = newDump,
-                content = content.value,
-                maxDumps = settings.value.maxDumps
-            )
+            val newContent =
+                when (registerResult) {
+                    is DumpRegisterResult.Error -> {
+                        notificationManager.notify(
+                            Notification(description = registerResult.reason)
+                        )
 
-            val newContent = when (registerResult) {
-                is DumpRegisterResult.Error -> {
-                    notificationManager.notify(
-                        Notification(description = registerResult.reason)
-                    )
+                        _state.value = previousStateValue
+                        return@launch
+                    }
 
-                    _state.value = previousStateValue
-                    return@launch
+                    is DumpRegisterResult.Success -> registerResult.content
                 }
-
-                is DumpRegisterResult.Success -> registerResult.content
-            }
 
             // Remove selected node for new dump.
             _isNodeSelected.value = false

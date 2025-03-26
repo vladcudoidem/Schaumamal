@@ -26,40 +26,33 @@ fun ExtractionPill(
     dumpProgressText: String,
     isExtractButtonEnabled: Boolean,
     onExtractButtonPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(elevatedBackgroundColor)
+        modifier = modifier.clip(RoundedCornerShape(50)).background(elevatedBackgroundColor),
     ) {
         ExtractionButton(
             isExtractButtonEnabled = isExtractButtonEnabled,
-            onExtractButtonPressed = onExtractButtonPressed
+            onExtractButtonPressed = onExtractButtonPressed,
         )
 
         if (showDumpSuggestion) {
             Text(
                 text = dumpSuggestionText,
                 color = discreteTextColor,
-                modifier = Modifier
-                    .padding(end = mediumPadding + 5.dp)
+                modifier = Modifier.padding(end = mediumPadding + 5.dp),
             )
         }
 
         if (showCurrentDump) {
-            Text(
-                text = "Current:",
-                color = discreteTextColor
-            )
+            Text(text = "Current:", color = discreteTextColor)
 
             Text(
                 text = currentDumpInfo,
                 color = primaryTextColor,
-                modifier = Modifier
-                    .padding(end = mediumPadding + 5.dp)
+                modifier = Modifier.padding(end = mediumPadding + 5.dp),
             )
         }
 
@@ -67,8 +60,7 @@ fun ExtractionPill(
             Text(
                 text = dumpProgressText,
                 color = primaryTextColor,
-                modifier = Modifier
-                    .padding(end = mediumPadding + 5.dp)
+                modifier = Modifier.padding(end = mediumPadding + 5.dp),
             )
         }
     }

@@ -2,7 +2,9 @@ package model
 
 enum class Os {
 
-    WIN, MACOS, LINUX;
+    WIN,
+    MACOS,
+    LINUX;
 
     companion object {
 
@@ -12,21 +14,26 @@ enum class Os {
                     contains("win") -> WIN
                     contains("mac") -> MACOS
                     contains("nix") or contains("nux") or contains("aix") -> LINUX
-                    else -> error("Could not detect that operating system is either Windows, MacOS or Linux.")
+                    else ->
+                        error(
+                            "Could not detect that operating system is either Windows, MacOS or Linux."
+                        )
                 }
             }
         }
     }
 }
 
-fun <T> on(win: T, mac: T, lin: T) = when(Os.current) {
-    Os.WIN -> win
-    Os.MACOS -> mac
-    Os.LINUX -> lin
-}
+fun <T> on(win: T, mac: T, lin: T) =
+    when (Os.current) {
+        Os.WIN -> win
+        Os.MACOS -> mac
+        Os.LINUX -> lin
+    }
 
-fun <T> on(win: () -> T, mac: () -> T, lin: () -> T) = when(Os.current) {
-    Os.WIN -> win()
-    Os.MACOS -> mac()
-    Os.LINUX -> lin()
-}
+fun <T> on(win: () -> T, mac: () -> T, lin: () -> T) =
+    when (Os.current) {
+        Os.WIN -> win()
+        Os.MACOS -> mac()
+        Os.LINUX -> lin()
+    }

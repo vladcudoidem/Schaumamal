@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import java.awt.Cursor
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
@@ -30,7 +31,6 @@ import shared.Dimensions.smallPadding
 import view.panes.CustomScrollbarStyle
 import view.panes.XmlTreeLine
 import view.utils.toPx
-import java.awt.Cursor
 
 @Composable
 fun XmlTree(
@@ -38,7 +38,7 @@ fun XmlTree(
     selectedNodeIndex: Int,
     activateScroll: Boolean,
     upperPaneHeight: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current.density
 
@@ -50,8 +50,9 @@ fun XmlTree(
             // Scroll to the selected node in the upper right box.
             upperPaneLazyListState.animateScrollToItem(
                 index = selectedNodeIndex,
-                // Divide the upper pane height by 2 so that the selected node ends up in the center of the Box.
-                scrollOffset = - upperPaneHeight.toPx(density).div(2).toInt()
+                // Divide the upper pane height by 2 so that the selected node ends up in the center
+                // of the Box.
+                scrollOffset = -upperPaneHeight.toPx(density).div(2).toInt(),
             )
         }
     }
@@ -60,50 +61,39 @@ fun XmlTree(
     val horizontalScrollbarAdapter = rememberScrollbarAdapter(upperPaneHorizontalScrollState)
 
     Box(modifier = modifier.fillMaxSize()) {
-
         LazyColumn(
             state = upperPaneLazyListState,
-            contentPadding = PaddingValues(
-                top = mediumPadding,
-                bottom = mediumPadding * 4 + scrollbarThickness,
-                start = mediumPadding,
-                end = mediumPadding * 4 + scrollbarThickness
-            ),
-            modifier = Modifier
-                .horizontalScroll(upperPaneHorizontalScrollState)
-                .animateContentSize()
+            contentPadding =
+                PaddingValues(
+                    top = mediumPadding,
+                    bottom = mediumPadding * 4 + scrollbarThickness,
+                    start = mediumPadding,
+                    end = mediumPadding * 4 + scrollbarThickness,
+                ),
+            modifier =
+                Modifier.horizontalScroll(upperPaneHorizontalScrollState).animateContentSize(),
         ) {
-            items(flatXmlTree) { line ->
-                XmlTreeLine(line = line)
-            }
+            items(flatXmlTree) { line -> XmlTreeLine(line = line) }
         }
 
         VerticalScrollbar(
             adapter = verticalScrollbarAdapter,
             style = CustomScrollbarStyle,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight()
-                .padding(
-                    top = largePadding,
-                    end = smallPadding,
-                    bottom = largePadding
-                )
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+            modifier =
+                Modifier.align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .padding(top = largePadding, end = smallPadding, bottom = largePadding)
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
         )
 
         HorizontalScrollbar(
             adapter = horizontalScrollbarAdapter,
             style = CustomScrollbarStyle,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(
-                    start = largePadding,
-                    bottom = smallPadding,
-                    end = largePadding
-                )
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(start = largePadding, bottom = smallPadding, end = largePadding)
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
         )
     }
 }

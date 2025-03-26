@@ -5,9 +5,11 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization") version "2.1.0"
+    alias(libs.plugins.spotless)
 }
 
 group = "com.vladvamos.schaumamal"
+
 version = "1.0.0"
 
 repositories {
@@ -57,9 +59,7 @@ compose.desktop {
 
             modules("java.instrument", "jdk.unsupported")
 
-            macOS {
-                iconFile.set(project.file("src/main/resources/appIcons/icon.icns"))
-            }
+            macOS { iconFile.set(project.file("src/main/resources/appIcons/icon.icns")) }
 
             windows {
                 iconFile.set(project.file("src/main/resources/appIcons/icon.ico"))
@@ -73,4 +73,18 @@ compose.desktop {
             }
         }
     }
+}
+
+spotless {
+    kotlin {
+        ktfmt().kotlinlangStyle().configure {
+            it.apply {
+                setMaxWidth(100)
+                setContinuationIndent(4)
+                setBlockIndent(4)
+            }
+        }
+    }
+
+    kotlinGradle { ktfmt().kotlinlangStyle() }
 }

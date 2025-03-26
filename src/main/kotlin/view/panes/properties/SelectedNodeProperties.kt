@@ -18,17 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import java.awt.Cursor
 import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import shared.Dimensions.smallPadding
 import view.panes.CustomScrollbarStyle
-import java.awt.Cursor
 
 @Composable
 fun SelectedNodeProperties(
     selectedNodePropertyMap: LinkedHashMap<String, String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val lowerPaneVerticalScrollState = rememberScrollState(initial = 0)
     val lowerPaneHorizontalScrollState = rememberScrollState(initial = 0)
@@ -37,18 +37,17 @@ fun SelectedNodeProperties(
     val horizontalScrollbarAdapter = rememberScrollbarAdapter(lowerPaneHorizontalScrollState)
 
     Box(modifier = modifier.fillMaxSize()) {
-
         Column(
-            modifier = Modifier
-                .verticalScroll(lowerPaneVerticalScrollState)
-                .horizontalScroll(lowerPaneHorizontalScrollState)
-                .padding(
-                    top = mediumPadding,
-                    bottom = mediumPadding * 4 + scrollbarThickness,
-                    start = mediumPadding,
-                    end = mediumPadding * 4 + scrollbarThickness
-                )
-                .animateContentSize()
+            modifier =
+                Modifier.verticalScroll(lowerPaneVerticalScrollState)
+                    .horizontalScroll(lowerPaneHorizontalScrollState)
+                    .padding(
+                        top = mediumPadding,
+                        bottom = mediumPadding * 4 + scrollbarThickness,
+                        start = mediumPadding,
+                        end = mediumPadding * 4 + scrollbarThickness,
+                    )
+                    .animateContentSize()
         ) {
             selectedNodePropertyMap.forEach { (property, value) ->
                 PropertyRow(property = property, value = value)
@@ -58,29 +57,21 @@ fun SelectedNodeProperties(
         VerticalScrollbar(
             adapter = verticalScrollbarAdapter,
             style = CustomScrollbarStyle,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight()
-                .padding(
-                    top = largePadding,
-                    end = smallPadding,
-                    bottom = largePadding
-                )
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+            modifier =
+                Modifier.align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .padding(top = largePadding, end = smallPadding, bottom = largePadding)
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
         )
 
         HorizontalScrollbar(
             adapter = horizontalScrollbarAdapter,
             style = CustomScrollbarStyle,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(
-                    start = largePadding,
-                    bottom = smallPadding,
-                    end = largePadding
-                )
-                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(start = largePadding, bottom = smallPadding, end = largePadding)
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
         )
     }
 }

@@ -15,10 +15,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import java.awt.Cursor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryElementColor
 import shared.Dimensions.extractButtonDiameter
-import java.awt.Cursor
 
 @Composable
 fun RoundIconButton(
@@ -27,19 +27,21 @@ fun RoundIconButton(
     buttonModifier: Modifier = Modifier,
     iconModifier: Modifier = Modifier,
     enabled: Boolean = true,
-    buttonColors: ButtonColors = ButtonDefaults.buttonColors(
-        contentColor = primaryElementColor,
-        disabledContentColor = primaryElementColor.copy(alpha = 0.35f),
-        backgroundColor = elevatedBackgroundColor,
-        disabledBackgroundColor = elevatedBackgroundColor
-    ),
-    buttonElevation: ButtonElevation = ButtonDefaults.elevation(
-        defaultElevation = 0.dp,
-        pressedElevation = 0.dp,
-        disabledElevation = 0.dp,
-        hoveredElevation = 0.dp,
-        focusedElevation = 0.dp
-    )
+    buttonColors: ButtonColors =
+        ButtonDefaults.buttonColors(
+            contentColor = primaryElementColor,
+            disabledContentColor = primaryElementColor.copy(alpha = 0.35f),
+            backgroundColor = elevatedBackgroundColor,
+            disabledBackgroundColor = elevatedBackgroundColor,
+        ),
+    buttonElevation: ButtonElevation =
+        ButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            focusedElevation = 0.dp,
+        ),
 ) {
     Button(
         onClick = onClick,
@@ -48,14 +50,15 @@ fun RoundIconButton(
         contentPadding = PaddingValues(0.dp),
         colors = buttonColors,
         elevation = buttonElevation,
-        modifier = buttonModifier
-            .size(extractButtonDiameter)
-            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+        modifier =
+            buttonModifier
+                .size(extractButtonDiameter)
+                .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
     ) {
         Icon(
             painter = iconPainter,
             contentDescription = null,
-            modifier = iconModifier.fillMaxSize(0.6f)
+            modifier = iconModifier.fillMaxSize(0.6f),
         )
     }
 }

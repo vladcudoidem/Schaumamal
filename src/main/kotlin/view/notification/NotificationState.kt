@@ -1,5 +1,6 @@
 package view.notification
 
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -8,11 +9,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import viewmodel.notification.Notification
-import kotlin.time.Duration.Companion.milliseconds
 
 class NotificationState(
     private val notifications: SharedFlow<Notification>,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
 ) {
     private val _active = MutableStateFlow(false)
     val active = _active.asStateFlow()

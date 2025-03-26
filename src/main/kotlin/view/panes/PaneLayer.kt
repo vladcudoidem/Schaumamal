@@ -36,49 +36,40 @@ import view.panes.properties.SelectedNodeProperties
 import view.panes.tree.XmlTree
 
 @Composable
-fun PaneLayer(
-    uiLayoutState: UiLayoutState,
-    paneState: PaneState,
-    modifier: Modifier = Modifier
-) {
+fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modifier = Modifier) {
     val showXmlTree by paneState.showXmlTree.collectAsState(initial = false)
     val flatXmlTree by paneState.flatXmlTree.collectAsState(initial = emptyList())
     val selectedNodeIndex by paneState.selectedNodeIndex.collectAsState(initial = 0)
     val activateScroll by paneState.activateScroll.collectAsState(initial = false)
-    val showSelectedNodeProperties by paneState.showSelectedNodeProperties.collectAsState(initial = false)
-    val selectedNodePropertyMap by paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
-        // using an empty linked hash map as initial value
+    val showSelectedNodeProperties by
+        paneState.showSelectedNodeProperties.collectAsState(initial = false)
+    val selectedNodePropertyMap by
+        paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
+    // using an empty linked hash map as initial value
     val paneWidth by uiLayoutState.paneWidth.collectAsState()
     val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
 
-    // As an exception we are not passing the modifier parameter to the outer composable, as we are using the o. c.
-    // (the BoxWithConstraints) just for background UI handling and not for any user-facing functionality.
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    // As an exception we are not passing the modifier parameter to the outer composable, as we are
+    // using the o. c.
+    // (the BoxWithConstraints) just for background UI handling and not for any user-facing
+    // functionality.
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        LaunchedEffect(maxWidth) { uiLayoutState.onPanesWidthConstraintChanged(maxWidth) }
 
-        LaunchedEffect(maxWidth) {
-            uiLayoutState.onPanesWidthConstraintChanged(maxWidth)
-        }
-
-        LaunchedEffect(maxHeight) {
-            uiLayoutState.onPanesHeightConstraintChanged(maxHeight)
-        }
+        LaunchedEffect(maxHeight) { uiLayoutState.onPanesHeightConstraintChanged(maxHeight) }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .fillMaxHeight()
-                .padding(mediumPadding)
+            modifier = modifier.fillMaxHeight().padding(mediumPadding),
         ) {
             Wedge(
                 orientation = WedgeOrientation.VERTICAL,
-                onDrag = uiLayoutState::onVerticalWedgeDrag
+                onDrag = uiLayoutState::onVerticalWedgeDrag,
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(paneWidth)
+                modifier = Modifier.width(paneWidth),
             ) {
                 UpperPane(
                     showXmlTree = showXmlTree,
@@ -86,22 +77,18 @@ fun PaneLayer(
                     selectedNodeIndex = selectedNodeIndex,
                     activateScroll = activateScroll,
                     upperPaneHeight = upperPaneHeight,
-                    modifier = Modifier
-                        .height(upperPaneHeight)
-                        .fillMaxWidth()
+                    modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
                 )
 
                 Wedge(
                     orientation = WedgeOrientation.HORIZONTAL,
-                    onDrag = uiLayoutState::onHorizontalWedgeDrag
+                    onDrag = uiLayoutState::onHorizontalWedgeDrag,
                 )
 
                 LowerPane(
                     showSelectedNodeProperties = showSelectedNodeProperties,
                     selectedNodePropertyMap = selectedNodePropertyMap,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxHeight().fillMaxWidth(),
                 )
             }
         }
@@ -115,25 +102,26 @@ fun UpperPane(
     selectedNodeIndex: Int,
     activateScroll: Boolean,
     upperPaneHeight: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .clip(RoundedCornerShape(largeCornerRadius))
-            .border(
-                width = paneBorderWidth,
-                color = paneBorderColor,
-                shape = RoundedCornerShape(largeCornerRadius)
-            )
-            .background(elevatedBackgroundColor)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(largeCornerRadius))
+                .border(
+                    width = paneBorderWidth,
+                    color = paneBorderColor,
+                    shape = RoundedCornerShape(largeCornerRadius),
+                )
+                .background(elevatedBackgroundColor),
     ) {
         FadeVisibility(showXmlTree) {
             XmlTree(
                 flatXmlTree = flatXmlTree,
                 selectedNodeIndex = selectedNodeIndex,
                 activateScroll = activateScroll,
-                upperPaneHeight = upperPaneHeight
+                upperPaneHeight = upperPaneHeight,
             )
         }
 
@@ -143,9 +131,7 @@ fun UpperPane(
                 color = discreteTextColor,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(mediumPadding)
+                modifier = Modifier.animateContentSize().padding(mediumPadding),
             )
         }
     }
@@ -155,23 +141,22 @@ fun UpperPane(
 fun LowerPane(
     showSelectedNodeProperties: Boolean,
     selectedNodePropertyMap: LinkedHashMap<String, String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .clip(RoundedCornerShape(largeCornerRadius))
-            .border(
-                width = paneBorderWidth,
-                color = paneBorderColor,
-                shape = RoundedCornerShape(largeCornerRadius)
-            )
-            .background(elevatedBackgroundColor)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(largeCornerRadius))
+                .border(
+                    width = paneBorderWidth,
+                    color = paneBorderColor,
+                    shape = RoundedCornerShape(largeCornerRadius),
+                )
+                .background(elevatedBackgroundColor),
     ) {
         FadeVisibility(showSelectedNodeProperties) {
-            SelectedNodeProperties(
-                selectedNodePropertyMap = selectedNodePropertyMap
-            )
+            SelectedNodeProperties(selectedNodePropertyMap = selectedNodePropertyMap)
         }
 
         FadeVisibility(!showSelectedNodeProperties) {
@@ -180,9 +165,7 @@ fun LowerPane(
                 color = discreteTextColor,
                 overflow = TextOverflow.Ellipsis,
                 softWrap = false,
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(mediumPadding)
+                modifier = Modifier.animateContentSize().padding(mediumPadding),
             )
         }
     }

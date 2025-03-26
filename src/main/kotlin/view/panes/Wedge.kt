@@ -21,18 +21,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import java.awt.Cursor
+import kotlin.properties.Delegates
 import shared.Colors.wedgeColor
 import shared.Dimensions.smallPadding
 import shared.Dimensions.wedgeLargeDimension
 import shared.Dimensions.wedgeSmallDimension
-import java.awt.Cursor
-import kotlin.properties.Delegates
 
 @Composable
 fun Wedge(
     orientation: WedgeOrientation,
     onDrag: (PointerInputChange, Offset, Float) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var width by Delegates.notNull<Dp>()
     var height by Delegates.notNull<Dp>()
@@ -55,27 +55,26 @@ fun Wedge(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier // Todo: how does the order of modifiers work (here)?
-            .run {
-                when (orientation) {
-                    WedgeOrientation.VERTICAL -> fillMaxHeight()
-                    WedgeOrientation.HORIZONTAL -> fillMaxWidth()
+        modifier =
+            modifier // Todo: how does the order of modifiers work (here)?
+                .run {
+                    when (orientation) {
+                        WedgeOrientation.VERTICAL -> fillMaxHeight()
+                        WedgeOrientation.HORIZONTAL -> fillMaxWidth()
+                    }
                 }
-            }
-            .pointerHoverIcon(pointerIcon)
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    onDrag(change, dragAmount, density)
+                .pointerHoverIcon(pointerIcon)
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount -> onDrag(change, dragAmount, density) }
                 }
-            }
-            .padding(smallPadding + 3.dp)
+                .padding(smallPadding + 3.dp),
     ) {
         Box(
-            modifier = Modifier
-                .width(width)
-                .height(height)
-                .clip(RoundedCornerShape(50))
-                .background(wedgeColor)
+            modifier =
+                Modifier.width(width)
+                    .height(height)
+                    .clip(RoundedCornerShape(50))
+                    .background(wedgeColor)
         )
     }
 }

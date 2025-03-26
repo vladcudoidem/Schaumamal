@@ -14,7 +14,7 @@ fun onWindowKeyEvent(
     areResizeButtonsEnabled: Boolean,
     onEnlargeScreenshotButtonPressed: () -> Unit,
     onShrinkScreenshotButtonPressed: () -> Unit,
-    onFitScreenshotToScreenButtonPressed: () -> Unit
+    onFitScreenshotToScreenButtonPressed: () -> Unit,
 ) =
     when {
         event.isCtrlPressed && event.type == KeyEventType.KeyDown -> {
