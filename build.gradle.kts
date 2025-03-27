@@ -87,4 +87,9 @@ spotless {
     }
 
     kotlinGradle { ktfmt().kotlinlangStyle() }
+
+    yaml {
+        target(".github/**/*.yml", ".github/**/*.yaml")
+        prettier()
+    }
 }
