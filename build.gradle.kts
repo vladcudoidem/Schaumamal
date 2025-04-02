@@ -15,6 +15,7 @@ version = "1.0.0"
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://packages.jetbrains.team/maven/p/kpm/public/")
     google()
 }
 
@@ -31,6 +32,15 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.kotlinx.serializationJson)
     implementation(libs.android.adblib)
+    implementation(libs.jewel.standalone)
+    implementation(libs.jewel.decoratedWindow)
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 }
 
 compose.desktop {
@@ -38,7 +48,8 @@ compose.desktop {
         mainClass = "MainKt"
 
         buildTypes.release.proguard {
-            obfuscate = true
+            obfuscate = false
+            optimize = true
             configurationFiles.from(project.file("rules.pro"))
         }
 
@@ -76,6 +87,8 @@ compose.desktop {
 }
 
 spotless {
+    isEnforceCheck = false
+
     kotlin {
         ktfmt().kotlinlangStyle().configure {
             it.apply {

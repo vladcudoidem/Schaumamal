@@ -31,8 +31,10 @@ jobs:
       - name: JDK Setup
         uses: actions/setup-java@v4
         with:
-          distribution: "zulu"
+          distribution: "jetbrains"
           java-version: "17"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package Release
         run: ./gradlew packageReleaseDistributionForCurrentOS
