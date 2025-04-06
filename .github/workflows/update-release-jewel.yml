@@ -3,12 +3,69 @@ name: "Release Update: with-jewel-title-bar"
 on:
   push:
     branches:
-      - main
+      - test/prod
 
 jobs:
   cherry-pick:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Empty step
-        run: 'echo "In workflow!"'
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Git Setup
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "${{ secrets.ACTIONS_EMAIL_ADDRESS }}"
+
+      - name: Run cherry-pick script
+        run: .github/scripts/update_release_jewel.sh
+
+#      - name: Send email if release branch is missing
+#        if: env.RELEASE_BRANCH_MISSING == 'true'
+#        uses: dawidd6/action-send-mail@v3
+#        with:
+#          server_address: smtp.gmail.com
+#          server_port: 465
+#          username: ${{ secrets.EMAIL_USERNAME }}
+#          password: ${{ secrets.EMAIL_PASSWORD }}
+#          subject: "Release branch missing"
+#          to: ${{ secrets.NOTIFY_EMAIL }}
+#          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+#          body: |
+#            The 'release/with-jewel-title-bar' branch does not exist in the repository.
+#            No cherry-pick was attempted.
+#
+#      - name: Send email if cherry-pick failed
+#        if: env.MERGE_FAILED == 'true'
+#        uses: dawidd6/action-send-mail@v3
+#        with:
+#          server_address: smtp.gmail.com
+#          server_port: 465
+#          username: ${{ secrets.EMAIL_USERNAME }}
+#          password: ${{ secrets.EMAIL_PASSWORD }}
+#          subject: "Cherry-pick failed - PR opened"
+#          to: ${{ secrets.NOTIFY_EMAIL }}
+#          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+#          body: |
+#            A cherry-pick from master to release/with-jewel-title-bar failed for commit:
+#            ${{ env.OFFENDING_COMMIT }}
+#
+#            A temporary branch '${{ env.TEMP_BRANCH }}' was created from master.
+#            A pull request will be opened for review.
+#
+#      - name: Create pull request from temp branch
+#        if: env.MERGE_FAILED == 'true'
+#        uses: peter-evans/create-pull-request@v7
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          base: release/with-jewel-title-bar
+#          branch: ${{ env.TEMP_BRANCH }}
+#          title: "PR: Conflict resolution for ${{ env.OFFENDING_COMMIT }}"
+#          body: |
+#            This PR was created automatically because cherry-picking commit `${{ env.OFFENDING_COMMIT }}` into `release/with-jewel-title-bar` failed.
+#
+#            The branch `${{ env.TEMP_BRANCH }}` was created from `master` and pushed.
+#            Please review the changes and resolve the conflict manually if needed.
