@@ -11,4 +11,4 @@ jobs:
 
     steps:
       - name: Empty step
-        run: "echo \"In workflow!\""
+        run: 'echo "In workflow!"'
