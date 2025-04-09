@@ -4,6 +4,7 @@ koin = "4.0.2"
 serialization = "1.8.0"
 adblib = "8.8.0"
 spotless = "7.0.2"
+jewel = "0.27.0"
 
 [libraries]
 kotlinx-coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -12,6 +13,8 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 kotlinx-serializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 android-adblib = { group = "com.android.tools.adblib", name = "adblib", version.ref = "adblib" }
+jewel-standalone = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone-243", version.ref = "jewel" }
+jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window-243", version.ref = "jewel" }
 
 [plugins]
 spotless = {id = "com.diffplug.spotless", version.ref = "spotless" }

@@ -1,16 +1,42 @@
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.awt.Dimension
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
+import org.jetbrains.jewel.intui.standalone.theme.darkThemeDefinition
+import org.jetbrains.jewel.intui.standalone.theme.default
+import org.jetbrains.jewel.intui.window.decoratedWindow
+import org.jetbrains.jewel.intui.window.styling.dark
+import org.jetbrains.jewel.intui.window.styling.defaults
+import org.jetbrains.jewel.ui.ComponentStyling
+import org.jetbrains.jewel.window.DecoratedWindow
+import org.jetbrains.jewel.window.TitleBar
+import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
+import org.jetbrains.jewel.window.styling.TitleBarMetrics
+import org.jetbrains.jewel.window.styling.TitleBarStyle
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import shared.Dimensions.minimumWindowHeight
@@ -77,52 +103,90 @@ fun main() = application {
         val areResizeButtonsEnabled by
             buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
 
-        Window(
-            title = "Schaumamal",
-            icon = painterResource("appIcons/icon.png"),
-            onCloseRequest = {
-                viewModel.cleanup()
-                exitApplication()
-            },
-            onKeyEvent = {
-                onWindowKeyEvent(
-                    event = it,
-                    isExtractButtonEnabled = isExtractButtonEnabled,
-                    onExtractButtonPressed = buttonState::onExtractButtonPressed,
-                    areResizeButtonsEnabled = areResizeButtonsEnabled,
-                    onEnlargeScreenshotButtonPressed =
-                        uiLayoutState::onEnlargeScreenshotButtonPressed,
-                    onShrinkScreenshotButtonPressed =
-                        uiLayoutState::onShrinkScreenshotButtonPressed,
-                    onFitScreenshotToScreenButtonPressed = {
-                        uiLayoutState.onFitScreenshotToScreenButtonPressed(density)
-                    },
-                )
-            },
-        ) {
-            // This seems to be density-independent (i.e. values behave like Dp).
-            window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
-
-            MaterialTheme {
-                val customTextStyle =
-                    LocalTextStyle.current.copy(
-                        lineHeightStyle =
-                            LineHeightStyle(
-                                alignment = LineHeightStyle.Alignment.Center,
-                                trim = LineHeightStyle.Trim.FirstLineTop,
+        IntUiTheme(
+            theme = JewelTheme.darkThemeDefinition(),
+            styling =
+                ComponentStyling.default()
+                    .decoratedWindow(
+                        windowStyle = DecoratedWindowStyle.dark(),
+                        titleBarStyle =
+                            TitleBarStyle.dark(
+                                metrics =
+                                    TitleBarMetrics.defaults(
+                                        gradientStartX = (-300).dp,
+                                        gradientEndX = 300.dp,
+                                    )
                             ),
-                        fontSize = 14.sp,
+                    ),
+        ) {
+            DecoratedWindow(
+                title = "Schaumamal",
+                icon = painterResource("appIcons/icon.png"),
+                onCloseRequest = {
+                    viewModel.cleanup()
+                    exitApplication()
+                },
+                onKeyEvent = {
+                    onWindowKeyEvent(
+                        event = it,
+                        isExtractButtonEnabled = isExtractButtonEnabled,
+                        onExtractButtonPressed = buttonState::onExtractButtonPressed,
+                        areResizeButtonsEnabled = areResizeButtonsEnabled,
+                        onEnlargeScreenshotButtonPressed =
+                            uiLayoutState::onEnlargeScreenshotButtonPressed,
+                        onShrinkScreenshotButtonPressed =
+                            uiLayoutState::onShrinkScreenshotButtonPressed,
+                        onFitScreenshotToScreenButtonPressed = {
+                            uiLayoutState.onFitScreenshotToScreenButtonPressed(density)
+                        },
                     )
+                },
+            ) {
+                // This seems to be density-independent (i.e. values behave like Dp).
+                window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
 
-                CompositionLocalProvider(LocalTextStyle provides customTextStyle) {
-                    MainScreen(
-                        screenshotState = screenshotState,
-                        buttonState = buttonState,
-                        paneState = paneState,
-                        uiLayoutState = uiLayoutState,
-                        floatingWindowState = floatingWindowState,
-                        notificationState = notificationState,
-                    )
+                Box {
+                    var titleBarHeight by remember { mutableStateOf(0.dp) }
+
+                    Column {
+                        Spacer(modifier = Modifier.height(titleBarHeight))
+
+                        val customTextStyle =
+                            LocalTextStyle.current.copy(
+                                lineHeightStyle =
+                                    LineHeightStyle(
+                                        alignment = LineHeightStyle.Alignment.Center,
+                                        trim = LineHeightStyle.Trim.FirstLineTop,
+                                    ),
+                                fontSize = 14.sp,
+                            )
+
+                        CompositionLocalProvider(LocalTextStyle provides customTextStyle) {
+                            MainScreen(
+                                screenshotState = screenshotState,
+                                buttonState = buttonState,
+                                paneState = paneState,
+                                uiLayoutState = uiLayoutState,
+                                floatingWindowState = floatingWindowState,
+                                notificationState = notificationState,
+                            )
+                        }
+                    }
+
+                    TitleBar(gradientStartColor = Color(0xFF5D2D30)) {
+                        BoxWithConstraints {
+                            LaunchedEffect(maxHeight) { titleBarHeight = maxHeight }
+
+                            Row(horizontalArrangement = Arrangement.Center) {
+                                Text(
+                                    text = "Schaumamal",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
