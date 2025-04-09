@@ -46,13 +46,18 @@ fun XmlTree(
     val upperPaneHorizontalScrollState = rememberScrollState(initial = 0)
 
     LaunchedEffect(selectedNodeIndex) {
-        if (activateScroll) {
+        val visibleItemsInfo = upperPaneLazyListState.layoutInfo.visibleItemsInfo
+        val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
+        val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
+
+        if (activateScroll && selectedNodeIndex !in visibleItemIndexes) {
             // Scroll to the selected node in the upper right box.
             upperPaneLazyListState.animateScrollToItem(
                 index = selectedNodeIndex,
                 // Divide the upper pane height by 2 so that the selected node ends up in the center
                 // of the Box.
-                scrollOffset = -upperPaneHeight.toPx(density).div(2).toInt(),
+                scrollOffset =
+                    -upperPaneHeight.toPx(density).div(2).minus(selectedNodeHeightPx).toInt(),
             )
         }
     }

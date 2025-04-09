@@ -1,5 +1,6 @@
 package view.button.extraction
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,11 @@ fun ExtractionPill(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-        modifier = modifier.clip(RoundedCornerShape(50)).background(elevatedBackgroundColor),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(50))
+                .background(elevatedBackgroundColor)
+                .animateContentSize(),
     ) {
         ExtractionButton(
             isExtractButtonEnabled = isExtractButtonEnabled,
