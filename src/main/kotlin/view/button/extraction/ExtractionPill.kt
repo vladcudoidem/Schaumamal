@@ -3,19 +3,25 @@ package view.button.extraction
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
+import shared.Colors.extractionButtonColor
 import shared.Colors.primaryTextColor
+import shared.Dimensions.extractButtonDiameter
 import shared.Dimensions.mediumPadding
+import view.FadeVisibility
 
 @Composable
 fun ExtractionPill(
@@ -38,10 +44,22 @@ fun ExtractionPill(
                 .background(elevatedBackgroundColor)
                 .animateContentSize(),
     ) {
-        ExtractionButton(
-            isExtractButtonEnabled = isExtractButtonEnabled,
-            onExtractButtonPressed = onExtractButtonPressed,
-        )
+        Box {
+            FadeVisibility(!showDumpProgress) {
+                ExtractionButton(
+                    isExtractButtonEnabled = isExtractButtonEnabled,
+                    onExtractButtonPressed = onExtractButtonPressed,
+                )
+            }
+
+            FadeVisibility(showDumpProgress) {
+                CircularProgressIndicator(
+                    strokeWidth = extractButtonDiameter / 5,
+                    strokeCap = StrokeCap.Round,
+                    color = extractionButtonColor,
+                )
+            }
+        }
 
         if (showDumpSuggestion) {
             Text(
