@@ -19,6 +19,7 @@ object Colors {
     /* Button Layer */
 
     val extractionButtonColor = Color(0xFFBA1A1A)
+    val extractionProgressBarColor = Color(0xFF006622)
 
     /* Pane Layer */
 

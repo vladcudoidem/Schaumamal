@@ -46,9 +46,15 @@ class Dumper(
     private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
 
     @OptIn(ExperimentalPathApi::class)
-    suspend fun dump(lastNickname: String?, tempDirectoryName: String): DumpResult =
+    suspend fun dump(
+        lastNickname: String?,
+        tempDirectoryName: String,
+        dumpProgressHandler: DumpProgressHandler,
+    ): DumpResult =
         withContext(Dispatchers.IO) {
             withTimeoutOrNull(dumpTimeout) {
+                dumpProgressHandler.reportStartingDump()
+
                 // First establish ADB connection.
                 val adbSession =
                     withTimeoutOrNull(shortTimeout) { AdbSession.create(adbSessionHost) }
@@ -83,6 +89,8 @@ class Dumper(
                 val tempDirectoryPath = appDirectoryPath.resolve(tempDirectoryName)
                 tempDirectoryPath.deleteRecursively()
                 tempDirectoryPath.createDirectories()
+
+                dumpProgressHandler.reportPreDumpSetupFinished()
 
                 // Dump the UI
                 deviceShell
@@ -122,6 +130,8 @@ class Dumper(
                         )
                     },
                 )
+
+                dumpProgressHandler.reportXmlDumpFinished()
 
                 val api =
                     deviceShell
@@ -193,10 +203,11 @@ class Dumper(
                             "Devices with API $api are not supported."
                         )
 
-                val displays = mutableListOf<Display>()
-                for (resolvedDisplay in resolvedDisplays) {
-                    if (resolvedDisplay.screenshotId == null) continue
+                val validResolvedDisplays = resolvedDisplays.filter { it.screenshotId != null }
+                dumpProgressHandler.setExpectedScreenshotCount(validResolvedDisplays.size)
 
+                val displays = mutableListOf<Display>()
+                for (resolvedDisplay in validResolvedDisplays) {
                     val screenshotFileName = "scr_${hash()}.png"
                     val remoteScreenshotFilePath = remoteScreenshotFilePath(screenshotFileName)
 
@@ -237,6 +248,8 @@ class Dumper(
                             )
                         },
                     )
+
+                    dumpProgressHandler.reportScreenshotTaken()
 
                     displays.add(
                         Display(

@@ -13,6 +13,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import java.awt.Cursor
 import shared.Colors.extractionButtonColor
 import shared.Dimensions.extractButtonDiameter
+import shared.darkenBy
 
 @Composable
 fun ExtractionButton(
@@ -23,7 +24,7 @@ fun ExtractionButton(
     val disabledBackgroundColor by
         animateColorAsState(
             if (isExtractButtonEnabled) extractionButtonColor
-            else extractionButtonColor.copy(alpha = 0.3f)
+            else extractionButtonColor.darkenBy(0.45f)
         )
 
     Button(

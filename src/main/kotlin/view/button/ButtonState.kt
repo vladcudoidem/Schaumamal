@@ -1,9 +1,12 @@
 package view.button
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import model.InspectorState
+import model.dumper.DumpProgressHandler
 import model.repository.dataClasses.Dump
 import view.utils.getFormattedDate
 import viewmodel.Direction
@@ -13,7 +16,7 @@ class ButtonState(
     selectedDump: StateFlow<Dump>,
     displayIndex: StateFlow<Int>,
     displayCount: StateFlow<Int>,
-    private val extract: () -> Unit,
+    private val extract: (DumpProgressHandler) -> Unit,
     private val switchDisplay: (Direction) -> Unit,
     private val openDumpHistory: () -> Unit,
 ) {
@@ -22,10 +25,16 @@ class ButtonState(
 
     val showCurrentDump = inspectorState.map { it == InspectorState.POPULATED }
     val currentDumpInfo =
-        selectedDump.map { "${it.nickname} @ ${getFormattedDate(it.timeMilliseconds)}" }
+        selectedDump
+            .onEach {
+                // Reset the progress bar in the background when a new dump is made available.
+                dumpProgress.value = 0f
+            }
+            .map { "${it.nickname} @ ${getFormattedDate(it.timeMilliseconds)}" }
 
     val showDumpProgress = inspectorState.map { it == InspectorState.WAITING }
-    val dumpProgressText = "Dumping..."
+    val dumpProgress = MutableStateFlow(0f)
+    val dumpProgressText = MutableStateFlow("")
 
     val isExtractButtonEnabled = inspectorState.map { it != InspectorState.WAITING }
 
@@ -47,7 +56,12 @@ class ButtonState(
     val isOpenDumpHistoryButtonEnabled = inspectorState.map { it == InspectorState.POPULATED }
 
     fun onExtractButtonPressed() {
-        extract()
+        extract(
+            DumpProgressHandler { progress, message ->
+                dumpProgress.value = progress
+                dumpProgressText.value = message
+            }
+        )
     }
 
     fun onNextDisplayButtonPressed() {

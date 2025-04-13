@@ -32,7 +32,8 @@ fun ButtonLayer(
     val currentDumpInfo by buttonState.currentDumpInfo.collectAsState(initial = "...")
 
     val showDumpProgress by buttonState.showDumpProgress.collectAsState(initial = false)
-    val dumpProgressText = buttonState.dumpProgressText
+    val dumpProgress by buttonState.dumpProgress.collectAsState()
+    val dumpProgressText by buttonState.dumpProgressText.collectAsState()
 
     val areResizeButtonsEnabled by
         buttonState.areResizeButtonsEnabled.collectAsState(initial = false)
@@ -59,6 +60,7 @@ fun ButtonLayer(
                 showCurrentDump = showCurrentDump,
                 currentDumpInfo = currentDumpInfo,
                 showDumpProgress = showDumpProgress,
+                dumpProgress = dumpProgress,
                 dumpProgressText = dumpProgressText,
                 isExtractButtonEnabled = isExtractButtonEnabled,
                 onExtractButtonPressed = buttonState::onExtractButtonPressed,
