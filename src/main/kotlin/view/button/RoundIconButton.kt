@@ -1,5 +1,7 @@
 package view.button
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -10,7 +12,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ButtonElevation
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -42,6 +47,7 @@ fun RoundIconButton(
             hoveredElevation = 0.dp,
             focusedElevation = 0.dp,
         ),
+    backgroundBrush: Brush? = null,
 ) {
     Button(
         onClick = onClick,
@@ -55,10 +61,22 @@ fun RoundIconButton(
                 .size(extractButtonDiameter)
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
     ) {
-        Icon(
-            painter = iconPainter,
-            contentDescription = null,
-            modifier = iconModifier.fillMaxSize(0.6f),
-        )
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(
+                        brush =
+                            backgroundBrush
+                                ?: SolidColor(buttonColors.backgroundColor(enabled).value),
+                        shape = CircleShape,
+                    ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = iconPainter,
+                contentDescription = null,
+                modifier = iconModifier.fillMaxSize(0.6f),
+            )
+        }
     }
 }

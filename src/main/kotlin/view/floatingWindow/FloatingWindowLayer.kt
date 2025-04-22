@@ -1,6 +1,8 @@
 package view.floatingWindow
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
@@ -133,7 +135,11 @@ fun FloatingWindowLayer(floatingWindowState: FloatingWindowState, modifier: Modi
     val showWindow = windowState != WindowState.HIDDEN
 
     Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
-        AnimatedVisibility(visible = showWindow, enter = fadeIn(), exit = fadeOut()) {
+        AnimatedVisibility(
+            visible = showWindow,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessHigh)),
+        ) {
             Box(
                 modifier =
                     modifier
@@ -147,7 +153,11 @@ fun FloatingWindowLayer(floatingWindowState: FloatingWindowState, modifier: Modi
             )
         }
 
-        AnimatedVisibility(visible = showWindow) {
+        AnimatedVisibility(
+            visible = showWindow,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessHigh)),
+        ) {
             Box(
                 modifier =
                     Modifier.padding(50.dp)

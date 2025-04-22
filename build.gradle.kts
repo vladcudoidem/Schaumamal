@@ -10,7 +10,9 @@ plugins {
 
 group = "com.vladvamos.schaumamal"
 
-version = "1.0.0"
+val releaseVersion = "1.0.0-beta.3"
+
+version = releaseVersion.removePrefix("v").substringBefore("-")
 
 repositories {
     mavenCentral()
@@ -34,6 +36,11 @@ dependencies {
     implementation(libs.android.adblib)
     implementation(libs.jewel.standalone)
     implementation(libs.jewel.decoratedWindow)
+    implementation(libs.z4kn4fein.semver)
+    implementation(libs.ktor.clientCore)
+    implementation(libs.ktor.clientCio)
+    implementation(libs.ktor.clienContenNegotiation)
+    implementation(libs.ktor.serializatioKotlinxJson)
 }
 
 kotlin {
@@ -41,6 +48,10 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(17)
         vendor = JvmVendorSpec.JETBRAINS
     }
+}
+
+sourceSets {
+    named("main") { java.srcDir(layout.buildDirectory.dir("generated/source/buildConfig")) }
 }
 
 compose.desktop {
@@ -106,3 +117,26 @@ spotless {
         prettier()
     }
 }
+
+val generateBuildConfig by
+    tasks.registering {
+        val outputDir = layout.buildDirectory.dir("generated/source/buildConfig")
+
+        inputs.property("version", project.version.toString())
+        outputs.dir(outputDir)
+
+        doLast {
+            val file = outputDir.get().file("BuildConfig.kt").asFile
+            file.parentFile.mkdirs()
+            file.writeText(
+                """
+            |object BuildConfig {
+            |    const val VERSION = "$releaseVersion"
+            |}
+            """
+                    .trimMargin()
+            )
+        }
+    }
+
+tasks.named("compileKotlin") { dependsOn(generateBuildConfig) }
