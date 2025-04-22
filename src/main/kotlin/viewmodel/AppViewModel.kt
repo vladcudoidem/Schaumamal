@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.displayDataResolver.DisplayDataResolver
+import model.dumper.DumpProgressHandler
 import model.dumper.DumpResult
 import model.dumper.Dumper
 import model.parser.dataClasses.GenericNode
@@ -114,7 +115,7 @@ class AppViewModel(
         }
     }
 
-    fun extract() {
+    fun extract(dumpProgressHandler: DumpProgressHandler) {
         viewModelScope.launch {
             val previousStateValue = _state.getAndUpdate { InspectorState.WAITING }
 
@@ -122,6 +123,7 @@ class AppViewModel(
                 dumper.dump(
                     lastNickname = content.value.dumps.firstOrNull()?.nickname,
                     tempDirectoryName = content.value.tempDirectoryName,
+                    dumpProgressHandler = dumpProgressHandler,
                 )
 
             val newDump =
@@ -222,16 +224,10 @@ class AppViewModel(
         // Abort if the selected dump is the same as the current dump.
         if (dump == _selectedDump.value) return
 
-        // Enter waiting state before switching dumps.
-        _state.value = InspectorState.WAITING
-
         _selectedDump.value = dump
         _displayIndex.value = 0
         _isNodeSelected.value = false
         _selectedNode.value = GenericNode.Empty
-
-        // Show selected dump.
-        _state.value = InspectorState.POPULATED
     }
 
     fun cleanup() {

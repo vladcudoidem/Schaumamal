@@ -12,6 +12,7 @@ object Colors {
 
     val primaryElementColor = primaryTextColor
     val accentColor = Color(0xFF705575)
+    val vibrantAccentColor = Color(0xFF753b99)
 
     val backgroundColor = Color(0xFF121317)
     val elevatedBackgroundColor = Color(0xFF1E2024)
@@ -19,6 +20,7 @@ object Colors {
     /* Button Layer */
 
     val extractionButtonColor = Color(0xFFBA1A1A)
+    val extractionProgressBarColor = Color(0xFF006622)
 
     /* Pane Layer */
 

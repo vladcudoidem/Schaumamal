@@ -24,6 +24,7 @@ object Dimensions {
     /* Button Layer */
 
     val extractButtonDiameter = largeCornerRadius * 2
+    val extractProgressBarWidth = 300.dp
 
     /* Notification Layer */
 

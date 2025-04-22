@@ -118,8 +118,6 @@ private val Node.displayText: AnnotatedString
                         append(" }")
                     }
 
-                    append(" $bounds")
-
                     if (contentDesc.isNotEmpty()) {
                         append(" -")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {

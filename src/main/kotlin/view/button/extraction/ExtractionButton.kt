@@ -22,8 +22,7 @@ fun ExtractionButton(
 ) {
     val disabledBackgroundColor by
         animateColorAsState(
-            if (isExtractButtonEnabled) extractionButtonColor
-            else extractionButtonColor.copy(alpha = 0.3f)
+            if (isExtractButtonEnabled) extractionButtonColor else extractionButtonColor.copy(0.3f)
         )
 
     Button(
