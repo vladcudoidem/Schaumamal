@@ -27,7 +27,7 @@ class ButtonState(
             if (
                 it == InspectorState.POPULATED && previousInspectorState == InspectorState.WAITING
             ) {
-                delay(400) // Todo: change this
+                delay(400)
                 emit(it)
                 delay(500)
                 dumpProgress.value = 0f
