@@ -12,7 +12,7 @@ group = "com.vladvamos.schaumamal"
 
 val releaseVersion = "1.0.0-beta.3"
 
-version = releaseVersion.removePrefix("v").substringBefore("-")
+version = releaseVersion.substringBefore("-")
 
 repositories {
     mavenCentral()
