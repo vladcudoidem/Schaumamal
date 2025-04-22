@@ -182,9 +182,17 @@ fun UpdateRoundIconButton(modifier: Modifier = Modifier) {
 
         val latestReleaseUrl =
             "https://api.github.com/repos/vladcudoidem/Schaumamal/releases/latest"
-        val response: String =
-            client.get(latestReleaseUrl) { accept(ContentType.Application.Json) }.body()
-        val responseObject = Json.parseToJsonElement(response)
+
+        val responseObject =
+            try {
+                val response: String =
+                    client.get(latestReleaseUrl) { accept(ContentType.Application.Json) }.body()
+                Json.parseToJsonElement(response)
+            } catch (e: Exception) {
+                return@LaunchedEffect
+            } finally {
+                client.close()
+            }
         val latestVersion =
             responseObject.jsonObject["name"]?.jsonPrimitive?.contentOrNull?.removePrefix("v")
                 ?: return@LaunchedEffect
