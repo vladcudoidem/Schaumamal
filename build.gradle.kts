@@ -108,6 +108,7 @@ spotless {
                 setBlockIndent(4)
             }
         }
+        targetExclude("build/**/BuildConfig.kt")
     }
 
     kotlinGradle { ktfmt().kotlinlangStyle() }
