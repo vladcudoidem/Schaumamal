@@ -1,4 +1,4 @@
-#### 🎉🎊 Schaumamal is finally stable! Download the newest version [here](https://github.com/vladcudoidem/Schaumamal/releases/latest).
+#### 🎉🎊 Schaumamal is finally stable! Download the latest version [here](https://github.com/vladcudoidem/Schaumamal/releases/latest).
 <br>
 
 <div align="center">
@@ -35,6 +35,7 @@ As such, Schaumamal can be a useful addition to the toolbox of both an **Android
 
 The application has a simple UI that should look familiar to users of other layout inspectors.
 At the center of the application is the _screenshot_ of the currently selected display.
+
 ![Complete application](docs/resources/app.png)
 
 Starting from the top left, the most important element is the _red dump button_. It is followed by some information
