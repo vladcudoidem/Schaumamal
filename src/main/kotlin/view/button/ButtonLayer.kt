@@ -197,8 +197,12 @@ fun UpdateRoundIconButton(modifier: Modifier = Modifier) {
             responseObject.jsonObject["name"]?.jsonPrimitive?.contentOrNull?.removePrefix("v")
                 ?: return@LaunchedEffect
 
-        if (latestVersion.toVersion() > BuildConfig.VERSION.toVersion()) {
-            updateAvailable = true
+        try {
+            if (latestVersion.toVersion() > BuildConfig.VERSION.toVersion()) {
+                updateAvailable = true
+            }
+        } catch (_: Exception) {
+            updateAvailable = false
         }
     }
 
