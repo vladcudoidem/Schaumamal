@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package Release
-        run: ./gradlew packageReleaseDistributionForCurrentOS
+        run: ./gradlew packageDistributionForCurrentOS
 
       - name: Upload Release Binaries
         uses: actions/upload-artifact@v4
