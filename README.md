@@ -59,6 +59,12 @@ In the bottom left corner, there are three buttons for screenshot control: _fit-
     <img src="docs/resources/img_control.png" alt="Screenshot control buttons" style="width: 50%;"/>
 </div>
 
+When a new release is available on GitHub, an animated _update icon_ appears over the screenshot control buttons.
+Clicking it opens a popup with a link to the release.
+<div align="center">
+    <img src="docs/resources/update.png" alt="Update icon" style="width: 60%;"/>
+</div>
+
 On the right side, there are two panes. The upper pane shows the _UI element tree_ for the currently selected display.
 The lower pane shows _all properties_ for the selected UI element. Click on the value of any property to copy its text.
 <div align="center">
