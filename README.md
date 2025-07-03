@@ -1,19 +1,16 @@
-#### 🎉🎊 Schaumamal is finally stable! Download the latest version [here](https://github.com/vladcudoidem/Schaumamal/releases/latest).
-<br>
-
 <div align="center">
-    <img src="docs/resources/icon.png" alt="Schaumamal" style="width: 30%; display: block; margin: 0 auto;" />
+    <img src="docs/resources/composite.png" alt="Schaumamal" style="width: 70%; display: block; margin: 0 auto;" />
 </div>
 
 <div align="center">
 
 # Schaumamal
 
-</div>
-
-Schaumamal (pronounced SHAU-muh-MAAL) is a **lightweight, cross-platform layout inspector** for Android devices. It's meant to be a successor to the
-old and retired UiAutomatorViewer. Schaumamal's central features are its **dump history** and **multi-display support**.
+Schaumamal (pronounced _SHAU-muh-MAAL_) is a **_lightweight, cross-platform layout inspector_** for Android devices. It's meant to be a successor to the
+old and retired UiAutomatorViewer. Schaumamal's central features are its **_dump history_** and **_multi-display support_**.
 Its fresh UI and better UX are also a plus.
+
+</div>
 
 <br>
 
