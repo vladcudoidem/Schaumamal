@@ -96,9 +96,14 @@ class ScreenshotState(
         // Extract nodes that are under the tap location.
         val nodes =
             displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
+        if (nodes.isEmpty()) return
         val nodeAreas = nodes.map { it.getGraphics().size.area }
 
-        val smallestNode = nodes[nodeAreas.indexOf(nodeAreas.min())]
+        val smallestNodeIndex = nodeAreas.indexOf(nodeAreas.min())
+        if (smallestNodeIndex == -1) return
+
+        val smallestNode = nodes.getOrNull(smallestNodeIndex)
+        if (smallestNode == null) return
         selectNode(smallestNode)
     }
 }

@@ -10,7 +10,7 @@ plugins {
 
 group = "com.vladvamos.schaumamal"
 
-val releaseVersion = "1.1.0"
+val releaseVersion = "1.1.1"
 
 version = releaseVersion.substringBefore("-")
 
@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.ktor.clientCio)
     implementation(libs.ktor.clienContenNegotiation)
     implementation(libs.ktor.serializatioKotlinxJson)
+    implementation(libs.arrow.core)
 }
 
 kotlin {
