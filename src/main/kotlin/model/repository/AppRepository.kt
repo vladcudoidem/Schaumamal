@@ -11,7 +11,6 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlinx.serialization.encodeToString // Do not remove! This is needed.
 import kotlinx.serialization.json.Json
 import model.platform.PlatformInformationProvider
 import model.repository.dataClasses.Content
@@ -19,7 +18,7 @@ import model.repository.dataClasses.Dump
 import model.repository.dataClasses.Settings
 
 class AppRepository(platformInformationProvider: PlatformInformationProvider) {
-    private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
+    val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
 
     private val contentJsonFilePath = appDirectoryPath.resolve("content.json")
     private val settingsFilePath = appDirectoryPath.resolve("settings.json")

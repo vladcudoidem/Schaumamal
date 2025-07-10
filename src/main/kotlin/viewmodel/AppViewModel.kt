@@ -1,5 +1,7 @@
 package viewmodel
 
+import arrow.core.Either
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -94,25 +96,84 @@ class AppViewModel(
         get() = _selectedNode.asStateFlow()
 
     init {
-        appRepository.createAppDirectory()
+        val setupResult = setupEnvironment()
+        setupResult.onLeft { errorMessages ->
+            val appDirectory = appRepository.appDirectoryPath.toString()
+            val completeErrorMessages =
+                errorMessages.map {
+                    Notification(
+                        description =
+                            "${it.value} Consider removing the \"$appDirectory\" directory.",
+                        timeout = 9000.milliseconds,
+                    )
+                }
+            viewModelScope.launch {
+                completeErrorMessages.forEach { notificationManager.notify(it) }
+            }
+        }
+    }
 
-        // Set up content.
+    private fun setupEnvironment(): Either<List<ErrorMessage>, Unit> {
+        val errors = mutableListOf<ErrorMessage>()
+
+        runCatching { appRepository.createAppDirectory() }
+            .onFailure {
+                errors += err("Could not create folder structure.")
+                return Either.Left(errors)
+            }
+
+        handleContentJson().onLeft { errors += err(it.value) }
+
+        runCatching { appRepository.createContentDirectories(content.value) }
+            .onFailure { errors += err("Could not create content directories.") }
+
+        handleSettingsJson().onLeft { errors += err(it.value) }
+
+        return if (errors.isEmpty()) {
+            Either.Right(Unit)
+        } else {
+            Either.Left(errors)
+        }
+    }
+
+    private fun handleContentJson(): Either<ErrorMessage, Unit> {
         if (appRepository.existsContentJson()) {
-            content.value = appRepository.readContentJson()
-            _selectedDump.value = content.value.dumps.first()
-            _state.value = InspectorState.POPULATED
+            content.value =
+                runCatching { appRepository.readContentJson() }
+                    .getOrElse {
+                        return Either.Left(err("Could read existing \"content.json\" file."))
+                    }
+
+            val dumps = content.value.dumps
+            if (dumps.isNotEmpty()) {
+                _selectedDump.value = dumps.first()
+                _state.value = InspectorState.POPULATED
+            }
         } else {
-            appRepository.writeContentJson(content.value)
+            runCatching { appRepository.writeContentJson(Content.DefaultEmpty) }
+                .onFailure {
+                    return Either.Left(err("Could create \"content.json\" file."))
+                }
         }
 
-        appRepository.createContentDirectories(content.value)
+        return Either.Right(Unit)
+    }
 
-        // Set up settings.
+    private fun handleSettingsJson(): Either<ErrorMessage, Unit> {
         if (appRepository.existsSettingsJson()) {
-            settings.value = appRepository.readSettingsJson()
+            settings.value =
+                runCatching { appRepository.readSettingsJson() }
+                    .getOrElse {
+                        return Either.Left(err("Could read existing \"settings.json\" file."))
+                    }
         } else {
-            appRepository.writeSettingsJson(settings.value)
+            runCatching { appRepository.writeSettingsJson(Settings.DefaultEmpty) }
+                .onFailure {
+                    return Either.Left(err("Could create \"settings.json\" file."))
+                }
         }
+
+        return Either.Right(Unit)
     }
 
     fun extract(dumpProgressHandler: DumpProgressHandler) {
