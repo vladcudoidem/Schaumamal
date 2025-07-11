@@ -121,6 +121,7 @@ spotless {
     }
 }
 
+// Todo: use library for this
 val generateBuildConfig by
     tasks.registering {
         val outputDir = layout.buildDirectory.dir("generated/source/buildConfig")
@@ -143,3 +144,51 @@ val generateBuildConfig by
     }
 
 tasks.named("compileKotlin") { dependsOn(generateBuildConfig) }
+
+data class Platform(val name: String, val extensions: List<String>)
+
+val platforms =
+    listOf(
+        Platform("windows", listOf("msi")),
+        Platform("apple", listOf("dmg")),
+        Platform("linux", listOf("deb", "rpm")),
+    )
+
+platforms.forEach { platform ->
+    fun String.capitalized() = replaceFirstChar { it.uppercase() }
+
+    val binariesDir = layout.buildDirectory.dir("compose/binaries")
+    val taskGroup = "compose desktop"
+    val platformTaskName = "moveReleaseBinaryFor${platform.name.capitalized()}"
+
+    val platformTasks =
+        platform.extensions.map { extension ->
+            tasks.register<Copy>("${platformTaskName}${extension.capitalized()}") {
+                group = taskGroup
+
+                val sourceDir = binariesDir.map { it.dir("main-release/$extension") }
+                val architectureId =
+                    project.findProperty("arch") as? String
+                        ?: "unknown_arch_${System.currentTimeMillis()}"
+
+                from(sourceDir) {
+                    include("*.$extension")
+                    rename { "Schaumamal-$releaseVersion-$architectureId.$extension" }
+                }
+                into(binariesDir.map { it.dir("repository") })
+            }
+        }
+
+    // Make sure that the platform tasks run sequentially to avoid conflicts.
+    platformTasks.forEachIndexed { index, task ->
+        val nextTaskIndex = index + 1
+        if (nextTaskIndex < platformTasks.size) {
+            platformTasks[nextTaskIndex].configure { mustRunAfter(task) }
+        }
+    }
+
+    tasks.register(platformTaskName) {
+        group = taskGroup
+        dependsOn(platformTasks)
+    }
+}
