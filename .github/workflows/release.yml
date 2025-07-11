@@ -14,13 +14,17 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            release_suffix: linux-x64
+            platformName: "Linux"
+            architectureId: "x64"
           - os: macos-13
-            release_suffix: macos-x64
+            platformName: "Apple"
+            architectureId: "x64"
           - os: macos-latest
-            release_suffix: macos-arm64
+            platformName: "Apple"
+            architectureId: "arm64"
           - os: windows-latest
-            release_suffix: windows-x64
+            platformName: "Windows"
+            architectureId: "x64"
 
     runs-on: ${{ matrix.os }}
 
@@ -39,8 +43,22 @@ jobs:
       - name: Package Release
         run: ./gradlew packageReleaseDistributionForCurrentOS
 
+      - name: Move Artifacts to Common Directory
+        run: ./gradlew moveReleaseBinaryFor${{ matrix.platformName }} -Parch=${{ matrix.architectureId }}
+
       - name: Upload Release Binaries
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ matrix.release_suffix }}
-          path: build/compose/binaries/main-release
+          name: release-${{ matrix.platformName }}-${{ matrix.architectureId }}
+          path: build/compose/binaries/repository
+
+  merge-artifacts:
+    needs: package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Merge Binaries
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: all-releases
+          pattern: release-*
