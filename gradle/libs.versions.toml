@@ -8,6 +8,7 @@ jewel = "0.27.0"
 semver = "3.0.0"
 ktor = "3.1.2"
 arrow = "2.1.0"
+appiumJava = "9.5.0"
 
 [libraries]
 kotlinx-coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -24,6 +25,7 @@ ktor-clientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-clienContenNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serializatioKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+appium-java = { module = "io.appium:java-client", version.ref = "appiumJava" }
 
 [plugins]
 spotless = {id = "com.diffplug.spotless", version.ref = "spotless" }

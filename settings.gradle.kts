@@ -12,3 +12,5 @@ pluginManagement {
 }
 
 rootProject.name = "Schaumamal"
+
+include(":appium-tests")
