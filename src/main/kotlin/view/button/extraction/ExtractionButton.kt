@@ -15,10 +15,10 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import java.awt.Cursor
 import shared.Colors.extractionButtonColor
 import shared.Dimensions.extractButtonDiameter
 import shared.times
-import java.awt.Cursor
 
 @Composable
 fun ExtractionButton(
