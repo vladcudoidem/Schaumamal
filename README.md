@@ -14,6 +14,9 @@ Its fresh UI and better UX are also a plus.
 
 <br>
 
+> [!TIP]
+> Go straight to the [Known problems](#%EF%B8%8F-known-problems) section if you're encountering problems with Schaumamal.
+
 # 🎯 Who and what is it for?
 
 Android Studio already has a powerful Layout Inspector. Why would anyone use this instead? There are two main reasons.
@@ -80,28 +83,36 @@ Thus, really the only requirement is an ADB connection to an Android device.
 
 Ideally, this list would not be needed. But currently, you might encounter the following problems:
 
-## Running Appium server
+## 1. Dump fails when an Appium server is running
 
 Sometimes, when using Schaumamal while an Appium server is running, the ADB connection fails.
 
 The most reliable solution currently is to temporarily stop the Appium server before dumping the screen content with Schaumamal. After
-that, the Appium server can be started again.
+that, the Appium server can be started again. It is annoying, but I have found no better solution as of now.
 
-## Corrupt files
+## 2. Corrupt files: `Failed to launch JVM`
 
 Although it happens extremely rarely, sometimes the files that Schaumamal uses to store the dump information
 (screenshots, XML files and some metadata) are corrupt. The result is an immediate failure when launching the
-application (the error message would most likely be `Failed to launch JVM`).
+application; the error message would most likely be `Failed to launch JVM`.
 
-_(Proceed with caution. Incorrectly following the next instructions can lead to all the recorded dump data being
-deleted!)_ To solve this, you can first back up the dump data (e.g., copy and paste it at some secure location) and
-then remove it from the application directory:
+> [!CAUTION]
+> Proceed with caution. Incorrectly following the next instructions can lead to all Schaumamal data (dumps, settings, etc.) being
+> lost!
 
-- on **MacOS**, the directory lies at `~/Library/Application Support/Schaumamal`,
-- on **Windows**, the directory lies at `~/AppData/Local/Schaumamal`,
-- on **Linux**, the directory lies at `~/.schaumamal`.
+To solve this problem, first look for the directory where Schaumamal stores its application data (settings, dumps, etc.):
 
-Schaumamal will rebuild a clean file structure and the error should go away.
+- on **macOS**: `~/Library/Application Support/Schaumamal`,
+- on **Windows**: `~/AppData/Local/Schaumamal`,
+- on **Linux**: `~/.schaumamal`.
+
+Now back up the directory (e.g., copy and paste to some secure location) and then delete it. This will force Schaumamal to
+recreate the file structure, which removes the problem.
+
+## 3. Cannot drag the application window on macOS
+
+On macOS, the application window can only be dragged if one first clicks on the top bar, then **waits a short moment** and only then
+drags the window. This comes from a [bug](https://github.com/JetBrains/jewel/issues/368) in the JetBrains _Jewel_ library. I am still waiting for a fix. 😅
 
 # 🚧 Upcoming features
 
