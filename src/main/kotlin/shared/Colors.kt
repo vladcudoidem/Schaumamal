@@ -8,9 +8,10 @@ object Colors {
     /* Generic */
 
     val primaryTextColor = Color(0xFFB4B7C2)
-    val discreteTextColor = primaryTextColor.copy(alpha = 0.55f)
+    val discreteTextColor = Color(0xFF71727B)
 
     val primaryElementColor = primaryTextColor
+    val disabledPrimaryElementColor = Color(0xFF53555B)
     val accentColor = Color(0xFF705575)
     val vibrantAccentColor = Color(0xFF753b99)
 

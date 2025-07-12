@@ -21,6 +21,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import java.awt.Cursor
+import shared.Colors.disabledPrimaryElementColor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.primaryElementColor
 import shared.Dimensions.extractButtonDiameter
@@ -35,7 +36,7 @@ fun RoundIconButton(
     buttonColors: ButtonColors =
         ButtonDefaults.buttonColors(
             contentColor = primaryElementColor,
-            disabledContentColor = primaryElementColor.copy(alpha = 0.35f),
+            disabledContentColor = disabledPrimaryElementColor,
             backgroundColor = elevatedBackgroundColor,
             disabledBackgroundColor = elevatedBackgroundColor,
         ),
