@@ -38,6 +38,8 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -126,6 +128,7 @@ fun ButtonLayer(
                 onClick = buttonState::onOpenDumpHistoryButtonPressed,
                 enabled = isOpenDumpHistoryButtonEnabled,
                 iconPainter = painterResource("icons/history.svg"),
+                buttonModifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "history_button" }
             )
 
             DisplayControlPill(

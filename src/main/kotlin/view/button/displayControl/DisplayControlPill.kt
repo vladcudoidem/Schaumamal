@@ -13,6 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import shared.Colors.elevatedBackgroundColor
@@ -38,6 +41,7 @@ fun DisplayControlPill(
             iconPainter = painterResource("icons/arrow_backward.svg"),
             iconModifier = Modifier.padding(end = 2.dp),
             enabled = areDisplayControlButtonsEnabled,
+            buttonModifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "decrease_display_count" }
         )
 
         Text(text = "Display", color = primaryTextColor)
@@ -47,7 +51,10 @@ fun DisplayControlPill(
             modifier =
                 Modifier.clip(RoundedCornerShape(50))
                     .background(primaryTextColor)
-                    .size(height = 25.dp, width = 40.dp),
+                    .size(height = 25.dp, width = 40.dp)
+                    .semantics {
+                        contentDescription = "display_counter_text"
+                    },
         ) {
             Text(
                 text = displayCounter,
@@ -61,6 +68,7 @@ fun DisplayControlPill(
             iconPainter = painterResource("icons/arrow_forward.svg"),
             iconModifier = Modifier.padding(start = 2.dp),
             enabled = areDisplayControlButtonsEnabled,
+            buttonModifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "increase_display_count_button" }
         )
     }
 }

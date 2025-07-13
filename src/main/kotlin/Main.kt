@@ -147,6 +147,8 @@ fun main() = application {
             ) {
                 // This seems to be density-independent (i.e. values behave like Dp).
                 window.minimumSize = Dimension(minimumWindowWidth, minimumWindowHeight)
+                window.size =
+                    Dimension((minimumWindowWidth * 1.2f).toInt(), (minimumWindowHeight * 1.2f).toInt())
 
                 Box {
                     var titleBarHeight by remember { mutableStateOf(0.dp) }

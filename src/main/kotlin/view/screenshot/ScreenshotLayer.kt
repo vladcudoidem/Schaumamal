@@ -31,8 +31,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
-import java.awt.Cursor
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.cancel
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
@@ -42,6 +40,8 @@ import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
 import view.utils.toPx
+import java.awt.Cursor
+import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun ScreenshotLayer(

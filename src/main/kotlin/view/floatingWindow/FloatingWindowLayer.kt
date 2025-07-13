@@ -41,6 +41,8 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -134,7 +136,7 @@ fun FloatingWindowLayer(floatingWindowState: FloatingWindowState, modifier: Modi
 
     val showWindow = windowState != WindowState.HIDDEN
 
-    Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize().semantics(mergeDescendants = true) { contentDescription = "floating_window" }) {
         AnimatedVisibility(
             visible = showWindow,
             enter = fadeIn(),
