@@ -10,7 +10,7 @@ plugins {
 
 group = "com.vladvamos.schaumamal"
 
-val releaseVersion = "1.1.0"
+val releaseVersion = "1.1.1"
 
 version = releaseVersion.substringBefore("-")
 
