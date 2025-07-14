@@ -1,7 +1,6 @@
 package view.button.extraction
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -12,7 +11,6 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
@@ -21,6 +19,7 @@ import java.awt.Cursor
 import shared.Colors.disabledPrimaryElementColor
 import shared.Colors.extractionButtonColor
 import shared.Dimensions.extractButtonDiameter
+import shared.times
 
 @Composable
 fun ExtractionButton(
@@ -28,8 +27,7 @@ fun ExtractionButton(
     onExtractButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val iconInnerColor = Color.Transparent
-    val iconColor by
+    val buttonColor by
         animateColorAsState(
             if (isExtractButtonEnabled) extractionButtonColor else disabledPrimaryElementColor
         )
@@ -39,11 +37,10 @@ fun ExtractionButton(
         enabled = isExtractButtonEnabled,
         shape = CircleShape,
         elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
-        border = BorderStroke(width = 3.dp, color = iconColor),
         colors =
             ButtonDefaults.buttonColors(
-                backgroundColor = iconInnerColor,
-                disabledBackgroundColor = iconInnerColor,
+                backgroundColor = buttonColor,
+                disabledBackgroundColor = buttonColor,
             ),
         contentPadding = PaddingValues(0.dp),
         modifier =
@@ -52,10 +49,10 @@ fun ExtractionButton(
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
     ) {
         Icon(
-            painter = painterResource("icons/shutter.svg"),
+            painter = painterResource("icons/camera.svg"),
             contentDescription = null,
-            tint = iconColor,
-            modifier = Modifier.fillMaxSize(),
+            tint = buttonColor * 0.3f,
+            modifier = Modifier.fillMaxSize(0.7f),
         )
     }
 }

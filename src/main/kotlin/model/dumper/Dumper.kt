@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import model.dumper.dataClasses.CmdDisplay
 import model.dumper.dataClasses.DumpDisplay
@@ -110,11 +111,13 @@ class Dumper(
                 // Pull the dump file from the device
                 val dumpFileName = "dump_${hash()}.xml"
                 try {
-                    deviceFileSystem.receiveFile(
-                        remoteFilePath = remoteDumpFilePath,
-                        destinationPath = tempDirectoryPath.resolve(dumpFileName),
-                    )
-                } catch (e: Exception) {
+                    withTimeout(shortTimeout) {
+                        deviceFileSystem.receiveFile(
+                            remoteFilePath = remoteDumpFilePath,
+                            destinationPath = tempDirectoryPath.resolve(dumpFileName),
+                        )
+                    }
+                } catch (_: Exception) {
                     return@withTimeoutOrNull DumpResult.Error(
                         "Could not pull dump file from device."
                     )
@@ -229,11 +232,13 @@ class Dumper(
 
                     try {
                         // Pull screenshot file from device
-                        deviceFileSystem.receiveFile(
-                            remoteFilePath = remoteScreenshotFilePath,
-                            destinationPath = tempDirectoryPath.resolve(screenshotFileName),
-                        )
-                    } catch (e: Exception) {
+                        withTimeout(shortTimeout) {
+                            deviceFileSystem.receiveFile(
+                                remoteFilePath = remoteScreenshotFilePath,
+                                destinationPath = tempDirectoryPath.resolve(screenshotFileName),
+                            )
+                        }
+                    } catch (_: Exception) {
                         continue
                     }
 
