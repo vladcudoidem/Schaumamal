@@ -8,10 +8,12 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import kotlin.math.min
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
 import shared.Dimensions.extractButtonDiameter
@@ -57,44 +59,46 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         // First update the height constraint.
         panesHeightConstraint = newHeightConstraint
 
-        _upperPaneHeight.value =
-            _upperPaneHeight.value.coerceIn(
-                minimumValue = minimumPaneDimension,
-                maximumValue = panesHeightConstraint - minimumPaneDimension,
-            )
+        _upperPaneHeight.update {
+            val minUpperPaneHeight = minimumPaneDimension
+            val maxUpperPaneHeight =
+                max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
+            it.coerceIn(minUpperPaneHeight, maxUpperPaneHeight)
+        }
     }
 
     fun onPanesWidthConstraintChanged(newWidthConstraint: Dp) {
         // First update the width constraint.
         panesWidthConstraint = newWidthConstraint
 
-        _paneWidth.value =
-            _paneWidth.value.coerceIn(
-                minimumValue = minimumPaneDimension,
-                maximumValue = panesWidthConstraint - minimumPaneDimension,
-            )
+        _paneWidth.update {
+            val minPaneWidth = minimumPaneDimension
+            val maxPaneWidth = max(minPaneWidth, panesWidthConstraint - minimumPaneDimension)
+            it.coerceIn(minPaneWidth, maxPaneWidth)
+        }
     }
 
     fun onVerticalWedgeDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.x.toDp(density)
-        _paneWidth.value =
-            (_paneWidth.value - dragAmountDp).coerceIn(
-                minimumValue = minimumPaneDimension,
-                maximumValue = panesWidthConstraint - minimumPaneDimension,
-            )
+        _paneWidth.update {
+            val minPaneWidth = minimumPaneDimension
+            val maxPaneWidth = max(minPaneWidth, panesWidthConstraint - minimumPaneDimension)
+            (it - dragAmountDp).coerceIn(minPaneWidth, maxPaneWidth)
+        }
     }
 
     fun onHorizontalWedgeDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.y.toDp(density)
-        _upperPaneHeight.value =
-            (_upperPaneHeight.value + dragAmountDp).coerceIn(
-                minimumValue = minimumPaneDimension,
-                maximumValue = panesHeightConstraint - minimumPaneDimension,
-            )
+        _upperPaneHeight.update {
+            val minUpperPaneHeight = minimumPaneDimension
+            val maxUpperPaneHeight =
+                max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
+            (it + dragAmountDp).coerceIn(minUpperPaneHeight, maxUpperPaneHeight)
+        }
     }
 
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
