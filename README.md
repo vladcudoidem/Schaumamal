@@ -90,7 +90,7 @@ Sometimes, when using Schaumamal while an Appium server is running, the ADB conn
 The most reliable solution currently is to temporarily stop the Appium server before dumping the screen content with Schaumamal. After
 that, the Appium server can be started again. It is annoying, but I have found no better solution as of now.
 
-## 2. Corrupt files: `Failed to launch JVM`
+## 2. Error `Failed to launch JVM` because of corrupt files
 
 Although it happens extremely rarely, sometimes the files that Schaumamal uses to store the dump information
 (screenshots, XML files and some metadata) are corrupt. The result is an immediate failure when launching the
