@@ -35,4 +35,12 @@ object Colors {
     /* Screenshot Layer */
 
     val highlighterColor = Color.Red
+
+    /* Notifications */
+
+    val infoIconColor = Color(0xFF3997FE)
+    val warningIconColor = Color(0xFFFFE74B)
+    val errorIconColor = Color(0xFFFF3A42)
+
+    val notificationActionTextColor = Color(0xFF4C82FE)
 }

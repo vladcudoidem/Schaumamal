@@ -33,6 +33,8 @@ import shared.Dimensions.extractProgressBarWidth
 import shared.Dimensions.mediumPadding
 import view.FadeVisibility
 
+// Todo: create some sort of animation (maybe "...") in text of extraction pill for feedback
+
 @Composable
 fun ExtractionPill(
     showDumpSuggestion: Boolean,

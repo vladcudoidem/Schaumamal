@@ -11,11 +11,15 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.json.Json
 import model.platform.PlatformInformationProvider
 import model.repository.dataClasses.Content
 import model.repository.dataClasses.Dump
 import model.repository.dataClasses.Settings
+import viewmodel.notification.Notification
+import viewmodel.notification.NotificationSeverity
+import viewmodel.notification.timeout
 
 class AppRepository(platformInformationProvider: PlatformInformationProvider) {
     val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
@@ -79,8 +83,15 @@ class AppRepository(platformInformationProvider: PlatformInformationProvider) {
         try {
             // Also clears the destination and temp directories.
             tempDirectoryPath.moveContents(destinationDirectoryPath)
-        } catch (e: Exception) {
-            return DumpRegisterResult.Error("Failed to register dump.")
+        } catch (_: Exception) {
+            return DumpRegisterResult.Error(
+                Notification(
+                    title = "Register Error",
+                    description = "Failed to register dump. Try again.",
+                    severity = NotificationSeverity.ERROR,
+                    exitStrategy = timeout(5.seconds),
+                )
+            )
         }
 
         val updatedDump = dump.copy(directoryName = destinationDirectoryPath.name)

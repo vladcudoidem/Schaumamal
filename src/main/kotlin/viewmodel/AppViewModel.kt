@@ -1,7 +1,6 @@
 package viewmodel
 
 import arrow.core.Either
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -28,6 +27,7 @@ import model.repository.dataClasses.Dump
 import model.repository.dataClasses.Settings
 import viewmodel.notification.Notification
 import viewmodel.notification.NotificationManager
+import viewmodel.notification.NotificationSeverity
 
 class AppViewModel(
     val notificationManager: NotificationManager,
@@ -101,10 +101,12 @@ class AppViewModel(
             val appDirectory = appRepository.appDirectoryPath.toString()
             val completeErrorMessages =
                 errorMessages.map {
+                    // Todo: go through all notifications and refine them
                     Notification(
+                        title = "Startup errors",
                         description =
                             "${it.value} Consider removing the \"$appDirectory\" directory.",
-                        timeout = 9000.milliseconds,
+                        severity = NotificationSeverity.ERROR,
                     )
                 }
             viewModelScope.launch {
@@ -190,7 +192,7 @@ class AppViewModel(
             val newDump =
                 when (dumpResult) {
                     is DumpResult.Error -> {
-                        notificationManager.notify(Notification(description = dumpResult.reason))
+                        notificationManager.notify(dumpResult.notification)
 
                         _state.value = previousStateValue
                         return@launch
@@ -209,9 +211,7 @@ class AppViewModel(
             val newContent =
                 when (registerResult) {
                     is DumpRegisterResult.Error -> {
-                        notificationManager.notify(
-                            Notification(description = registerResult.reason)
-                        )
+                        notificationManager.notify(registerResult.notification)
 
                         _state.value = previousStateValue
                         return@launch

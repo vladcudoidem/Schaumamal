@@ -28,7 +28,7 @@ object Dimensions {
 
     /* Notification Layer */
 
-    val notificationPillHeight = largeCornerRadius * 2
+    val notificationWidth = 600.dp
 
     /* Pane Layer */
 
