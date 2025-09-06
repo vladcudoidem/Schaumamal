@@ -31,13 +31,18 @@ import model.dumper.dataClasses.ResolvedDisplay
 import model.platform.PlatformInformationProvider
 import model.repository.dataClasses.Display
 import model.repository.dataClasses.Dump
+import model.utils.copyToClipboard
+import viewmodel.notification.Notification
+import viewmodel.notification.NotificationAction
+import viewmodel.notification.NotificationSeverity
+import viewmodel.notification.timeout
 
 class Dumper(
     platformInformationProvider: PlatformInformationProvider,
     private val adbSessionHost: AdbSessionHost,
     private val nicknameProvider: NicknameProvider,
 ) {
-    private val shortTimeout = 8.seconds
+    private val shortTimeout = 12.seconds
     private val dumpTimeout = 40.seconds
 
     private val remoteDumpFilePath = "/sdcard/dump.xml"
@@ -60,7 +65,13 @@ class Dumper(
                 val adbSession =
                     withTimeoutOrNull(shortTimeout) { AdbSession.create(adbSessionHost) }
                         ?: return@withTimeoutOrNull DumpResult.Error(
-                            "Could not establish ADB connection."
+                            Notification(
+                                title = "ADB Session Error",
+                                description =
+                                    "Could not establish ADB connection. Please check that ADB is installed and that the usual commands work.",
+                                severity = NotificationSeverity.ERROR,
+                                exitStrategy = timeout(5.seconds),
+                            )
                         )
 
                 // Todo:
@@ -77,11 +88,27 @@ class Dumper(
                 val device =
                     withTimeoutOrNull(shortTimeout) {
                         adbSession.connectedDevicesTracker.waitForAnyDevice()
-                    } ?: return@withTimeoutOrNull DumpResult.Error("No device connected.")
+                    }
+                        ?: return@withTimeoutOrNull DumpResult.Error(
+                            Notification(
+                                title = "No Device Connected",
+                                description =
+                                    "Cannot find a device that is reachable through ADB. Connect to a device or start an emulator.",
+                                severity = NotificationSeverity.ERROR,
+                                exitStrategy = timeout(8.seconds),
+                            )
+                        )
 
                 // Attempt to root device
                 withTimeoutOrNull(shortTimeout) { device.rootAndWait() }
-                    ?: return@withTimeoutOrNull DumpResult.Error("Root process took too long.")
+                    ?: return@withTimeoutOrNull DumpResult.Error(
+                        Notification(
+                            title = "ADB Root Timeout",
+                            description = "ADB root command took too long. Try again.",
+                            severity = NotificationSeverity.ERROR,
+                            exitStrategy = timeout(5.seconds),
+                        )
+                    )
 
                 val deviceShell = device.shell
                 val deviceFileSystem = device.fileSystem
@@ -93,6 +120,9 @@ class Dumper(
 
                 dumpProgressHandler.reportPreDumpSetupFinished()
 
+                val dumpCommandForClipboard = "adb shell uiautomator dump"
+                val adbKillStartCommandForClipboard = "adb kill-server && adb start-server"
+
                 // Dump the UI
                 deviceShell
                     .executeWithTimeout(
@@ -100,12 +130,44 @@ class Dumper(
                         commandTimeout = shortTimeout,
                         timeoutAction = {
                             return@withTimeoutOrNull DumpResult.Error(
-                                "XML Dump process took too long."
+                                Notification(
+                                    title = "XML Dump Timeout",
+                                    description =
+                                        "The XML dump ran into a timeout. This might be caused by the UI not reaching idle state, in which case it cannot be dumped. To test this, try executing \"$dumpCommandForClipboard\". Or maybe just try again.",
+                                    severity = NotificationSeverity.ERROR,
+                                    actions =
+                                        listOf(
+                                            NotificationAction(
+                                                title = "Copy \"$dumpCommandForClipboard\"",
+                                                block = { copyToClipboard(dumpCommandForClipboard) },
+                                            )
+                                        ),
+                                )
                             )
                         },
                     )
                     .ifNonZeroExit {
-                        return@withTimeoutOrNull DumpResult.Error("XML Dump failed.")
+                        return@withTimeoutOrNull DumpResult.Error(
+                            Notification(
+                                title = "XML Dump Failed",
+                                description =
+                                    "Try again. Or try executing \"$dumpCommandForClipboard\" to see why the dump is not working. Sometimes it helps to (1) restart the emulator or (2) execute \"$adbKillStartCommandForClipboard\".",
+                                severity = NotificationSeverity.ERROR,
+                                actions =
+                                    listOf(
+                                        NotificationAction(
+                                            title = "Copy \"$dumpCommandForClipboard\"",
+                                            block = { copyToClipboard(dumpCommandForClipboard) },
+                                        ),
+                                        NotificationAction(
+                                            title = "Copy \"$adbKillStartCommandForClipboard\"",
+                                            block = {
+                                                copyToClipboard(adbKillStartCommandForClipboard)
+                                            },
+                                        ),
+                                    ),
+                            )
+                        )
                     }
 
                 // Pull the dump file from the device
@@ -119,9 +181,17 @@ class Dumper(
                     }
                 } catch (_: Exception) {
                     return@withTimeoutOrNull DumpResult.Error(
-                        "Could not pull dump file from device."
+                        Notification(
+                            title = "Dump File Error",
+                            description =
+                                "Could not pull the dump file from the device. Try again.",
+                            severity = NotificationSeverity.ERROR,
+                            exitStrategy = timeout(5.seconds),
+                        )
                     )
                 }
+
+                // Todo: do not stop the dump if removal was unsuccessful.
 
                 // Remove the dump file from the device
                 deviceShell.executeWithTimeout(
@@ -129,7 +199,13 @@ class Dumper(
                     commandTimeout = shortTimeout,
                     timeoutAction = {
                         return@withTimeoutOrNull DumpResult.Error(
-                            "Removing the dump file from device took too long."
+                            Notification(
+                                title = "Dump File Removal Timeout",
+                                description =
+                                    "Removing the dump file from the device took too long. Try again.",
+                                severity = NotificationSeverity.ERROR,
+                                exitStrategy = timeout(5.seconds),
+                            )
                         )
                     },
                 )
@@ -143,18 +219,30 @@ class Dumper(
                             commandTimeout = shortTimeout,
                             timeoutAction = {
                                 return@withTimeoutOrNull DumpResult.Error(
-                                    "Getting the device API level took too long."
+                                    Notification(
+                                        title = "API Level Timeout",
+                                        description = "Getting the device API level took too long.",
+                                        severity = NotificationSeverity.ERROR,
+                                        exitStrategy = timeout(5.seconds),
+                                    )
                                 )
                             },
                         )
                         .ifNonZeroExit {
                             return@withTimeoutOrNull DumpResult.Error(
-                                "Could not retrieve device API level."
+                                Notification(
+                                    title = "API Level Error",
+                                    description = "Could not retrieve device API level.",
+                                    severity = NotificationSeverity.ERROR,
+                                    exitStrategy = timeout(5.seconds),
+                                )
                             )
                         }
                         .stdout
                         .trim()
                         .toInt()
+
+                val flingerCommandForClipboard = "adb shell dumpsys SurfaceFlinger --displays"
 
                 val flingerOutput =
                     deviceShell
@@ -163,16 +251,48 @@ class Dumper(
                             commandTimeout = shortTimeout,
                             timeoutAction = {
                                 return@withTimeoutOrNull DumpResult.Error(
-                                    "Getting the display IDs (SurfaceFlinger) took too long."
+                                    Notification(
+                                        title = "SurfaceFlinger Timeout",
+                                        description =
+                                            "Getting the display IDs (SurfaceFlinger) took too long. Try again or execute \"$flingerCommandForClipboard\" to debug.",
+                                        severity = NotificationSeverity.ERROR,
+                                        exitStrategy = timeout(15.seconds),
+                                        actions =
+                                            listOf(
+                                                NotificationAction(
+                                                    title = "Copy \"$flingerCommandForClipboard\"",
+                                                    block = {
+                                                        copyToClipboard(flingerCommandForClipboard)
+                                                    },
+                                                )
+                                            ),
+                                    )
                                 )
                             },
                         )
                         .ifNonZeroExit {
                             return@withTimeoutOrNull DumpResult.Error(
-                                "Could not retrieve display IDs (SurfaceFlinger failed)."
+                                Notification(
+                                    title = "SurfaceFlinger Error",
+                                    description =
+                                        "Could not retrieve display IDs (SurfaceFlinger failed). Try again or execute \"$flingerCommandForClipboard\" to debug.",
+                                    severity = NotificationSeverity.ERROR,
+                                    exitStrategy = timeout(5.seconds),
+                                    actions =
+                                        listOf(
+                                            NotificationAction(
+                                                title = "Copy \"$flingerCommandForClipboard\"",
+                                                block = {
+                                                    copyToClipboard(flingerCommandForClipboard)
+                                                },
+                                            )
+                                        ),
+                                )
                             )
                         }
                         .stdout
+
+                val getDisplaysCommandForClipboard = "adb shell dumpsys SurfaceFlinger --displays"
 
                 val getDisplaysOutput =
                     deviceShell
@@ -181,13 +301,46 @@ class Dumper(
                             commandTimeout = shortTimeout,
                             timeoutAction = {
                                 return@withTimeoutOrNull DumpResult.Error(
-                                    "Getting the display IDs (get-displays) took too long."
+                                    Notification(
+                                        title = "Display IDs Timeout",
+                                        description =
+                                            "Getting the display IDs (get-displays) took too long. Try again or execute \"$getDisplaysCommandForClipboard\" to debug.",
+                                        severity = NotificationSeverity.ERROR,
+                                        exitStrategy = timeout(5.seconds),
+                                        actions =
+                                            listOf(
+                                                NotificationAction(
+                                                    title =
+                                                        "Copy \"$getDisplaysCommandForClipboard\"",
+                                                    block = {
+                                                        copyToClipboard(
+                                                            getDisplaysCommandForClipboard
+                                                        )
+                                                    },
+                                                )
+                                            ),
+                                    )
                                 )
                             },
                         )
                         .ifNonZeroExit {
                             return@withTimeoutOrNull DumpResult.Error(
-                                "Could not retrieve display IDs (get-displays failed)."
+                                Notification(
+                                    title = "Display IDs Error",
+                                    description =
+                                        "Could not retrieve display IDs (get-displays failed). Try again or execute \"$getDisplaysCommandForClipboard\" to debug.",
+                                    severity = NotificationSeverity.ERROR,
+                                    exitStrategy = timeout(5.seconds),
+                                    actions =
+                                        listOf(
+                                            NotificationAction(
+                                                title = "Copy \"$getDisplaysCommandForClipboard\"",
+                                                block = {
+                                                    copyToClipboard(getDisplaysCommandForClipboard)
+                                                },
+                                            )
+                                        ),
+                                )
                             )
                         }
                         .stdout
@@ -203,7 +356,11 @@ class Dumper(
                         dumpOutput = dumpOutput,
                     )
                         ?: return@withTimeoutOrNull DumpResult.Error(
-                            "Devices with API $api are not supported."
+                            Notification(
+                                title = "Unsupported API",
+                                description = "Devices with API $api are not supported.",
+                                severity = NotificationSeverity.ERROR,
+                            )
                         )
 
                 val validResolvedDisplays = resolvedDisplays.filter { it.screenshotId != null }
@@ -221,7 +378,13 @@ class Dumper(
                             commandTimeout = shortTimeout,
                             timeoutAction = {
                                 return@withTimeoutOrNull DumpResult.Error(
-                                    "Taking a screenshot (id ${resolvedDisplay.screenshotId}) took too long."
+                                    Notification(
+                                        title = "Screenshot Timeout",
+                                        description =
+                                            "Taking a screenshot (id ${resolvedDisplay.screenshotId}) took too long. Try again.",
+                                        severity = NotificationSeverity.ERROR,
+                                        exitStrategy = timeout(5.seconds),
+                                    )
                                 )
                             },
                         )
@@ -248,8 +411,13 @@ class Dumper(
                         commandTimeout = shortTimeout,
                         timeoutAction = {
                             return@withTimeoutOrNull DumpResult.Error(
-                                "Removing the screenshot file (id ${resolvedDisplay.screenshotId}) from " +
-                                    "device took too long."
+                                Notification(
+                                    title = "Screenshot Removal Timeout",
+                                    description =
+                                        "Removing the screenshot file (id ${resolvedDisplay.screenshotId}) from the device took too long. Try again.",
+                                    severity = NotificationSeverity.ERROR,
+                                    exitStrategy = timeout(5.seconds),
+                                )
                             )
                         },
                     )
@@ -275,7 +443,15 @@ class Dumper(
 
                 return@withTimeoutOrNull DumpResult.Success(dump)
             }
-        } ?: DumpResult.Error("Dump process took too long (more than $dumpTimeout).")
+        }
+            ?: DumpResult.Error(
+                Notification(
+                    title = "Dump Timeout",
+                    description = "Dump process took too long (more than $dumpTimeout). Try again.",
+                    severity = NotificationSeverity.ERROR,
+                    exitStrategy = timeout(10.seconds),
+                )
+            )
 
     @Suppress("DuplicatedCode")
     private fun resolveDisplays(
