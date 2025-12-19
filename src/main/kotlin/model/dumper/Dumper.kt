@@ -297,7 +297,9 @@ class Dumper(
         // This when statement partly contains duplicated code.
         val resolvedDisplays: List<ResolvedDisplay>? =
             when (api) {
-                35 -> {
+                // Todo: API 36 changes handling for multiple virtual displays. Find the algorithm.
+                35,
+                36 -> {
                     val flingerDisplays =
                         flingerOutput.extractAll(
                             pattern =
