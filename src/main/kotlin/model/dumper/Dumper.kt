@@ -212,6 +212,8 @@ class Dumper(
 
                 dumpProgressHandler.reportXmlDumpFinished()
 
+                // Todo: exit early when API level is not supported
+
                 val api =
                     deviceShell
                         .executeWithTimeout(
