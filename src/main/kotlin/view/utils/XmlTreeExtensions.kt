@@ -1,6 +1,5 @@
 package view.utils
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -11,56 +10,56 @@ import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.Node
 import model.parser.dataClasses.WindowNode
-import shared.Colors.accentColor
 import shared.Colors.discreteTextColor
 import view.panes.XmlTreeLine
 
 fun DisplayNode.getFlatXmlTreeMap(
-    selectedNode: GenericNode,
-    onNodeTreeLineClicked: (GenericNode) -> Unit,
+    onNodeTreeLineClicked: (GenericNode) -> Unit
 ): LinkedHashMap<Node, XmlTreeLine> {
-    val result: LinkedHashMap<Node, XmlTreeLine> = linkedMapOf()
 
-    forThisAndDescendants { element, depth ->
-        result +=
-            when (element) {
-                is DisplayNode ->
-                    element to
-                        XmlTreeLine(
-                            text = element.displayText,
-                            textBackgroundColor = Color.Transparent,
-                            depth = depth,
-                            onClickText = {},
-                        )
+    val flattenedTreeMap =
+        flattenTo<Pair<Node, XmlTreeLine>> { currentNode, depth, parentProduct ->
+            val hasChildren = currentNode.children.isNotEmpty()
 
-                is WindowNode ->
-                    element to
-                        XmlTreeLine(
-                            text = element.displayText,
-                            textBackgroundColor = Color.Transparent,
-                            depth = depth,
-                            onClickText = {},
-                        )
+            val currentProduct =
+                when (currentNode) {
+                    is DisplayNode ->
+                        currentNode to
+                            XmlTreeLine(
+                                text = currentNode.displayText,
+                                depth = depth,
+                                onClickText = {},
+                                parentLine = parentProduct?.second,
+                                hasChildren = hasChildren,
+                            )
 
-                is GenericNode ->
-                    element to
-                        XmlTreeLine(
-                            text = element.displayText,
-                            textBackgroundColor =
-                                if (selectedNode === element) {
-                                    accentColor
-                                } else {
-                                    Color.Transparent
-                                },
-                            depth = depth,
-                            onClickText = { onNodeTreeLineClicked(element) },
-                        )
+                    is WindowNode ->
+                        currentNode to
+                            XmlTreeLine(
+                                text = currentNode.displayText,
+                                depth = depth,
+                                onClickText = {},
+                                parentLine = parentProduct?.second,
+                                hasChildren = hasChildren,
+                            )
 
-                else -> error("XmlTreeLine template not specified for this XmlElement subtype.")
-            }
-    }
+                    is GenericNode ->
+                        currentNode to
+                            XmlTreeLine(
+                                text = currentNode.displayText,
+                                depth = depth,
+                                onClickText = { onNodeTreeLineClicked(currentNode) },
+                                parentLine = parentProduct?.second,
+                                hasChildren = hasChildren,
+                            )
 
-    return result
+                    else -> error("XmlTreeLine template not specified for this XmlElement subtype.")
+                }
+
+            currentProduct
+        }
+
+    return flattenedTreeMap.toMap(LinkedHashMap())
 }
 
 private val Node.displayText: AnnotatedString
@@ -129,11 +128,21 @@ private val Node.displayText: AnnotatedString
             else -> error("displayText template not specified for this XmlElement subtype.")
         }
 
-private fun Node.forThisAndDescendants(
+private fun <ProductType> Node.flattenTo(
     depth: Int = 0,
-    action: (element: Node, depth: Int) -> Unit,
-) {
-    action(this, depth)
+    parentProduct: ProductType? = null,
+    generateProduct: (currentNode: Node, depth: Int, parentProduct: ProductType?) -> ProductType,
+): List<ProductType> {
+    val result = mutableListOf<ProductType>()
 
-    children.forEach { it.forThisAndDescendants(depth = depth + 1, action = action) }
+    val currentProduct = generateProduct(this, depth, parentProduct)
+    result.add(currentProduct)
+
+    children.forEach {
+        val childResult =
+            it.flattenTo(depth = depth + 1, parentProduct = currentProduct, generateProduct)
+        result += childResult
+    }
+
+    return result
 }
