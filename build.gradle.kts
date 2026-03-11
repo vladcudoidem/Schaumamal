@@ -108,6 +108,7 @@ spotless {
                 setMaxWidth(100)
                 setContinuationIndent(4)
                 setBlockIndent(4)
+                setRemoveUnusedImports(true)
             }
         }
         targetExclude("build/**/BuildConfig.kt")
