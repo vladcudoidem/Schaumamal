@@ -101,7 +101,6 @@ class AppViewModel(
             val appDirectory = appRepository.appDirectoryPath.toString()
             val completeErrorMessages =
                 errorMessages.map {
-                    // Todo: go through all notifications and refine them
                     Notification(
                         title = "Startup errors",
                         description =

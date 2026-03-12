@@ -34,7 +34,6 @@ data class XmlTreeLine(
         _isCollapsed.update { false }
     }
 
-    // Todo: use this
     fun expandUntilVisible() {
         val parentsFromTop = generateSequence(parentLine) { it.parentLine }.toList().asReversed()
 
