@@ -18,8 +18,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEvent
@@ -29,11 +29,14 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import java.awt.Cursor
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.cancel
+import model.parser.dataClasses.Bounds
+import shared.Colors
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.defaultHighlighterStrokeWidth
@@ -41,7 +44,8 @@ import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
-import view.utils.toPx
+import view.utils.toOffset
+import view.utils.toSize
 
 @Composable
 fun ScreenshotLayer(
@@ -50,12 +54,16 @@ fun ScreenshotLayer(
     modifier: Modifier = Modifier,
 ) {
     val showScreenshot by screenshotState.showScreenshot.collectAsState(initial = false)
-    val imageBitmap by screenshotState.imageBitmap.collectAsState(initial = ImageBitmap(0, 0))
+    val imageBitmap by screenshotState.imageBitmap.collectAsState(initial = ImageBitmap(1, 1))
     val showHighlighter by screenshotState.showHighlighter.collectAsState(initial = false)
-    val selectedNodeDisplayGraphics by
-        screenshotState.selectedNodeDisplayGraphics.collectAsState(initial = Graphics.Unspecified)
+    val selectedNodeDisplayBounds by
+        screenshotState.selectedNodeDisplayBounds.collectAsState(initial = Bounds.Zero)
     val screenshotLayerOffset by uiLayoutState.screenshotLayerOffset.collectAsState()
     val screenshotLayerScale by uiLayoutState.screenshotLayerScale.collectAsState()
+    val shouldHighlightSearchResults by
+        screenshotState.shouldHighlightSearchResults.collectAsState()
+    val searchResultDisplayBounds by
+        screenshotState.searchResultDisplayBounds.collectAsState(listOf())
 
     // This is the Box that places the next Box correctly on the screen.
     Box(
@@ -91,14 +99,22 @@ fun ScreenshotLayer(
                 }
             }
 
-            val density = LocalDensity.current.density
-            val highlighterStrokeWidth =
-                (defaultHighlighterStrokeWidth / screenshotLayerScale).toPx(density)
+            val highlighterStrokeWidth = defaultHighlighterStrokeWidth / screenshotLayerScale
 
-            FadeVisibility(showHighlighter) {
-                Highlighter(
-                    offset = selectedNodeDisplayGraphics.offset,
-                    size = selectedNodeDisplayGraphics.size,
+            if (shouldHighlightSearchResults) {
+                searchResultDisplayBounds.forEach { searchResultBounds ->
+                    SearchResultHighlighter(
+                        offset = searchResultBounds.toOffset(),
+                        size = searchResultBounds.toSize(),
+                        strokeWidth = highlighterStrokeWidth,
+                    )
+                }
+            }
+
+            if (showHighlighter) {
+                SelectedNodeHighlighter(
+                    offset = selectedNodeDisplayBounds.toOffset(),
+                    size = selectedNodeDisplayBounds.toSize(),
                     strokeWidth = highlighterStrokeWidth,
                 )
             }
@@ -136,13 +152,45 @@ fun Screenshot(
 }
 
 @Composable
-fun Highlighter(offset: Offset, size: Size, strokeWidth: Float, modifier: Modifier = Modifier) {
+fun SelectedNodeHighlighter(
+    offset: Offset,
+    size: Size,
+    strokeWidth: Dp,
+    modifier: Modifier = Modifier,
+) {
     Canvas(modifier = modifier) {
         drawRect(
-            color = Color.Red,
+            color = Colors.selectedNodeHighlighterColor,
             topLeft = offset,
             size = size,
-            style = Stroke(width = strokeWidth),
+            style = Stroke(width = strokeWidth.toPx()),
+        )
+    }
+}
+
+@Composable
+fun SearchResultHighlighter(
+    offset: Offset,
+    size: Size,
+    strokeWidth: Dp,
+    modifier: Modifier = Modifier,
+) {
+    val dashOnLength = 4.dp
+    val dashOffLength = 2.dp
+
+    Canvas(modifier = modifier) {
+        drawRect(
+            color = Colors.searchResultHighlighterColor,
+            topLeft = offset,
+            size = size,
+            style =
+                Stroke(
+                    width = strokeWidth.toPx(),
+                    pathEffect =
+                        PathEffect.dashPathEffect(
+                            floatArrayOf(dashOnLength.toPx(), dashOffLength.toPx())
+                        ),
+                ),
         )
     }
 }

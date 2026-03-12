@@ -3,9 +3,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.CompositionLocalProvider
@@ -16,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -45,6 +41,7 @@ import shared.Dimensions.mediumPadding
 import shared.Dimensions.minimumWindowHeight
 import shared.Dimensions.minimumWindowWidth
 import view.MainScreen
+import view.Spacer
 import view.UiLayoutState
 import view.button.ButtonState
 import view.floatingWindow.FloatingWindowState
@@ -52,6 +49,8 @@ import view.notification.NotificationState
 import view.panes.PaneState
 import view.screenshot.ScreenshotState
 import viewmodel.AppViewModel
+
+// Todo: offer VM as dependency instead of properties.
 
 fun main() = application {
     KoinApplication(application = { modules(viewModelModule) }) {
@@ -81,10 +80,17 @@ fun main() = application {
                 isNodeSelected = viewModel.isNodeSelected,
                 selectedNode = viewModel.selectedNode,
                 selectNode = viewModel::selectNode,
+                searchResult = viewModel.searchResult,
+                searchQuery = viewModel.searchQuery,
+                onSearchQueryChanged = viewModel::onSearchQueryChanged,
+                isSearchActive = viewModel.isSearchActive,
+                toggleSearchActive = viewModel::toggleSearchActive,
+                shouldHighlightResultsOnScreenshot = viewModel.shouldHighlightResultsOnScreenshot,
+                toggleHighlightResultsOnScreenshot = viewModel::toggleHighlightResultsOnScreenshot,
             )
         }
         // Todo: take layout stuff out of ScreenshotState and split UiLayoutState into two state
-        // holders
+        //  holders
         val screenshotState = remember {
             ScreenshotState(
                 inspectorState = viewModel.state,
@@ -92,6 +98,8 @@ fun main() = application {
                 selectedNode = viewModel.selectedNode,
                 displayData = viewModel.selectedDisplayData,
                 selectNode = viewModel::selectNode,
+                shouldHighlightSearchResults = viewModel.shouldHighlightResultsOnScreenshot,
+                searchResult = viewModel.searchResult,
             )
         }
         val uiLayoutState = remember {
@@ -152,7 +160,7 @@ fun main() = application {
                     var titleBarHeight by remember { mutableStateOf(0.dp) }
 
                     Column {
-                        Spacer(modifier = Modifier.height(titleBarHeight))
+                        Spacer(height = titleBarHeight)
 
                         val customTextStyle =
                             LocalTextStyle.current.copy(
@@ -191,7 +199,7 @@ fun main() = application {
                                     fontSize = 15.sp,
                                 )
 
-                                Spacer(modifier = Modifier.width(mediumPadding))
+                                Spacer(width = mediumPadding)
 
                                 Text(
                                     text = "v${BuildConfig.VERSION}",

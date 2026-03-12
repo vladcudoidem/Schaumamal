@@ -55,6 +55,7 @@ import shared.Dimensions.mediumCornerRadius
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.paneBorderWidth
 import shared.Dimensions.smallPadding
+import view.Spacer
 import view.button.DumpHistoryEntry
 import view.button.RoundIconButton
 
@@ -106,7 +107,7 @@ fun DumpHistoryLine(dumpHistoryEntry: DumpHistoryEntry, modifier: Modifier = Mod
             modifier = Modifier.size(30.dp),
         )
 
-        Spacer(modifier = Modifier.width(largePadding))
+        Spacer(width = largePadding)
 
         Column {
             Text(text = dumpHistoryEntry.name, color = primaryTextColor, fontSize = 16.sp)

@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +31,7 @@ import shared.Dimensions.extractButtonDiameter
 import shared.Dimensions.extractProgressBarWidth
 import shared.Dimensions.mediumPadding
 import view.FadeVisibility
+import view.Spacer
 
 // Todo: create some sort of animation (maybe "...") in text of extraction pill for feedback
 
@@ -78,7 +78,7 @@ fun ExtractionPill(
                 Row {
                     Text(text = "Current:", color = discreteTextColor)
 
-                    Spacer(modifier = Modifier.width(mediumPadding))
+                    Spacer(width = mediumPadding)
 
                     Text(
                         text = currentDumpInfo,

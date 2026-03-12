@@ -3,7 +3,6 @@ package model.dumper
 import com.android.adblib.AdbSession
 import com.android.adblib.AdbSessionHost
 import com.android.adblib.ConnectedDevice
-import com.android.adblib.ConnectedDevicesTracker
 import com.android.adblib.ShellCommandOutput
 import com.android.adblib.ShellManager
 import com.android.adblib.connectedDevicesTracker
@@ -42,6 +41,7 @@ class Dumper(
     private val adbSessionHost: AdbSessionHost,
     private val nicknameProvider: NicknameProvider,
 ) {
+    private val deviceCheckTimeout = 0.2.seconds
     private val shortTimeout = 12.seconds
     private val dumpTimeout = 40.seconds
 
@@ -50,6 +50,14 @@ class Dumper(
     private fun remoteScreenshotFilePath(name: String) = "/sdcard/$name"
 
     private val appDirectoryPath = Path(platformInformationProvider.getAppDirectoryPath())
+
+    suspend fun isDeviceConnected(): Boolean =
+        withContext(Dispatchers.IO) {
+            val adbSession = AdbSession.create(adbSessionHost)
+            val device = getFirstDeviceWithTimeout(adbSession, timeout = deviceCheckTimeout)
+
+            return@withContext device != null
+        }
 
     @OptIn(ExperimentalPathApi::class)
     suspend fun dump(
@@ -61,18 +69,7 @@ class Dumper(
             withTimeoutOrNull(dumpTimeout) {
                 dumpProgressHandler.reportStartingDump()
 
-                // First establish ADB connection.
-                val adbSession =
-                    withTimeoutOrNull(shortTimeout) { AdbSession.create(adbSessionHost) }
-                        ?: return@withTimeoutOrNull DumpResult.Error(
-                            Notification(
-                                title = "ADB Session Error",
-                                description =
-                                    "Could not establish ADB connection. Please check that ADB is installed and that the usual commands work.",
-                                severity = NotificationSeverity.ERROR,
-                                exitStrategy = timeout(5.seconds),
-                            )
-                        )
+                val adbSession = AdbSession.create(adbSessionHost)
 
                 // Todo:
                 //  - check that system health is retained if dump process is interrupted at any
@@ -84,20 +81,10 @@ class Dumper(
 
                 val nextNickname = nicknameProvider.getNext(current = lastNickname)
 
-                // Dynamically retrieve any device
+                // Dynamically retrieve first device
                 val device =
-                    withTimeoutOrNull(shortTimeout) {
-                        adbSession.connectedDevicesTracker.waitForAnyDevice()
-                    }
-                        ?: return@withTimeoutOrNull DumpResult.Error(
-                            Notification(
-                                title = "No Device Connected",
-                                description =
-                                    "Cannot find a device that is reachable through ADB. Connect to a device or start an emulator.",
-                                severity = NotificationSeverity.ERROR,
-                                exitStrategy = timeout(8.seconds),
-                            )
-                        )
+                    getFirstDeviceWithTimeout(adbSession, timeout = shortTimeout)
+                        ?: return@withTimeoutOrNull DumpResult.Error(noDeviceConnectedNotification)
 
                 // Attempt to root device
                 withTimeoutOrNull(shortTimeout) { device.rootAndWait() }
@@ -477,7 +464,8 @@ class Dumper(
             when (api) {
                 // Todo: API 36 changes handling for multiple virtual displays. Find the algorithm.
                 35,
-                36 -> {
+                36,
+                37 -> {
                     val flingerDisplays =
                         flingerOutput.extractAll(
                             pattern =
@@ -584,20 +572,32 @@ class Dumper(
 
         return resolvedDisplays
     }
-}
 
-// Todo: move these to separate file
-
-suspend fun ConnectedDevicesTracker.waitForAnyDevice(): ConnectedDevice {
-    // Do a quick scan on the current state first (more efficient), then wait on the StateFlow.
-    return connectedDevices.value.firstOrNull()
-        ?: run {
-            connectedDevices
+    private suspend fun getFirstDeviceWithTimeout(
+        adbSession: AdbSession,
+        timeout: Duration,
+    ): ConnectedDevice? {
+        return withTimeoutOrNull(timeout) {
+            adbSession.connectedDevicesTracker.connectedDevices
                 .transform { devices -> emit(devices.firstOrNull()) }
                 .filterNotNull()
                 .first()
         }
+    }
+
+    companion object {
+        val noDeviceConnectedNotification =
+            Notification(
+                title = "No Device Connected",
+                description =
+                    "Cannot find a device that is reachable through ADB. Connect to a device or start an emulator.",
+                severity = NotificationSeverity.ERROR,
+                exitStrategy = timeout(8.seconds),
+            )
+    }
 }
+
+// Todo: move these to separate file
 
 fun <T> String.extractAll(pattern: Regex, transform: (MatchResult.Destructured) -> T): List<T> {
     val results = pattern.findAll(this)

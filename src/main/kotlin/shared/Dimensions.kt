@@ -2,6 +2,8 @@ package shared
 
 import androidx.compose.ui.unit.dp
 
+// Todo: take stuff out of Colors and Dimensions that should not be there
+
 @Suppress("unused", "MayBeConstant")
 object Dimensions {
 
@@ -32,18 +34,22 @@ object Dimensions {
 
     /* Pane Layer */
 
-    val minimumPaneDimension = 100.dp
+    val minimumPaneDimension = 150.dp
     val paneBorderWidth = 1.dp
+    val defaultTopBarContentHeight = 38.dp
 
     // Wedge
     val wedgeSmallDimension = 4.dp
     val wedgeLargeDimension = 40.dp
 
+    // Resizing Handle
+    val handleDiameter = 30.dp
+
     // Xml Tree Pane
     val startPaddingPerDepthLevel = 20.dp
 
     // Selected Node Pane
-    val propertyNameWidth = 200.dp
+    val propertyNameWidth = 145.dp
     val maximumPropertyValueWidth = 600.dp
 
     /* Screenshot Layer */

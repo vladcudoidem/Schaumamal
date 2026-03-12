@@ -1,15 +1,20 @@
 package viewmodel
 
 import arrow.core.Either
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,6 +25,8 @@ import model.dumper.DumpProgressHandler
 import model.dumper.DumpResult
 import model.dumper.Dumper
 import model.parser.dataClasses.GenericNode
+import model.parser.dataClasses.Node
+import model.parser.dataClasses.flattenThisAndDescendantsTo
 import model.repository.AppRepository
 import model.repository.DumpRegisterResult
 import model.repository.dataClasses.Content
@@ -28,6 +35,8 @@ import model.repository.dataClasses.Settings
 import viewmodel.notification.Notification
 import viewmodel.notification.NotificationManager
 import viewmodel.notification.NotificationSeverity
+
+const val MIN_SEARCH_QUERY_LENGTH_FOR_SEARCHING = 3
 
 class AppViewModel(
     val notificationManager: NotificationManager,
@@ -53,6 +62,7 @@ class AppViewModel(
         get() = _selectedDump.asStateFlow()
 
     private val displayDataList =
+        // Todo: fix this freaking ugly formatting.
         combineTransform(dumpsDirectoryName, _selectedDump) { dumpsDirectoryName, selectedDump ->
                 if (selectedDump != Dump.Empty && selectedDump.displays.isNotEmpty()) {
                     emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
@@ -87,6 +97,7 @@ class AppViewModel(
                 initialValue = DisplayData.Empty,
             )
 
+    // Todo: this is not really needed. Use "_selectedNode".
     private val _isNodeSelected = MutableStateFlow(false)
     val isNodeSelected
         get() = _isNodeSelected.asStateFlow()
@@ -94,6 +105,62 @@ class AppViewModel(
     private val _selectedNode = MutableStateFlow(GenericNode.Empty)
     val selectedNode
         get() = _selectedNode.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    @OptIn(FlowPreview::class)
+    // Todo: maybe build own operator that emits first change immediately.
+    private val sampledSearchQuery = searchQuery.sample(500.milliseconds)
+
+    private val searchableNodesFlattened =
+        selectedDisplayData.map {
+            val flattenedNodes: List<Node> =
+                it.displayNode.flattenThisAndDescendantsTo { currentNode, _, _ -> currentNode }
+            val searchableNodesFlattened = flattenedNodes.filterIsInstance<GenericNode>()
+
+            searchableNodesFlattened
+        }
+
+    private val _isSearchActive = MutableStateFlow(false)
+    val isSearchActive = _isSearchActive.asStateFlow()
+
+    val searchResult =
+        combine(searchableNodesFlattened, sampledSearchQuery, isSearchActive) {
+                searchableNodesFlattened,
+                sampledSearchQuery,
+                isSearchActive ->
+                val isSearchQueryValid =
+                    sampledSearchQuery.length.let {
+                        it != 0 && it >= MIN_SEARCH_QUERY_LENGTH_FOR_SEARCHING
+                    }
+
+                if (!isSearchActive || !isSearchQueryValid) {
+                    return@combine emptyList()
+                }
+
+                searchableNodesFlattened.filter { searchableNode ->
+                    val searchableFields =
+                        with(searchableNode) {
+                            listOf(
+                                text,
+                                resourceId,
+                                className,
+                                packageName,
+                                contentDesc,
+                                *bounds.toSearchableArray(),
+                            )
+                        }
+                    val isMatch =
+                        searchableFields.any { it.contains(sampledSearchQuery, ignoreCase = true) }
+
+                    isMatch
+                }
+            }
+            .distinctUntilChanged()
+
+    private val _shouldHighlightResultsOnScreenshot = MutableStateFlow(true)
+    val shouldHighlightResultsOnScreenshot = _shouldHighlightResultsOnScreenshot.asStateFlow()
 
     init {
         val setupResult = setupEnvironment()
@@ -179,6 +246,13 @@ class AppViewModel(
 
     fun extract(dumpProgressHandler: DumpProgressHandler) {
         viewModelScope.launch {
+            // Before changing anything in the UI, check that a device is connected. If not, exit
+            // early.
+            if (!dumper.isDeviceConnected()) {
+                notificationManager.notify(Dumper.noDeviceConnectedNotification)
+                return@launch
+            }
+
             val previousStateValue = _state.getAndUpdate { InspectorState.WAITING }
 
             val dumpResult =
@@ -288,6 +362,18 @@ class AppViewModel(
         _displayIndex.value = 0
         _isNodeSelected.value = false
         _selectedNode.value = GenericNode.Empty
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.update { query }
+    }
+
+    fun toggleSearchActive() {
+        _isSearchActive.update { !it }
+    }
+
+    fun toggleHighlightResultsOnScreenshot() {
+        _shouldHighlightResultsOnScreenshot.update { !it }
     }
 
     fun cleanup() {

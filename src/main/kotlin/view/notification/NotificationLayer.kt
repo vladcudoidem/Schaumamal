@@ -37,13 +37,7 @@ fun NotificationLayer(notificationState: NotificationState, modifier: Modifier =
                 PaddingValues(top = Dimensions.largePadding, bottom = Dimensions.largePadding),
             reverseLayout = true,
         ) {
-            items(
-                activeNotifications,
-                key = {
-                    // Todo: there can be conflicts for same data class info. Use UUID.
-                    it.hashCode()
-                },
-            ) {
+            items(activeNotifications, key = { it.uuid }) {
                 NotificationPill(
                     activeNotification = it,
                     hideNotification = { notificationState.hideNotification(it) },
