@@ -1,8 +1,14 @@
 package view.panes
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
@@ -13,18 +19,21 @@ class PaneState(
     inspectorState: StateFlow<InspectorState>,
     displayData: StateFlow<DisplayData>,
     isNodeSelected: StateFlow<Boolean>,
-    selectedNode: StateFlow<GenericNode>,
+    val selectedNode: StateFlow<GenericNode>,
     selectNode: (GenericNode) -> Unit,
 ) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     val showXmlTree = inspectorState.map { it == InspectorState.POPULATED }
     private val flatXmlTreeMap =
-        combine(displayData, selectedNode) { dataRoot, selectedNode ->
-            dataRoot.displayNode.getFlatXmlTreeMap(
-                selectedNode = selectedNode,
-                onNodeTreeLineClicked = { node: GenericNode -> selectNode(node) },
+        displayData
+            .map { it.displayNode.getFlatXmlTreeMap { node: GenericNode -> selectNode(node) } }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.Eagerly,
+                initialValue = emptyMap(),
             )
-        }
+
     val flatXmlTree = flatXmlTreeMap.map { it.values.toList() }
 
     val selectedNodeIndex =
@@ -41,4 +50,43 @@ class PaneState(
             showXmlTree && isNodeSelected
         }
     val selectedNodePropertyMap = selectedNode.map { it.propertyMap }
+
+    init {
+        collectSelectedNodes()
+    }
+
+    private fun collectSelectedNodes() {
+        coroutineScope.launch {
+            var lastSelectedNode: GenericNode? = null
+
+            selectedNode
+                .transform {
+                    val newSelectedNodes = SelectedNodes(current = it, last = lastSelectedNode)
+                    lastSelectedNode = it
+
+                    emit(newSelectedNodes)
+                }
+                .collect { propagateNodeSelection(it) }
+        }
+    }
+
+    private fun propagateNodeSelection(selectedNodes: SelectedNodes) {
+        val treeLineToSelect = flatXmlTreeMap.value.get(selectedNodes.current)
+
+        val lastSelectedNode = selectedNodes.last
+        val treeLineToDeselect =
+            if (lastSelectedNode != null) {
+                flatXmlTreeMap.value.get(selectedNodes.last)
+            } else {
+                null
+            }
+
+        treeLineToSelect?.apply {
+            expandUntilVisible()
+            select()
+        }
+        treeLineToDeselect?.deselect()
+    }
 }
+
+private data class SelectedNodes(val current: GenericNode, val last: GenericNode?)

@@ -17,6 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -65,6 +67,12 @@ fun XmlTree(
     val verticalScrollbarAdapter = rememberScrollbarAdapter(upperPaneLazyListState)
     val horizontalScrollbarAdapter = rememberScrollbarAdapter(upperPaneHorizontalScrollState)
 
+    val visibleTreeLines =
+        flatXmlTree.filter {
+            val isVisible: Boolean by it.isVisible.collectAsState(true)
+            isVisible
+        }
+
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             state = upperPaneLazyListState,
@@ -78,7 +86,7 @@ fun XmlTree(
             modifier =
                 Modifier.horizontalScroll(upperPaneHorizontalScrollState).animateContentSize(),
         ) {
-            items(flatXmlTree) { line -> XmlTreeLine(line = line) }
+            items(visibleTreeLines) { line -> XmlTreeLine(line = line) }
         }
 
         VerticalScrollbar(

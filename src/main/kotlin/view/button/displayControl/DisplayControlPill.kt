@@ -35,7 +35,7 @@ fun DisplayControlPill(
     ) {
         RoundIconButton(
             onClick = onPreviousDisplayButtonPressed,
-            iconPainter = painterResource("icons/arrow_backward.svg"),
+            iconPainter = painterResource("icons/arrow_left.svg"),
             iconModifier = Modifier.padding(end = 2.dp),
             enabled = areDisplayControlButtonsEnabled,
         )
@@ -58,7 +58,7 @@ fun DisplayControlPill(
 
         RoundIconButton(
             onClick = onNextDisplayButtonPressed,
-            iconPainter = painterResource("icons/arrow_forward.svg"),
+            iconPainter = painterResource("icons/arrow_right.svg"),
             iconModifier = Modifier.padding(start = 2.dp),
             enabled = areDisplayControlButtonsEnabled,
         )
