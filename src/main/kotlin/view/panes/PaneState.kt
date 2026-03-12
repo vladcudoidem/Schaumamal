@@ -71,7 +71,7 @@ class PaneState(
     }
 
     private fun propagateNodeSelection(selectedNodes: SelectedNodes) {
-        val treeLineToSelect = flatXmlTreeMap.value.get(selectedNodes.current)
+        val treeLineToSelect = flatXmlTreeMap.value[selectedNodes.current]
 
         val lastSelectedNode = selectedNodes.last
         val treeLineToDeselect =
@@ -86,6 +86,30 @@ class PaneState(
             select()
         }
         treeLineToDeselect?.deselect()
+    }
+
+    // Todo: add buttons for: collapse all, expand all, expand and scroll to selected node
+
+    // Todo: use
+    fun collapseAllLines() {
+        val allLines = flatXmlTreeMap.value.values
+        allLines.forEach {
+            it.collapse()
+        }
+    }
+
+    // Todo: use
+    fun expandAllLines() {
+        val allLines = flatXmlTreeMap.value.values
+        allLines.forEach {
+            it.expand()
+        }
+    }
+
+    // Todo: use
+    fun expandToSelectedNode() {
+        val selectedLine = flatXmlTreeMap.value[selectedNode.value]
+        selectedLine?.expandUntilVisible()
     }
 }
 
