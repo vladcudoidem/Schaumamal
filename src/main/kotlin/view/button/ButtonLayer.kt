@@ -61,6 +61,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import shared.Colors
+import shared.Colors.elevatedBackgroundColor
 import shared.Colors.paneBorderColor
 import shared.Dimensions.extractButtonDiameter
 import shared.Dimensions.mediumCornerRadius
@@ -147,17 +148,22 @@ fun ButtonLayer(
             iconPainter = painterResource("icons/fit.svg"),
         )
 
-        RoundIconButton(
-            onClick = uiLayoutState::onEnlargeScreenshotButtonPressed,
-            enabled = areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/enlarge.svg"),
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier.clip(RoundedCornerShape(50)).background(elevatedBackgroundColor),
+        ) {
+            RoundIconButton(
+                onClick = uiLayoutState::onEnlargeScreenshotButtonPressed,
+                enabled = areResizeButtonsEnabled,
+                iconPainter = painterResource("icons/enlarge.svg"),
+            )
 
-        RoundIconButton(
-            onClick = uiLayoutState::onShrinkScreenshotButtonPressed,
-            enabled = areResizeButtonsEnabled,
-            iconPainter = painterResource("icons/shrink.svg"),
-        )
+            RoundIconButton(
+                onClick = uiLayoutState::onShrinkScreenshotButtonPressed,
+                enabled = areResizeButtonsEnabled,
+                iconPainter = painterResource("icons/shrink.svg"),
+            )
+        }
     }
 }
 

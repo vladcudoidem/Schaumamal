@@ -3,13 +3,13 @@ package view.utils
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.Node
 import model.parser.dataClasses.WindowNode
+import model.parser.dataClasses.flattenThisAndDescendantsTo
 import shared.Colors.discreteTextColor
 import view.panes.XmlTreeLine
 
@@ -18,7 +18,7 @@ fun DisplayNode.getFlatXmlTreeMap(
 ): LinkedHashMap<Node, XmlTreeLine> {
 
     val flattenedTreeMap =
-        flattenTo<Pair<Node, XmlTreeLine>> { currentNode, depth, parentProduct ->
+        flattenThisAndDescendantsTo<Pair<Node, XmlTreeLine>> { currentNode, depth, parentProduct ->
             val hasChildren = currentNode.children.isNotEmpty()
 
             val currentProduct =
@@ -30,7 +30,8 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = {},
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                // It makes no sense to collapse display node.
+                                isCollapsible = false,
                             )
 
                     is WindowNode ->
@@ -40,7 +41,7 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = {},
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                isCollapsible = hasChildren,
                             )
 
                     is GenericNode ->
@@ -50,7 +51,7 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = { onNodeTreeLineClicked(currentNode) },
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                isCollapsible = hasChildren,
                             )
 
                     else -> error("XmlTreeLine template not specified for this XmlElement subtype.")
@@ -99,13 +100,7 @@ private val Node.displayText: AnnotatedString
 
                     if (resourceId.isNotEmpty()) {
                         val formattedResourceId = resourceId.split(":").last()
-                        withStyle(
-                            style =
-                                SpanStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontStyle = FontStyle.Italic,
-                                )
-                        ) {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(" $formattedResourceId")
                         }
                     }
@@ -127,22 +122,3 @@ private val Node.displayText: AnnotatedString
 
             else -> error("displayText template not specified for this XmlElement subtype.")
         }
-
-private fun <ProductType> Node.flattenTo(
-    depth: Int = 0,
-    parentProduct: ProductType? = null,
-    generateProduct: (currentNode: Node, depth: Int, parentProduct: ProductType?) -> ProductType,
-): List<ProductType> {
-    val result = mutableListOf<ProductType>()
-
-    val currentProduct = generateProduct(this, depth, parentProduct)
-    result.add(currentProduct)
-
-    children.forEach {
-        val childResult =
-            it.flattenTo(depth = depth + 1, parentProduct = currentProduct, generateProduct)
-        result += childResult
-    }
-
-    return result
-}

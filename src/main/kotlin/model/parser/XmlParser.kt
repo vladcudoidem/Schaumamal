@@ -3,6 +3,7 @@ package model.parser
 import java.io.File
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import model.parser.dataClasses.Bounds
 import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.WindowNode
@@ -34,7 +35,7 @@ class XmlParser(
         windowElements.forEach { windowNodes.add(parseWindow(it)) }
 
         return DisplayNode(
-            id = element.getAttribute(PropertyName.Display.ID),
+            id = element.getAttribute(PropertyInfo.Display.Id.rawName),
             children = windowNodes,
         )
     }
@@ -56,16 +57,16 @@ class XmlParser(
 
         return with(element) {
             WindowNode(
-                index = getAttribute(PropertyName.Window.INDEX).toInt(),
-                id = getAttribute(PropertyName.Window.ID),
-                title = getAttribute(PropertyName.Window.TITLE),
-                bounds = getAttribute(PropertyName.Window.BOUNDS),
-                active = getAttribute(PropertyName.Window.ACTIVE).toBoolean(),
-                type = getAttribute(PropertyName.Window.TYPE),
-                layer = getAttribute(PropertyName.Window.LAYER).toInt(),
-                focused = getAttribute(PropertyName.Window.FOCUSED).toBoolean(),
+                index = getAttribute(PropertyInfo.Window.Index.rawName).toInt(),
+                id = getAttribute(PropertyInfo.Window.Id.rawName),
+                title = getAttribute(PropertyInfo.Window.Title.rawName),
+                bounds = getAttribute(PropertyInfo.Window.Bounds.rawName),
+                active = getAttribute(PropertyInfo.Window.Active.rawName).toBoolean(),
+                type = getAttribute(PropertyInfo.Window.Type.rawName),
+                layer = getAttribute(PropertyInfo.Window.Layer.rawName).toInt(),
+                focused = getAttribute(PropertyInfo.Window.Focused.rawName).toBoolean(),
                 accessibilityFocused =
-                    getAttribute(PropertyName.Window.ACCESSIBILITY_FOCUSED).toBoolean(),
+                    getAttribute(PropertyInfo.Window.AccessibilityFocused.rawName).toBoolean(),
                 children = genericNodes,
             )
         }
@@ -83,23 +84,27 @@ class XmlParser(
 
         return with(element) {
             GenericNode(
-                index = getAttribute(PropertyName.Node.INDEX).toInt(),
-                text = getAttribute(PropertyName.Node.TEXT),
-                resourceId = getAttribute(PropertyName.Node.RESOURCE_ID),
-                className = getAttribute(PropertyName.Node.CLASS),
-                packageName = getAttribute(PropertyName.Node.PACKAGE),
-                contentDesc = getAttribute(PropertyName.Node.CONTENT_DESCRIPTION),
-                checkable = getAttribute(PropertyName.Node.CHECKABLE).toBoolean(),
-                checked = getAttribute(PropertyName.Node.CHECKED).toBoolean(),
-                clickable = getAttribute(PropertyName.Node.CLICKABLE).toBoolean(),
-                enabled = getAttribute(PropertyName.Node.ENABLED).toBoolean(),
-                focusable = getAttribute(PropertyName.Node.FOCUSABLE).toBoolean(),
-                focused = getAttribute(PropertyName.Node.FOCUSED).toBoolean(),
-                scrollable = getAttribute(PropertyName.Node.SCROLLABLE).toBoolean(),
-                longClickable = getAttribute(PropertyName.Node.LONG_CLICKABLE).toBoolean(),
-                password = getAttribute(PropertyName.Node.PASSWORD).toBoolean(),
-                selected = getAttribute(PropertyName.Node.SELECTED).toBoolean(),
-                bounds = getAttribute(PropertyName.Node.BOUNDS),
+                index = getAttribute(PropertyInfo.Node.Index.rawName).toInt(),
+                text = getAttribute(PropertyInfo.Node.Text.rawName),
+                resourceId = getAttribute(PropertyInfo.Node.ResourceId.rawName),
+                className = getAttribute(PropertyInfo.Node.Class.rawName),
+                packageName = getAttribute(PropertyInfo.Node.Package.rawName),
+                contentDesc = getAttribute(PropertyInfo.Node.ContentDescription.rawName),
+                checkable = getAttribute(PropertyInfo.Node.Checkable.rawName).toBoolean(),
+                checked = getAttribute(PropertyInfo.Node.Checked.rawName).toBoolean(),
+                clickable = getAttribute(PropertyInfo.Node.Clickable.rawName).toBoolean(),
+                enabled = getAttribute(PropertyInfo.Node.Enabled.rawName).toBoolean(),
+                focusable = getAttribute(PropertyInfo.Node.Focusable.rawName).toBoolean(),
+                focused = getAttribute(PropertyInfo.Node.Focused.rawName).toBoolean(),
+                scrollable = getAttribute(PropertyInfo.Node.Scrollable.rawName).toBoolean(),
+                longClickable = getAttribute(PropertyInfo.Node.LongClickable.rawName).toBoolean(),
+                password = getAttribute(PropertyInfo.Node.Password.rawName).toBoolean(),
+                selected = getAttribute(PropertyInfo.Node.Selected.rawName).toBoolean(),
+                bounds =
+                    run {
+                        val boundsString = getAttribute(PropertyInfo.Node.Bounds.rawName)
+                        Bounds.fromBoundsString(boundsString)
+                    },
                 children = children,
             )
         }

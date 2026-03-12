@@ -1,8 +1,5 @@
 package view.panes
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -13,41 +10,105 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import shared.Colors.discreteTextColor
-import shared.Colors.elevatedBackgroundColor
-import shared.Colors.paneBorderColor
-import shared.Dimensions.largeCornerRadius
+import androidx.compose.ui.unit.dp
+import java.awt.Cursor
+import shared.Dimensions
 import shared.Dimensions.mediumPadding
-import shared.Dimensions.paneBorderWidth
-import view.FadeVisibility
+import view.Spacer
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
+import view.panes.properties.topbar.LowerPaneTitleBar
+import view.panes.topbar.PaneTopBarActionButton
 import view.panes.tree.XmlTree
+import view.panes.tree.topbar.UpperPaneTopBars
+import view.utils.toPx
+
+private val resizingAreaWidth = 10.dp
 
 @Composable
 fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modifier = Modifier) {
     val showXmlTree by paneState.showXmlTree.collectAsState(initial = false)
     val flatXmlTree by paneState.flatXmlTree.collectAsState(initial = emptyList())
-    val selectedNodeIndex by paneState.selectedNodeIndex.collectAsState(initial = 0)
-    val activateScroll by paneState.activateScroll.collectAsState(initial = false)
     val showSelectedNodeProperties by
         paneState.showSelectedNodeProperties.collectAsState(initial = false)
     val selectedNodePropertyMap by
         paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
-    // using an empty linked hash map as initial value
-    val paneWidth by uiLayoutState.paneWidth.collectAsState()
-    val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
+    val paneWidth by uiLayoutState.paneWidth.collectAsState(0.dp)
+    val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState(0.dp)
+    val searchQuery by paneState.searchQuery.collectAsState()
+    val isSearchActive by paneState.isSearchActive.collectAsState()
+    val isImageSearchActive by paneState.shouldHighlightResultsOnScreenshot.collectAsState()
+    val searchResultText by paneState.searchResultText.collectAsState("")
+
+    val topBarActions =
+        listOf(
+            PaneTopBarActionButton(
+                iconResource = "icons/locate.svg",
+                onClick = { paneState.expandAndScrollToSelectedNode() },
+                enabled = paneState.isExpandAndScrollButtonEnabled,
+            ),
+            PaneTopBarActionButton(
+                iconResource = "icons/collapse_all.svg",
+                onClick = { paneState.collapseAllLines() },
+            ),
+            PaneTopBarActionButton(
+                iconResource = "icons/expand_all.svg",
+                onClick = { paneState.expandAllLines() },
+            ),
+        )
+
+    val treeListState = rememberLazyListState()
+
+    val density = LocalDensity.current.density
+    var treeListViewportHeight by remember { mutableStateOf(0.dp) }
+
+    // Listen for scroll events.
+    LaunchedEffect(Unit) {
+        paneState.combinedTreeScrollEvents.collect { scrollEvent ->
+            val visibleItemsInfo = treeListState.layoutInfo.visibleItemsInfo
+
+            val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
+            val targetIndex = scrollEvent.targetIndex
+            val isIndexValid = targetIndex != -1
+            val isScrollNecessary = targetIndex !in visibleItemIndexes
+
+            // Todo: this is not the only place where I am creating loose dependencies for UI stuff.
+            //  Create some sort of system for this. It is very easy to change stuff and break it.
+            //  Search for comments that contain "break".
+
+            val treeListViewportHeightPx = treeListViewportHeight.toPx(density)
+            // We need this to offset the scrolling by a little so the element ends up in the middle
+            // of the viewport.
+            val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size?.toFloat() ?: 0f
+            // Seems like this has to be considered, since list padding values always offset
+            // scrolling.
+            val topTreeListPaddingPx = mediumPadding.toPx(density)
+
+            val scrollOffset =
+                (topTreeListPaddingPx + selectedNodeHeightPx / 2) - treeListViewportHeightPx / 2
+
+            if (isScrollNecessary && isIndexValid) {
+                treeListState.animateScrollToItem(
+                    index = targetIndex,
+                    scrollOffset = scrollOffset.toInt(),
+                )
+            }
+        }
+    }
 
     // As an exception we are not passing the modifier parameter to the outer composable, as we are
     // using the o. c.
@@ -58,37 +119,73 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 
         LaunchedEffect(maxHeight) { uiLayoutState.onPanesHeightConstraintChanged(maxHeight) }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.fillMaxHeight().padding(mediumPadding),
-        ) {
-            Wedge(
-                orientation = WedgeOrientation.VERTICAL,
-                onDrag = uiLayoutState::onVerticalWedgeDrag,
-            )
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(paneWidth),
+        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    modifier
+                        .fillMaxHeight()
+                        .padding(top = mediumPadding, end = mediumPadding, bottom = mediumPadding),
             ) {
-                UpperPane(
-                    showXmlTree = showXmlTree,
-                    flatXmlTree = flatXmlTree,
-                    selectedNodeIndex = selectedNodeIndex,
-                    activateScroll = activateScroll,
-                    upperPaneHeight = upperPaneHeight,
-                    modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
+                // Some arbitrary padding to fit the resizing area properly into the gap between
+                // the upper and lower pane.
+                Spacer(width = 12.dp)
+
+                ResizingArea(
+                    pointerIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
+                    onDrag = uiLayoutState::onHorizontalHandleDrag,
+                    onDragEnd = uiLayoutState::onHandleDragEnd,
+                    modifier = Modifier.fillMaxHeight().width(resizingAreaWidth),
                 )
 
-                Wedge(
-                    orientation = WedgeOrientation.HORIZONTAL,
-                    onDrag = uiLayoutState::onHorizontalWedgeDrag,
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.width(paneWidth),
+                ) {
+                    UpperPane(
+                        showXmlTree = showXmlTree,
+                        flatXmlTree = flatXmlTree,
+                        treeListState = treeListState,
+                        topBarActions = topBarActions,
+                        onTreeListViewportHeightChanged = { treeListViewportHeight = it },
+                        query = searchQuery,
+                        onQueryChange = paneState.onSearchQueryChanged,
+                        isSearchActive = isSearchActive,
+                        searchResultText = searchResultText,
+                        onSearchNext = paneState::selectNextSearchResult,
+                        onSearchPrevious = paneState::selectPreviousSearchResult,
+                        toggleSearchActive = { paneState.toggleSearchActive() },
+                        isImageSearchActive = isImageSearchActive,
+                        toggleImageSearch = { paneState.toggleHighlightResultsOnScreenshot() },
+                        modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
+                    )
+
+                    ResizingArea(
+                        pointerIcon = PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)),
+                        onDrag = uiLayoutState::onVerticalHandleDrag,
+                        onDragEnd = uiLayoutState::onHandleDragEnd,
+                        modifier = Modifier.fillMaxWidth().height(resizingAreaWidth),
+                    )
+
+                    LowerPane(
+                        showSelectedNodeProperties = showSelectedNodeProperties,
+                        selectedNodePropertyMap = selectedNodePropertyMap,
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight()) {
+                Spacer(
+                    height =
+                        // This will break easily. Fix later in some way.
+                        upperPaneHeight + mediumPadding / 2 + mediumPadding -
+                            Dimensions.handleDiameter / 2
                 )
 
-                LowerPane(
-                    showSelectedNodeProperties = showSelectedNodeProperties,
-                    selectedNodePropertyMap = selectedNodePropertyMap,
-                    modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+                ResizingHandle(
+                    onDrag = uiLayoutState::onHandleDrag,
+                    onDragEnd = uiLayoutState::onHandleDragEnd,
                 )
             }
         }
@@ -96,77 +193,61 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 }
 
 @Composable
-fun UpperPane(
+private fun UpperPane(
     showXmlTree: Boolean,
     flatXmlTree: List<XmlTreeLine>,
-    selectedNodeIndex: Int,
-    activateScroll: Boolean,
-    upperPaneHeight: Dp,
+    treeListState: LazyListState,
+    topBarActions: List<PaneTopBarActionButton>,
+    onTreeListViewportHeightChanged: (Dp) -> Unit,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    isSearchActive: Boolean,
+    onSearchNext: () -> Unit,
+    onSearchPrevious: () -> Unit,
+    searchResultText: String,
+    toggleSearchActive: () -> Unit,
+    isImageSearchActive: Boolean,
+    toggleImageSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(largeCornerRadius))
-                .border(
-                    width = paneBorderWidth,
-                    color = paneBorderColor,
-                    shape = RoundedCornerShape(largeCornerRadius),
-                )
-                .background(elevatedBackgroundColor),
-    ) {
-        FadeVisibility(showXmlTree) {
+    PaneContainer(showContent = showXmlTree, placeholder = "Perform a dump.", modifier = modifier) {
+        Column {
+            UpperPaneTopBars(
+                topBarActions = topBarActions,
+                onSearchNext = onSearchNext,
+                onSearchPrevious = onSearchPrevious,
+                searchResultText = searchResultText,
+                query = query,
+                onQueryChange = onQueryChange,
+                isSearchActive = isSearchActive,
+                toggleSearchActive = toggleSearchActive,
+                isImageSearchActive = isImageSearchActive,
+                toggleImageSearch = toggleImageSearch,
+            )
+
             XmlTree(
                 flatXmlTree = flatXmlTree,
-                selectedNodeIndex = selectedNodeIndex,
-                activateScroll = activateScroll,
-                upperPaneHeight = upperPaneHeight,
-            )
-        }
-
-        FadeVisibility(!showXmlTree) {
-            Text(
-                text = "Missing layout.",
-                color = discreteTextColor,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false,
-                modifier = Modifier.animateContentSize().padding(mediumPadding),
+                treeListState = treeListState,
+                onTreeListViewportHeightChanged = onTreeListViewportHeightChanged,
             )
         }
     }
 }
 
 @Composable
-fun LowerPane(
+private fun LowerPane(
     showSelectedNodeProperties: Boolean,
     selectedNodePropertyMap: LinkedHashMap<String, String>,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(largeCornerRadius))
-                .border(
-                    width = paneBorderWidth,
-                    color = paneBorderColor,
-                    shape = RoundedCornerShape(largeCornerRadius),
-                )
-                .background(elevatedBackgroundColor),
+    PaneContainer(
+        showContent = showSelectedNodeProperties,
+        placeholder = "No node selected.",
+        modifier = modifier,
     ) {
-        FadeVisibility(showSelectedNodeProperties) {
-            SelectedNodeProperties(selectedNodePropertyMap = selectedNodePropertyMap)
-        }
-
-        FadeVisibility(!showSelectedNodeProperties) {
-            Text(
-                text = "No node selected.",
-                color = discreteTextColor,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false,
-                modifier = Modifier.animateContentSize().padding(mediumPadding),
-            )
+        Column {
+            LowerPaneTitleBar()
+            SelectedNodeProperties(selectedNodePropertyMap)
         }
     }
 }

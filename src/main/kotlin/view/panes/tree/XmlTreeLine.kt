@@ -6,12 +6,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -29,13 +27,17 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import java.awt.Cursor
+import shared.Colors
 import shared.Colors.accentColor
 import shared.Colors.discreteTextColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
+import view.Spacer
 import view.panes.XmlTreeLine
+
+// Todo: fix how content-desc text is cut off at the end of the line.
 
 @Composable
 fun XmlTreeLine(line: XmlTreeLine, modifier: Modifier = Modifier) {
@@ -45,84 +47,104 @@ fun XmlTreeLine(line: XmlTreeLine, modifier: Modifier = Modifier) {
     val arrowInteractionSource = remember { MutableInteractionSource() }
     val arrowIndication = ripple(color = accentColor)
 
-    val isArrowEnabled = line.hasChildren
+    val isArrowEnabled = line.isCollapsible
 
     val isCollapsed by line.isCollapsed.collectAsState()
     val isSelected by line.isSelected.collectAsState()
+    val isSearchResult by line.highlightedAsSearchResult.collectAsState()
 
     val lineHeight = 27.dp
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
+        Spacer(width = startPaddingPerDepthLevel * line.depth)
 
-        val arrowColor: Color
-        if (isArrowEnabled) {
-            arrowColor = primaryTextColor
-        } else {
-            arrowColor = discreteTextColor.copy(alpha = 0.6f)
-        }
-
-        val onClickArrow: () -> Unit
-        val arrowResourcePath: String
-        val arrowPaddingValues: PaddingValues
-        if (!isCollapsed) {
-            onClickArrow = { line.collapse() }
-            arrowResourcePath = "icons/arrow_down.svg"
-            arrowPaddingValues = PaddingValues(top = 1.dp)
-        } else {
-            onClickArrow = { line.expand() }
-            arrowResourcePath = "icons/arrow_right.svg"
-            arrowPaddingValues = PaddingValues(start = 1.dp)
-        }
-
-        Box(
-            modifier =
-                Modifier.clip(RoundedCornerShape(smallCornerRadius))
-                    .background(Color.Transparent)
-                    .clickable(
-                        interactionSource = arrowInteractionSource,
-                        indication = arrowIndication,
-                        onClick = { onClickArrow() },
-                        enabled = isArrowEnabled,
-                    )
-                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                    .size(lineHeight),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(arrowResourcePath),
-                contentDescription = null,
-                tint = arrowColor,
-                modifier = Modifier.fillMaxSize(0.8f).padding(arrowPaddingValues),
-            )
-        }
-
-        val textBackgroundColor =
-            if (isSelected) {
-                accentColor
+        val rowBackgroundColor =
+            if (isSearchResult) {
+                Colors.searchResultBackgroundColor
             } else {
                 Color.Transparent
             }
 
-        Text(
-            text = line.text,
-            color = primaryTextColor,
+        // This is for search results. We want to see the green element at the end as well.
+        val rowEndPadding = 8.dp
+
+        // Todo: make the green highlight from end to end.
+
+        Row(
             modifier =
                 Modifier.clip(RoundedCornerShape(smallCornerRadius))
-                    .background(textBackgroundColor)
-                    .clickable(
-                        interactionSource = textInteractionSource,
-                        indication = textIndication,
-                        onClick = line.onClickText,
-                    )
-                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                    .height(lineHeight)
-                    .padding(
-                        top = smallPadding,
-                        start = smallPadding,
-                        end = smallPadding,
-                        bottom = smallPadding + 1.dp,
-                    ),
-        )
+                    .background(rowBackgroundColor)
+                    .padding(end = rowEndPadding)
+        ) {
+            val arrowColor =
+                if (isArrowEnabled) {
+                    primaryTextColor
+                } else {
+                    discreteTextColor.copy(alpha = 0.6f)
+                }
+
+            val onClickArrow: () -> Unit
+            val arrowResourcePath: String
+            val arrowPaddingValues: PaddingValues
+            if (!isCollapsed) {
+                onClickArrow = { line.collapse() }
+                arrowResourcePath = "icons/arrow_down.svg"
+                arrowPaddingValues = PaddingValues(top = 1.dp)
+            } else {
+                onClickArrow = { line.expand() }
+                arrowResourcePath = "icons/arrow_right.svg"
+                arrowPaddingValues = PaddingValues(start = 1.dp)
+            }
+
+            Box(
+                modifier =
+                    Modifier.clip(RoundedCornerShape(smallCornerRadius))
+                        .background(Color.Transparent)
+                        .clickable(
+                            interactionSource = arrowInteractionSource,
+                            indication = arrowIndication,
+                            onClick = { onClickArrow() },
+                            enabled = isArrowEnabled,
+                        )
+                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                        .size(lineHeight),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(arrowResourcePath),
+                    contentDescription = null,
+                    tint = arrowColor,
+                    modifier = Modifier.fillMaxSize(0.8f).padding(arrowPaddingValues),
+                )
+            }
+
+            val textBackgroundColor =
+                if (isSelected) {
+                    accentColor
+                } else {
+                    Color.Transparent
+                }
+
+            Text(
+                text = line.text,
+                color = primaryTextColor,
+                modifier =
+                    Modifier.clip(RoundedCornerShape(smallCornerRadius))
+                        .background(textBackgroundColor)
+                        .clickable(
+                            interactionSource = textInteractionSource,
+                            indication = textIndication,
+                            onClick = line.onClickText,
+                        )
+                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                        .height(lineHeight)
+                        .padding(
+                            top = smallPadding,
+                            start = smallPadding,
+                            end = smallPadding,
+                            bottom = smallPadding + 1.dp,
+                        ),
+            )
+        }
     }
 }

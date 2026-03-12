@@ -4,7 +4,7 @@ koin = "4.0.2"
 serialization = "1.8.0"
 adblib = "8.8.0"
 spotless = "7.0.2"
-jewel = "0.27.0"
+jewel = "0.33.0-253.29795"
 semver = "3.0.0"
 ktor = "3.1.2"
 arrow = "2.1.0"
@@ -16,8 +16,8 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 kotlinx-serializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 android-adblib = { group = "com.android.tools.adblib", name = "adblib", version.ref = "adblib" }
-jewel-standalone = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone-243", version.ref = "jewel" }
-jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window-243", version.ref = "jewel" }
+jewel-standalone = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone", version.ref = "jewel" }
+jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window", version.ref = "jewel" }
 z4kn4fein-semver = { group = "io.github.z4kn4fein", name = "semver", version.ref = "semver" }
 ktor-clientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-clientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }

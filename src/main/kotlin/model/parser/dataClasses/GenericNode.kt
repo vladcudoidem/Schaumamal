@@ -1,5 +1,7 @@
 package model.parser.dataClasses
 
+import kotlin.uuid.Uuid
+
 data class GenericNode(
     val index: Int,
     val text: String,
@@ -17,10 +19,10 @@ data class GenericNode(
     val longClickable: Boolean,
     val password: Boolean,
     val selected: Boolean,
-    val bounds: String,
+    val bounds: Bounds,
     override val children: List<GenericNode>,
+    override val uuid: Uuid = Uuid.random(),
 ) : Node {
-
     companion object {
         val Empty =
             GenericNode(
@@ -40,7 +42,7 @@ data class GenericNode(
                 longClickable = false,
                 password = false,
                 selected = false,
-                bounds = "[0,0][0,0]",
+                bounds = Bounds.Zero,
                 children = emptyList(),
             )
     }

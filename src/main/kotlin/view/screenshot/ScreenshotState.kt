@@ -10,6 +10,7 @@ import java.io.FileInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +23,6 @@ import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
 import view.utils.Irrelevant
-import view.utils.area
-import view.utils.getGraphics
 import view.utils.getNodesUnder
 
 class ScreenshotState(
@@ -32,6 +31,8 @@ class ScreenshotState(
     selectedNode: StateFlow<GenericNode>,
     private val displayData: StateFlow<DisplayData>,
     private val selectNode: (GenericNode) -> Unit,
+    searchResult: Flow<List<GenericNode>>,
+    shouldHighlightSearchResults: StateFlow<Boolean>,
 ) {
     val showScreenshot = inspectorState.map { it == InspectorState.POPULATED }
     val imageBitmap =
@@ -39,7 +40,7 @@ class ScreenshotState(
             withContext(
                 Dispatchers.IO
             ) { // Todo: is "withContext(Dispatchers.IO)" a fitting solution for blocking call?
-                val defaultBitmap = ImageBitmap(0, 0)
+                val defaultBitmap = ImageBitmap(1, 1)
                 val actualBitmap =
                     if (it == DisplayData.Empty) {
                         defaultBitmap
@@ -65,11 +66,13 @@ class ScreenshotState(
         get() = _screenshotComposableSize.asStateFlow()
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
+    // "displayPixelConversionFactor" is for transforming the offset and size to screen pixels by
+    // multiplying the screenshot pixels with a conversion factor.
     private val displayPixelConversionFactor: StateFlow<Float> =
         combine(_screenshotComposableSize, screenshotFileSize) {
-                _screenshotComposableSize,
+                screenshotComposableSize,
                 screenshotFileSize ->
-                _screenshotComposableSize.height / screenshotFileSize.height
+                screenshotComposableSize.height / screenshotFileSize.height
             }
             .stateIn(
                 scope = CoroutineScope(Dispatchers.Default),
@@ -81,12 +84,21 @@ class ScreenshotState(
         combine(showScreenshot, isNodeSelected) { showScreenshot, isNodeSelected ->
             showScreenshot && isNodeSelected
         }
-    val selectedNodeDisplayGraphics =
+    val selectedNodeDisplayBounds =
         combine(selectedNode, displayPixelConversionFactor) {
             selectedNode,
             displayPixelConversionFactor ->
-            selectedNode.getGraphics(displayPixelConversionFactor)
+            selectedNode.bounds * displayPixelConversionFactor
         }
+
+    val searchResultDisplayBounds =
+        combine(searchResult, displayPixelConversionFactor) {
+            searchResult,
+            displayPixelConversionFactor ->
+            searchResult.map { it.bounds * displayPixelConversionFactor }
+        }
+
+    val shouldHighlightSearchResults = shouldHighlightSearchResults
 
     fun onImageSizeChanged(size: IntSize) {
         _screenshotComposableSize.value = size.toSize()
@@ -97,13 +109,17 @@ class ScreenshotState(
         val nodes =
             displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
         if (nodes.isEmpty()) return
-        val nodeAreas = nodes.map { it.getGraphics().size.area }
+        val nodeAreas =
+            nodes.map {
+                // We use not conversion factor here because we only want to compare the areas, and
+                // multiplying each area by a factor does not change the result of the comparison.
+                it.bounds.area
+            }
 
         val smallestNodeIndex = nodeAreas.indexOf(nodeAreas.min())
         if (smallestNodeIndex == -1) return
 
-        val smallestNode = nodes.getOrNull(smallestNodeIndex)
-        if (smallestNode == null) return
+        val smallestNode = nodes.getOrNull(smallestNodeIndex) ?: return
         selectNode(smallestNode)
     }
 }
