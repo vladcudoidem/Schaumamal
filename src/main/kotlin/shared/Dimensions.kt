@@ -43,7 +43,7 @@ object Dimensions {
     val startPaddingPerDepthLevel = 20.dp
 
     // Selected Node Pane
-    val propertyNameWidth = 200.dp
+    val propertyNameWidth = 120.dp
     val maximumPropertyValueWidth = 600.dp
 
     /* Screenshot Layer */
