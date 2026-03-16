@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +34,9 @@ import shared.Dimensions.paneBorderWidth
 import view.FadeVisibility
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
+import view.panes.toolbar.PaneTitleBar
+import view.panes.toolbar.PaneToolbar
+import view.panes.toolbar.PaneToolbarAction
 import view.panes.tree.XmlTree
 
 @Composable
@@ -117,12 +121,31 @@ fun UpperPane(
                 .background(elevatedBackgroundColor),
     ) {
         FadeVisibility(showXmlTree) {
-            XmlTree(
-                flatXmlTree = flatXmlTree,
-                selectedNodeIndex = selectedNodeIndex,
-                activateScroll = activateScroll,
-                upperPaneHeight = upperPaneHeight,
-            )
+            Column {
+                val toolbarActions = remember {
+                    listOf(
+                        PaneToolbarAction(iconResource = "icons/locate.svg", onClick = { }),
+                        PaneToolbarAction(iconResource = "icons/collapse_all.svg", onClick = { }),
+                        PaneToolbarAction(iconResource = "icons/expand_all.svg", onClick = { }),
+                    )
+                }
+                PaneToolbar(
+                    title = "UI Tree",
+                    actions = toolbarActions,
+                    onSearch = {},
+                    onSearchNext = {},
+                    onSearchPrevious = {},
+                    currentSearchIndex = 0,
+                    totalSearchResults = 0,
+                )
+
+                XmlTree(
+                    flatXmlTree = flatXmlTree,
+                    selectedNodeIndex = selectedNodeIndex,
+                    activateScroll = activateScroll,
+                    upperPaneHeight = upperPaneHeight,
+                )
+            }
         }
 
         FadeVisibility(!showXmlTree) {
@@ -156,7 +179,10 @@ fun LowerPane(
                 .background(elevatedBackgroundColor),
     ) {
         FadeVisibility(showSelectedNodeProperties) {
-            SelectedNodeProperties(selectedNodePropertyMap = selectedNodePropertyMap)
+            Column {
+                PaneTitleBar(title = "Node Properties")
+                SelectedNodeProperties(selectedNodePropertyMap = selectedNodePropertyMap)
+            }
         }
 
         FadeVisibility(!showSelectedNodeProperties) {

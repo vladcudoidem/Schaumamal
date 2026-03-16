@@ -95,7 +95,7 @@ fun XmlTree(
             modifier =
                 Modifier.align(Alignment.CenterEnd)
                     .fillMaxHeight()
-                    .padding(top = largePadding, end = smallPadding, bottom = largePadding)
+                    .padding(top = smallPadding, end = smallPadding, bottom = largePadding)
                     .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
         )
 
