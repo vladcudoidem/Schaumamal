@@ -2,10 +2,8 @@ package view.panes.toolbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -22,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -36,7 +33,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,11 +47,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import java.awt.Cursor
-import shared.Colors.discreteTextColor
 import shared.Colors.disabledPrimaryElementColor
+import shared.Colors.discreteTextColor
 import shared.Colors.elevatedBackgroundColor
 import shared.Colors.paneBorderColor
 import shared.Colors.primaryElementColor
@@ -69,7 +66,7 @@ import view.FadeVisibility
 private val toolbarHeight = 40.dp
 private val actionButtonSize = 38.dp
 private val titleMinWidth = 80.dp
-private val searchFieldMinWidth = 200.dp
+private val searchFieldMinWidth = 500.dp
 private val searchFieldBackgroundColor = primaryTextColor.copy(alpha = 0.07f)
 
 @Composable
@@ -89,7 +86,11 @@ fun PaneToolbar(
     val totalButtonCount = actions.size + 1
 
     BoxWithConstraints {
-        val showTitle = maxWidth >= titleMinWidth + actionButtonSize * totalButtonCount + (smallPadding + mediumPadding) * 2
+        val showTitle =
+            maxWidth >=
+                titleMinWidth +
+                    actionButtonSize * totalButtonCount +
+                    (smallPadding + mediumPadding) * 2
 
         Column(modifier = modifier.fillMaxWidth()) {
             TitleRow(
@@ -135,10 +136,7 @@ fun PaneToolbar(
 }
 
 @Composable
-fun PaneTitleBar(
-    title: String,
-    modifier: Modifier = Modifier,
-) {
+fun PaneTitleBar(title: String, modifier: Modifier = Modifier) {
     Row(
         modifier =
             modifier
@@ -208,14 +206,9 @@ private fun TitleRow(
 
         Spacer(Modifier.weight(1f))
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(smallPadding)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(smallPadding)) {
             actions.forEach { action ->
-                ToolbarIconButton(
-                    iconResource = action.iconResource,
-                    onClick = action.onClick,
-                )
+                ToolbarIconButton(iconResource = action.iconResource, onClick = action.onClick)
             }
 
             val searchButtonColors =
@@ -249,59 +242,83 @@ private fun SearchBar(
     currentIndex: Int,
     totalResults: Int,
 ) {
-    Box(
+    var availableWidth by remember { mutableStateOf(0.dp) }
+    var textWidth by remember { mutableStateOf(0.dp) }
+
+    val targetWidth =
+        if (availableWidth < 160.dp) {
+            160.dp
+        } else {
+            if (textWidth < 300.dp) {
+                min(availableWidth, 300.dp)
+            } else {
+                min(availableWidth, textWidth)
+            }
+        }
+    val shouldBeScrollable = availableWidth < 160.dp
+
+    BoxWithConstraints(
         contentAlignment = Alignment.TopCenter,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(toolbarHeight - 1.dp)
-            .background(elevatedBackgroundColor)
-            .drawBehind {
-                val lineWidthPx = paneBorderWidth.toPx()
-                drawLine(
-                    color = paneBorderColor,
-                    start = Offset(lineWidthPx, size.height - lineWidthPx / 2),
-                    end = Offset(size.width - lineWidthPx, size.height - lineWidthPx / 2),
-                    strokeWidth = lineWidthPx,
-                )
-            },
+        modifier =
+            Modifier.fillMaxWidth()
+                .height(toolbarHeight - 1.dp)
+                .background(elevatedBackgroundColor)
+                .drawBehind {
+                    val lineWidthPx = paneBorderWidth.toPx()
+                    drawLine(
+                        color = paneBorderColor,
+                        start = Offset(lineWidthPx, size.height - lineWidthPx / 2),
+                        end = Offset(size.width - lineWidthPx, size.height - lineWidthPx / 2),
+                        strokeWidth = lineWidthPx,
+                    )
+                },
     ) {
+        LaunchedEffect(maxWidth) {
+            availableWidth = max(0.dp, maxWidth - 200.dp)
+            println("new availableWidth = $availableWidth")
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(smallPadding),
             modifier =
                 Modifier.fillMaxWidth()
                     .height(toolbarHeight - 2.dp)
-                    .padding(start = smallPadding, end = smallPadding + mediumPadding),
+                    .padding(start = smallPadding, end = smallPadding + mediumPadding)
+                    .then(
+                        if (shouldBeScrollable) {
+                            Modifier.horizontalScroll(rememberScrollState())
+                        } else {
+                            Modifier
+                        }
+                    ),
         ) {
-            Box(
+            BoxWithConstraints(
                 contentAlignment = Alignment.CenterStart,
                 modifier =
-                    Modifier
-                        .weight(1f)
+                    Modifier.width(targetWidth)
                         .padding(vertical = 4.dp)
                         .height(actionButtonSize)
                         .clip(RoundedCornerShape(largeCornerRadius))
-                        .background(searchFieldBackgroundColor)
-                        .horizontalScroll(rememberScrollState()),
+                        .background(searchFieldBackgroundColor),
             ) {
-                Row {
-                    Spacer(Modifier.width(mediumPadding))
-
-                    Box {
-                        if (query.isEmpty()) {
-                            Text(text = "Type here...", color = discreteTextColor)
-                        }
-                        BasicTextField(
-                            value = query,
-                            onValueChange = onQueryChange,
-                            singleLine = true,
-                            textStyle = TextStyle(color = primaryTextColor),
-                            cursorBrush = SolidColor(primaryTextColor),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                Box(modifier = Modifier.padding(horizontal = mediumPadding)) {
+                    if (query.isEmpty()) {
+                        Text(text = "Type here...", color = discreteTextColor)
                     }
-
-                    Spacer(Modifier.width(mediumPadding))
+                    BasicTextField(
+                        value = query,
+                        onValueChange = onQueryChange,
+                        singleLine = true,
+                        textStyle = TextStyle(color = primaryTextColor),
+                        cursorBrush = SolidColor(primaryTextColor),
+                        modifier = Modifier.fillMaxWidth(),
+                        onTextLayout = {
+                            textWidth =
+                                (it.getLineRight(0) - it.getLineLeft(0)).dp / 2 + mediumPadding * 2
+                            println("new textWidth = $textWidth")
+                        },
+                    )
                 }
             }
 
@@ -314,11 +331,7 @@ private fun SearchBar(
                     softWrap = false,
                 )
             } else {
-                Text(
-                    text = "No results",
-                    color = discreteTextColor,
-                    softWrap = false,
-                )
+                Text(text = "No results", color = discreteTextColor, softWrap = false)
             }
 
             Row {
@@ -334,12 +347,13 @@ private fun ToolbarIconButton(
     iconResource: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    buttonColors: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = Color.Transparent,
-        contentColor = primaryElementColor,
-        disabledBackgroundColor = Color.Transparent,
-        disabledContentColor = disabledPrimaryElementColor,
-    ),
+    buttonColors: ButtonColors =
+        ButtonDefaults.buttonColors(
+            backgroundColor = Color.Transparent,
+            contentColor = primaryElementColor,
+            disabledBackgroundColor = Color.Transparent,
+            disabledContentColor = disabledPrimaryElementColor,
+        ),
 ) {
     Button(
         onClick = onClick,
@@ -364,4 +378,10 @@ private fun ToolbarIconButton(
             modifier = Modifier.fillMaxSize(0.55f),
         )
     }
+}
+
+enum class ScrollBarSizeState {
+    SCROLL,
+    GROW,
+    MAX,
 }

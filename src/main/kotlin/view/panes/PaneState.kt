@@ -93,17 +93,13 @@ class PaneState(
     // Todo: use
     fun collapseAllLines() {
         val allLines = flatXmlTreeMap.value.values
-        allLines.forEach {
-            it.collapse()
-        }
+        allLines.forEach { it.collapse() }
     }
 
     // Todo: use
     fun expandAllLines() {
         val allLines = flatXmlTreeMap.value.values
-        allLines.forEach {
-            it.expand()
-        }
+        allLines.forEach { it.expand() }
     }
 
     // Todo: use

@@ -124,9 +124,9 @@ fun UpperPane(
             Column {
                 val toolbarActions = remember {
                     listOf(
-                        PaneToolbarAction(iconResource = "icons/locate.svg", onClick = { }),
-                        PaneToolbarAction(iconResource = "icons/collapse_all.svg", onClick = { }),
-                        PaneToolbarAction(iconResource = "icons/expand_all.svg", onClick = { }),
+                        PaneToolbarAction(iconResource = "icons/locate.svg", onClick = {}),
+                        PaneToolbarAction(iconResource = "icons/collapse_all.svg", onClick = {}),
+                        PaneToolbarAction(iconResource = "icons/expand_all.svg", onClick = {}),
                     )
                 }
                 PaneToolbar(
