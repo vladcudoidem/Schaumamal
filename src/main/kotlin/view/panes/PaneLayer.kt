@@ -1,9 +1,5 @@
 package view.panes
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,22 +16,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import shared.Colors.discreteTextColor
-import shared.Colors.elevatedBackgroundColor
-import shared.Colors.paneBorderColor
-import shared.Dimensions.largeCornerRadius
 import shared.Dimensions.mediumPadding
-import shared.Dimensions.paneBorderWidth
-import view.FadeVisibility
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
-import view.panes.toolbar.PaneTitleBar
-import view.panes.toolbar.PaneToolbar
-import view.panes.toolbar.PaneToolbarAction
+import view.panes.properties.topbar.LowerPaneTitleBar
+import view.panes.topbar.PaneTopBarActionButton
 import view.panes.tree.XmlTree
+import view.panes.tree.topbar.UpperPaneTopBars
 
 @Composable
 fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modifier = Modifier) {
@@ -49,7 +35,6 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
         paneState.showSelectedNodeProperties.collectAsState(initial = false)
     val selectedNodePropertyMap by
         paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
-    // using an empty linked hash map as initial value
     val paneWidth by uiLayoutState.paneWidth.collectAsState()
     val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
 
@@ -100,7 +85,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 }
 
 @Composable
-fun UpperPane(
+private fun UpperPane(
     showXmlTree: Boolean,
     flatXmlTree: List<XmlTreeLine>,
     selectedNodeIndex: Int,
@@ -108,91 +93,48 @@ fun UpperPane(
     upperPaneHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(largeCornerRadius))
-                .border(
-                    width = paneBorderWidth,
-                    color = paneBorderColor,
-                    shape = RoundedCornerShape(largeCornerRadius),
-                )
-                .background(elevatedBackgroundColor),
-    ) {
-        FadeVisibility(showXmlTree) {
-            Column {
-                val toolbarActions = remember {
-                    listOf(
-                        PaneToolbarAction(iconResource = "icons/locate.svg", onClick = {}),
-                        PaneToolbarAction(iconResource = "icons/collapse_all.svg", onClick = {}),
-                        PaneToolbarAction(iconResource = "icons/expand_all.svg", onClick = {}),
-                    )
-                }
-                PaneToolbar(
-                    title = "UI Tree",
-                    actions = toolbarActions,
-                    onSearch = {},
-                    onSearchNext = {},
-                    onSearchPrevious = {},
-                    currentSearchIndex = 0,
-                    totalSearchResults = 0,
-                )
-
-                XmlTree(
-                    flatXmlTree = flatXmlTree,
-                    selectedNodeIndex = selectedNodeIndex,
-                    activateScroll = activateScroll,
-                    upperPaneHeight = upperPaneHeight,
+    PaneContainer(showContent = showXmlTree, placeholder = "Perform a dump.", modifier = modifier) {
+        Column {
+            val toolbarActions = remember {
+                listOf(
+                    PaneTopBarActionButton(iconResource = "icons/locate.svg", onClick = {}),
+                    PaneTopBarActionButton(iconResource = "icons/collapse_all.svg", onClick = {}),
+                    PaneTopBarActionButton(iconResource = "icons/expand_all.svg", onClick = {}),
                 )
             }
-        }
+            UpperPaneTopBars(
+                actions = toolbarActions,
+                onSearch = {},
+                onSearchNext = {},
+                onSearchPrevious = {},
+                currentSearchResultIndex = 0,
+                totalSearchResultCount = 0,
+            )
 
-        FadeVisibility(!showXmlTree) {
-            Text(
-                text = "Missing layout.",
-                color = discreteTextColor,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false,
-                modifier = Modifier.animateContentSize().padding(mediumPadding),
+            XmlTree(
+                flatXmlTree = flatXmlTree,
+                selectedNodeIndex = selectedNodeIndex,
+                activateScroll = activateScroll,
+                upperPaneHeight = upperPaneHeight,
             )
         }
     }
 }
 
 @Composable
-fun LowerPane(
+private fun LowerPane(
     showSelectedNodeProperties: Boolean,
     selectedNodePropertyMap: LinkedHashMap<String, String>,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(largeCornerRadius))
-                .border(
-                    width = paneBorderWidth,
-                    color = paneBorderColor,
-                    shape = RoundedCornerShape(largeCornerRadius),
-                )
-                .background(elevatedBackgroundColor),
+    PaneContainer(
+        showContent = showSelectedNodeProperties,
+        placeholder = "No node selected.",
+        modifier = modifier,
     ) {
-        FadeVisibility(showSelectedNodeProperties) {
-            Column {
-                PaneTitleBar(title = "Node Properties")
-                SelectedNodeProperties(selectedNodePropertyMap = selectedNodePropertyMap)
-            }
-        }
-
-        FadeVisibility(!showSelectedNodeProperties) {
-            Text(
-                text = "No node selected.",
-                color = discreteTextColor,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false,
-                modifier = Modifier.animateContentSize().padding(mediumPadding),
-            )
+        Column {
+            LowerPaneTitleBar()
+            SelectedNodeProperties(selectedNodePropertyMap)
         }
     }
 }

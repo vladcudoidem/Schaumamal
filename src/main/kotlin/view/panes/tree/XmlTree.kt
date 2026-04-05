@@ -1,15 +1,8 @@
 package view.panes.tree
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.HorizontalScrollbar
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,18 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import java.awt.Cursor
-import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
-import shared.Dimensions.smallPadding
-import view.panes.CustomScrollbarStyle
+import view.panes.ScrollableBox
 import view.panes.XmlTreeLine
 import view.utils.toPx
 
@@ -44,17 +31,17 @@ fun XmlTree(
 ) {
     val density = LocalDensity.current.density
 
-    val upperPaneLazyListState = rememberLazyListState()
-    val upperPaneHorizontalScrollState = rememberScrollState(initial = 0)
+    val lazyListState = rememberLazyListState()
+    val horizontalScrollState = rememberScrollState(initial = 0)
 
     LaunchedEffect(selectedNodeIndex) {
-        val visibleItemsInfo = upperPaneLazyListState.layoutInfo.visibleItemsInfo
+        val visibleItemsInfo = lazyListState.layoutInfo.visibleItemsInfo
         val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
         val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
 
         if (activateScroll && selectedNodeIndex !in visibleItemIndexes) {
             // Scroll to the selected node in the upper right box.
-            upperPaneLazyListState.animateScrollToItem(
+            lazyListState.animateScrollToItem(
                 index = selectedNodeIndex,
                 // Divide the upper pane height by 2 so that the selected node ends up in the center
                 // of the Box.
@@ -64,18 +51,19 @@ fun XmlTree(
         }
     }
 
-    val verticalScrollbarAdapter = rememberScrollbarAdapter(upperPaneLazyListState)
-    val horizontalScrollbarAdapter = rememberScrollbarAdapter(upperPaneHorizontalScrollState)
-
     val visibleTreeLines =
         flatXmlTree.filter {
             val isVisible: Boolean by it.isVisible.collectAsState(true)
             isVisible
         }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    ScrollableBox(
+        verticalScrollbarAdapter = rememberScrollbarAdapter(lazyListState),
+        horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScrollState),
+        modifier = modifier,
+    ) {
         LazyColumn(
-            state = upperPaneLazyListState,
+            state = lazyListState,
             contentPadding =
                 PaddingValues(
                     top = mediumPadding,
@@ -83,30 +71,9 @@ fun XmlTree(
                     start = mediumPadding,
                     end = mediumPadding * 4 + scrollbarThickness,
                 ),
-            modifier =
-                Modifier.horizontalScroll(upperPaneHorizontalScrollState).animateContentSize(),
+            modifier = Modifier.horizontalScroll(horizontalScrollState).animateContentSize(),
         ) {
             items(visibleTreeLines) { line -> XmlTreeLine(line = line) }
         }
-
-        VerticalScrollbar(
-            adapter = verticalScrollbarAdapter,
-            style = CustomScrollbarStyle,
-            modifier =
-                Modifier.align(Alignment.CenterEnd)
-                    .fillMaxHeight()
-                    .padding(top = smallPadding, end = smallPadding, bottom = largePadding)
-                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
-        )
-
-        HorizontalScrollbar(
-            adapter = horizontalScrollbarAdapter,
-            style = CustomScrollbarStyle,
-            modifier =
-                Modifier.align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(start = largePadding, bottom = smallPadding, end = largePadding)
-                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
-        )
     }
 }

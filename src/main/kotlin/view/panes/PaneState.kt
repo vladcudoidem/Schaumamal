@@ -88,8 +88,6 @@ class PaneState(
         treeLineToDeselect?.deselect()
     }
 
-    // Todo: add buttons for: collapse all, expand all, expand and scroll to selected node
-
     // Todo: use
     fun collapseAllLines() {
         val allLines = flatXmlTreeMap.value.values

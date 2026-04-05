@@ -2,6 +2,8 @@ package shared
 
 import androidx.compose.ui.unit.dp
 
+// Todo: take stuff out of Colors and Dimensions that should not be there
+
 @Suppress("unused", "MayBeConstant")
 object Dimensions {
 
@@ -34,6 +36,7 @@ object Dimensions {
 
     val minimumPaneDimension = 100.dp
     val paneBorderWidth = 1.dp
+    val defaultTopBarContentHeight = 38.dp
 
     // Wedge
     val wedgeSmallDimension = 4.dp
