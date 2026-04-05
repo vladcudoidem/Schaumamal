@@ -9,24 +9,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlin.collections.forEach
-import shared.Colors.activeElementColor
-import shared.Colors.primaryElementColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.smallPadding
 import view.FadeVisibility
+import view.Spacer
 import view.panes.topbar.PaneTopBarActionButton
+import view.panes.topbar.StatefulTopBarIconButton
 import view.panes.topbar.TopBarContainer
 import view.panes.topbar.TopBarIconButton
 import view.panes.topbar.topBarButtonSize
@@ -34,7 +30,7 @@ import view.panes.topbar.topBarButtonSize
 @Composable
 fun UpperPaneTitleBar(
     actions: List<PaneTopBarActionButton>,
-    isSearchMode: Boolean,
+    isSearchModeActive: Boolean,
     onSearchClick: () -> Unit,
 ) {
     val totalButtonCount = actions.size + 1 // one more for search button
@@ -75,8 +71,7 @@ fun UpperPaneTitleBar(
 
                 Spacer(Modifier.weight(1f))
 
-                // Todo: create Width and Height composables
-                Spacer(modifier = Modifier.width(smallPadding + mediumPadding))
+                Spacer(width = smallPadding + mediumPadding)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(smallPadding)) {
                     actions.forEach { action ->
@@ -86,24 +81,14 @@ fun UpperPaneTitleBar(
                         )
                     }
 
-                    val searchButtonColors =
-                        ButtonDefaults.buttonColors(
-                            contentColor =
-                                if (!isSearchMode) {
-                                    primaryElementColor
-                                } else {
-                                    activeElementColor
-                                },
-                            backgroundColor = Color.Transparent,
-                        )
-                    TopBarIconButton(
+                    StatefulTopBarIconButton(
                         iconResource = "icons/search.svg",
+                        isActive = isSearchModeActive,
                         onClick = onSearchClick,
-                        buttonColors = searchButtonColors,
                     )
                 }
 
-                Spacer(modifier = Modifier.width(smallPadding + mediumPadding))
+                Spacer(width = smallPadding + mediumPadding)
             }
         }
     }

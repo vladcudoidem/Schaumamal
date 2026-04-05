@@ -15,7 +15,7 @@ import view.panes.topbar.PaneTopBarActionButton
 
 @Composable
 fun UpperPaneTopBars(
-    actions: List<PaneTopBarActionButton>,
+    topBarActions: List<PaneTopBarActionButton>,
     onSearch: (String) -> Unit,
     onSearchNext: () -> Unit,
     onSearchPrevious: () -> Unit,
@@ -23,26 +23,26 @@ fun UpperPaneTopBars(
     totalSearchResultCount: Int,
     modifier: Modifier = Modifier,
 ) {
-    var isSearchMode by remember { mutableStateOf(false) }
+    var isSearchModeActive by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxWidth()) {
         UpperPaneTitleBar(
-            actions = actions,
-            isSearchMode = isSearchMode,
+            actions = topBarActions,
+            isSearchModeActive = isSearchModeActive,
             onSearchClick = {
-                if (isSearchMode) {
-                    isSearchMode = false
+                if (isSearchModeActive) {
+                    isSearchModeActive = false
                     searchQuery = ""
                     onSearch("")
                 } else {
-                    isSearchMode = true
+                    isSearchModeActive = true
                 }
             },
         )
 
         AnimatedVisibility(
-            visible = isSearchMode,
+            visible = isSearchModeActive,
             enter = expandVertically(),
             exit = shrinkVertically(),
         ) {

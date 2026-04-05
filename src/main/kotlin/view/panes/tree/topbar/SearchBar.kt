@@ -2,10 +2,9 @@ package view.panes.tree.topbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,8 +34,11 @@ import androidx.compose.ui.unit.min
 import shared.Colors.discreteTextColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.largeCornerRadius
+import shared.Dimensions.largePadding
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.smallPadding
+import view.Spacer
+import view.panes.topbar.StatefulTopBarIconButton
 import view.panes.topbar.TopBarContainer
 import view.panes.topbar.TopBarIconButton
 import view.utils.toDp
@@ -44,7 +46,7 @@ import view.utils.toDp
 // Todo: fix stutter when resizing search bar
 
 // This approximation depends on the UI elements that are used and might break often.
-private val widthOfOtherSearchBarElements = 200.dp
+private val widthOfOtherSearchBarElements = 245.dp
 
 @Composable
 fun SearchBar(
@@ -72,10 +74,8 @@ fun SearchBar(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(smallPadding),
                 modifier =
                     Modifier.fillMaxSize()
-                        .padding(start = smallPadding, end = smallPadding + mediumPadding)
                         .then(
                             if (searchBarLayoutState.shouldScroll) {
                                 Modifier.horizontalScroll(rememberScrollState())
@@ -84,9 +84,10 @@ fun SearchBar(
                             }
                         ),
             ) {
-                val searchFieldBackgroundColor = primaryTextColor.copy(alpha = 0.07f)
+                Spacer(width = smallPadding)
 
-                BoxWithConstraints(
+                val searchFieldBackgroundColor = primaryTextColor.copy(alpha = 0.07f)
+                Box(
                     contentAlignment = Alignment.CenterStart,
                     modifier =
                         Modifier.width(searchBarLayoutState.inputFieldWidth)
@@ -114,7 +115,7 @@ fun SearchBar(
                     )
                 }
 
-                Spacer(Modifier.width(mediumPadding))
+                Spacer(width = largePadding)
 
                 if (totalResults > 0) {
                     Text(
@@ -126,13 +127,19 @@ fun SearchBar(
                     Text(text = "No results", color = discreteTextColor, softWrap = false)
                 }
 
-                Row {
-                    TopBarIconButton(iconResource = "icons/long_arrow_up.svg", onClick = onNext)
-                    TopBarIconButton(
-                        iconResource = "icons/long_arrow_down.svg",
-                        onClick = onPrevious,
-                    )
-                }
+                Spacer(width = mediumPadding)
+
+                TopBarIconButton(iconResource = "icons/long_arrow_up.svg", onClick = onNext)
+                TopBarIconButton(iconResource = "icons/long_arrow_down.svg", onClick = onPrevious)
+
+                Spacer(width = smallPadding)
+
+                var isImageSearchActive by remember { mutableStateOf(true) }
+                StatefulTopBarIconButton(
+                    iconResource = "icons/image_search.svg",
+                    isActive = isImageSearchActive,
+                    onClick = { isImageSearchActive = !isImageSearchActive },
+                )
             }
         }
     }

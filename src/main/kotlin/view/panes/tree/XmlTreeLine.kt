@@ -6,12 +6,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -35,6 +33,7 @@ import shared.Colors.primaryTextColor
 import shared.Dimensions.smallCornerRadius
 import shared.Dimensions.smallPadding
 import shared.Dimensions.startPaddingPerDepthLevel
+import view.Spacer
 import view.panes.XmlTreeLine
 
 @Composable
@@ -53,7 +52,7 @@ fun XmlTreeLine(line: XmlTreeLine, modifier: Modifier = Modifier) {
     val lineHeight = 27.dp
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        Spacer(modifier = Modifier.width(startPaddingPerDepthLevel * line.depth))
+        Spacer(width = startPaddingPerDepthLevel * line.depth)
 
         val arrowColor: Color
         if (isArrowEnabled) {

@@ -16,6 +16,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import java.awt.Cursor
+import shared.Colors.activeElementColor
 import shared.Colors.disabledPrimaryElementColor
 import shared.Colors.primaryElementColor
 import shared.Dimensions.defaultTopBarContentHeight
@@ -59,4 +60,32 @@ fun TopBarIconButton(
             modifier = Modifier.fillMaxSize(0.55f),
         )
     }
+}
+
+@Composable
+fun StatefulTopBarIconButton(
+    iconResource: String,
+    onClick: () -> Unit,
+    isActive: Boolean = false,
+    enabled: Boolean = true,
+) {
+    val buttonColors =
+        ButtonDefaults.buttonColors(
+            backgroundColor = Color.Transparent,
+            contentColor =
+                if (isActive) {
+                    activeElementColor
+                } else {
+                    primaryElementColor
+                },
+            disabledBackgroundColor = Color.Transparent,
+            disabledContentColor = disabledPrimaryElementColor,
+        )
+
+    TopBarIconButton(
+        iconResource = iconResource,
+        onClick = onClick,
+        enabled = enabled,
+        buttonColors = buttonColors,
+    )
 }

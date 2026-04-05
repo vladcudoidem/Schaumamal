@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
+import model.parser.dataClasses.WindowNode
 import view.utils.getFlatXmlTreeMap
 import view.utils.propertyMap
 
@@ -88,13 +89,21 @@ class PaneState(
         treeLineToDeselect?.deselect()
     }
 
-    // Todo: use
-    fun collapseAllLines() {
-        val allLines = flatXmlTreeMap.value.values
-        allLines.forEach { it.collapse() }
+    fun collapseAllLines(excludeDisplayNodes: Boolean = true) {
+        val lines =
+            flatXmlTreeMap.value
+                .filter {
+                    if (excludeDisplayNodes) {
+                        it.key is GenericNode || it.key is WindowNode
+                    } else {
+                        true
+                    }
+                }
+                .values
+
+        lines.forEach { it.collapse() }
     }
 
-    // Todo: use
     fun expandAllLines() {
         val allLines = flatXmlTreeMap.value.values
         allLines.forEach { it.expand() }

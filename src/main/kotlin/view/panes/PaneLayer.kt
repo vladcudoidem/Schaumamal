@@ -38,6 +38,20 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
     val paneWidth by uiLayoutState.paneWidth.collectAsState()
     val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
 
+    val topBarActions = remember {
+        listOf(
+            PaneTopBarActionButton(iconResource = "icons/locate.svg", onClick = {}),
+            PaneTopBarActionButton(
+                iconResource = "icons/collapse_all.svg",
+                onClick = { paneState.collapseAllLines() },
+            ),
+            PaneTopBarActionButton(
+                iconResource = "icons/expand_all.svg",
+                onClick = { paneState.expandAllLines() },
+            ),
+        )
+    }
+
     // As an exception we are not passing the modifier parameter to the outer composable, as we are
     // using the o. c.
     // (the BoxWithConstraints) just for background UI handling and not for any user-facing
@@ -66,6 +80,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                     selectedNodeIndex = selectedNodeIndex,
                     activateScroll = activateScroll,
                     upperPaneHeight = upperPaneHeight,
+                    topBarActions = topBarActions,
                     modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
                 )
 
@@ -91,19 +106,13 @@ private fun UpperPane(
     selectedNodeIndex: Int,
     activateScroll: Boolean,
     upperPaneHeight: Dp,
+    topBarActions: List<PaneTopBarActionButton>,
     modifier: Modifier = Modifier,
 ) {
     PaneContainer(showContent = showXmlTree, placeholder = "Perform a dump.", modifier = modifier) {
         Column {
-            val toolbarActions = remember {
-                listOf(
-                    PaneTopBarActionButton(iconResource = "icons/locate.svg", onClick = {}),
-                    PaneTopBarActionButton(iconResource = "icons/collapse_all.svg", onClick = {}),
-                    PaneTopBarActionButton(iconResource = "icons/expand_all.svg", onClick = {}),
-                )
-            }
             UpperPaneTopBars(
-                actions = toolbarActions,
+                topBarActions = topBarActions,
                 onSearch = {},
                 onSearchNext = {},
                 onSearchPrevious = {},
