@@ -19,8 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlin.collections.forEach
-import shared.Colors.discreteTextColor
-import shared.Colors.elevatedBackgroundColor
+import shared.Colors.activeElementColor
 import shared.Colors.primaryElementColor
 import shared.Colors.primaryTextColor
 import shared.Dimensions.mediumPadding
@@ -86,17 +85,15 @@ fun UpperPaneTitleBar(
                     }
 
                     val searchButtonColors =
-                        if (!isSearchMode) {
-                            ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = primaryElementColor,
-                            )
-                        } else {
-                            ButtonDefaults.buttonColors(
-                                backgroundColor = discreteTextColor,
-                                contentColor = elevatedBackgroundColor,
-                            )
-                        }
+                        ButtonDefaults.buttonColors(
+                            contentColor =
+                                if (!isSearchMode) {
+                                    primaryElementColor
+                                } else {
+                                    activeElementColor
+                                },
+                            backgroundColor = Color.Transparent,
+                        )
                     TopBarIconButton(
                         iconResource = "icons/search.svg",
                         onClick = onSearchClick,
