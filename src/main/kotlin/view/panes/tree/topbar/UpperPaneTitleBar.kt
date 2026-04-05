@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -44,7 +45,7 @@ fun UpperPaneTitleBar(
             val titleWidth = 50.dp
             // We need a tolerance to force the title to disappear a little sooner than absolutely
             // required.
-            val tolerance = 30.dp
+            val tolerance = 20.dp
 
             // The following logic heavily relies on the UI implementation and might break often.
             val showTitle =
@@ -56,10 +57,7 @@ fun UpperPaneTitleBar(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier =
-                    Modifier.fillMaxSize()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = smallPadding + mediumPadding),
+                modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState()),
             ) {
                 FadeVisibility(
                     visible = showTitle,
@@ -71,10 +69,14 @@ fun UpperPaneTitleBar(
                         color = primaryTextColor,
                         fontWeight = FontWeight.Bold,
                         softWrap = false,
+                        modifier = Modifier.padding(start = smallPadding + mediumPadding),
                     )
                 }
 
                 Spacer(Modifier.weight(1f))
+
+                // Todo: create Width and Height composables
+                Spacer(modifier = Modifier.width(smallPadding + mediumPadding))
 
                 Row(horizontalArrangement = Arrangement.spacedBy(smallPadding)) {
                     actions.forEach { action ->
@@ -100,6 +102,8 @@ fun UpperPaneTitleBar(
                         buttonColors = searchButtonColors,
                     )
                 }
+
+                Spacer(modifier = Modifier.width(smallPadding + mediumPadding))
             }
         }
     }
