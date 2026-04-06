@@ -64,7 +64,10 @@ class PaneState(
         merge(automaticTreeScrollEvents, manualTreeScrollEvents).combineTransform(
             isTreeScrollAllowed
         ) { scrollEvent, isScrollAllowed ->
-            if (isScrollAllowed) {
+            // Should not be the case, but better safe than sorry.
+            val isIndexValid = scrollEvent.targetIndex != -1
+
+            if (isScrollAllowed && isIndexValid) {
                 emit(scrollEvent)
             }
         }

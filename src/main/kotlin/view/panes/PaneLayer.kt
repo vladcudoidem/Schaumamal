@@ -66,6 +66,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 
             val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
             val targetIndex = scrollEvent.targetIndex
+            val isIndexValid = targetIndex != -1
             val isScrollNecessary = targetIndex !in visibleItemIndexes
 
             val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
@@ -74,7 +75,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
             val scrollOffset =
                 -upperPaneHeight.toPx(density).div(2).minus(selectedNodeHeightPx).toInt()
 
-            if (isScrollNecessary) {
+            if (isScrollNecessary && isIndexValid) {
                 treeListState.animateScrollToItem(index = targetIndex, scrollOffset = scrollOffset)
             }
         }
