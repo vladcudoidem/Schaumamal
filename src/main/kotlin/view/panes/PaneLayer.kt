@@ -15,9 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import shared.Dimensions.mediumPadding
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
@@ -58,6 +63,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
     val treeListState = rememberLazyListState()
 
     val density = LocalDensity.current.density
+    var treeListViewportHeight by remember { mutableStateOf(0.dp) }
 
     // Listen for scroll events.
     LaunchedEffect(Unit) {
@@ -69,14 +75,25 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
             val isIndexValid = targetIndex != -1
             val isScrollNecessary = targetIndex !in visibleItemIndexes
 
-            val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
-            // Divide the upper pane height by 2 so that the selected node ends up in the center
-            // of the Box.
+            // Todo: this is not the only place where I am creating loose dependencies for UI stuff.
+            //  Create some sort of system for this. It is very easy to change stuff and break it.
+
+            val treeListViewportHeightPx = treeListViewportHeight.toPx(density)
+            // We need this to offset the scrolling by a little so the element ends up in the middle
+            // of the viewport.
+            val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size?.toFloat() ?: 0f
+            // Seems like this has to be considered, since list padding values always offset
+            // scrolling.
+            val topTreeListPaddingPx = mediumPadding.toPx(density)
+
             val scrollOffset =
-                -upperPaneHeight.toPx(density).div(2).minus(selectedNodeHeightPx).toInt()
+                (topTreeListPaddingPx + selectedNodeHeightPx / 2) - treeListViewportHeightPx / 2
 
             if (isScrollNecessary && isIndexValid) {
-                treeListState.animateScrollToItem(index = targetIndex, scrollOffset = scrollOffset)
+                treeListState.animateScrollToItem(
+                    index = targetIndex,
+                    scrollOffset = scrollOffset.toInt(),
+                )
             }
         }
     }
@@ -108,6 +125,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                     flatXmlTree = flatXmlTree,
                     treeListState = treeListState,
                     topBarActions = topBarActions,
+                    onTreeListViewportHeightChanged = { treeListViewportHeight = it },
                     modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
                 )
 
@@ -132,6 +150,7 @@ private fun UpperPane(
     flatXmlTree: List<XmlTreeLine>,
     treeListState: LazyListState,
     topBarActions: List<PaneTopBarActionButton>,
+    onTreeListViewportHeightChanged: (Dp) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PaneContainer(showContent = showXmlTree, placeholder = "Perform a dump.", modifier = modifier) {
@@ -145,7 +164,11 @@ private fun UpperPane(
                 totalSearchResultCount = 0,
             )
 
-            XmlTree(flatXmlTree = flatXmlTree, treeListState = treeListState)
+            XmlTree(
+                flatXmlTree = flatXmlTree,
+                treeListState = treeListState,
+                onTreeListViewportHeightChanged = onTreeListViewportHeightChanged,
+            )
         }
     }
 }

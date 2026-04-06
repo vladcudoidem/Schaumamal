@@ -13,7 +13,7 @@ data class XmlTreeLine(
     val depth: Int,
     val onClickText: () -> Unit,
     val parentLine: XmlTreeLine? = null,
-    val hasChildren: Boolean = true,
+    val isCollapsible: Boolean = true,
 ) {
     private val _isCollapsed: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isCollapsed: StateFlow<Boolean> = _isCollapsed.asStateFlow()

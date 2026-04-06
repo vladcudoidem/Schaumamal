@@ -30,7 +30,8 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = {},
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                // It makes no sense to collapse display node.
+                                isCollapsible = false,
                             )
 
                     is WindowNode ->
@@ -40,7 +41,7 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = {},
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                isCollapsible = hasChildren,
                             )
 
                     is GenericNode ->
@@ -50,7 +51,7 @@ fun DisplayNode.getFlatXmlTreeMap(
                                 depth = depth,
                                 onClickText = { onNodeTreeLineClicked(currentNode) },
                                 parentLine = parentProduct?.second,
-                                hasChildren = hasChildren,
+                                isCollapsible = hasChildren,
                             )
 
                     else -> error("XmlTreeLine template not specified for this XmlElement subtype.")

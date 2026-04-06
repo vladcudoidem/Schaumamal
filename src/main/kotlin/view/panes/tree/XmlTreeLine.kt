@@ -44,7 +44,7 @@ fun XmlTreeLine(line: XmlTreeLine, modifier: Modifier = Modifier) {
     val arrowInteractionSource = remember { MutableInteractionSource() }
     val arrowIndication = ripple(color = accentColor)
 
-    val isArrowEnabled = line.hasChildren
+    val isArrowEnabled = line.isCollapsible
 
     val isCollapsed by line.isCollapsed.collectAsState()
     val isSelected by line.isSelected.collectAsState()

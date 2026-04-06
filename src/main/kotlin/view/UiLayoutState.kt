@@ -29,6 +29,8 @@ import shared.Values.scrollZoomFactor
 import view.utils.toDp
 import view.utils.toPx
 
+// Todo: refactor this. Some stuff can be simplified.
+
 class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
 
     // panesHeightConstraint and panesWidthConstraint are, under the current implementation, also
