@@ -3,6 +3,7 @@ package view.panes.tree
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -45,7 +46,8 @@ fun XmlTree(
                     start = mediumPadding,
                     end = mediumPadding * 4 + scrollbarThickness,
                 ),
-            modifier = Modifier.horizontalScroll(horizontalScrollState).animateContentSize(),
+            modifier =
+                Modifier.fillMaxSize().horizontalScroll(horizontalScrollState).animateContentSize(),
         ) {
             items(visibleTreeLines) { line -> XmlTreeLine(line = line) }
         }
