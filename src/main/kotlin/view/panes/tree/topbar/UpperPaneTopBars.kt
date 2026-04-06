@@ -28,7 +28,7 @@ fun UpperPaneTopBars(
 
     Column(modifier = modifier.fillMaxWidth()) {
         UpperPaneTitleBar(
-            actions = topBarActions,
+            topBarActions = topBarActions,
             isSearchModeActive = isSearchModeActive,
             onSearchClick = {
                 if (isSearchModeActive) {

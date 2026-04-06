@@ -58,7 +58,7 @@ class PaneState(
 
     private val automaticTreeScrollEvents =
         selectedNodeIndex.map { TreeScrollEvent(targetIndex = it) }
-    private val manualTreeScrollEvents = MutableSharedFlow<TreeScrollEvent>()
+    private val manualTreeScrollEvents = MutableSharedFlow<TreeScrollEvent>(extraBufferCapacity = 1)
 
     val combinedTreeScrollEvents =
         merge(automaticTreeScrollEvents, manualTreeScrollEvents).combineTransform(
@@ -74,6 +74,8 @@ class PaneState(
             showXmlTree && isNodeSelected
         }
     val selectedNodePropertyMap = selectedNode.map { it.propertyMap }
+
+    val isExpandAndScrollButtonEnabled = isNodeSelected
 
     init {
         collectSelectedNodes()
@@ -133,12 +135,12 @@ class PaneState(
         allLines.forEach { it.expand() }
     }
 
-    // Todo: use
     fun expandAndScrollToSelectedNode() {
         val selectedLine = flatXmlTreeMap.value[selectedNode.value]
         selectedLine?.expandUntilVisible()
 
-        // Todo: add scroll logic
+        val targetIndex = selectedNodeIndex.value
+        manualTreeScrollEvents.tryEmit(TreeScrollEvent(targetIndex))
     }
 }
 

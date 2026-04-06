@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,11 +31,11 @@ import view.panes.topbar.topBarButtonSize
 
 @Composable
 fun UpperPaneTitleBar(
-    actions: List<PaneTopBarActionButton>,
+    topBarActions: List<PaneTopBarActionButton>,
     isSearchModeActive: Boolean,
     onSearchClick: () -> Unit,
 ) {
-    val totalButtonCount = actions.size + 1 // one more for search button
+    val totalButtonCount = topBarActions.size + 1 // one more for search button
 
     TopBarContainer(isFirstTopBar = true) {
         BoxWithConstraints {
@@ -74,10 +76,13 @@ fun UpperPaneTitleBar(
                 Spacer(width = smallPadding + mediumPadding)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(smallPadding)) {
-                    actions.forEach { action ->
+                    topBarActions.forEach { action ->
+                        val isEnabled by action.enabled.collectAsState()
+
                         TopBarIconButton(
                             iconResource = action.iconResource,
                             onClick = action.onClick,
+                            enabled = isEnabled,
                         )
                     }
 

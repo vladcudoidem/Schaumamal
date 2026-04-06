@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -39,9 +38,13 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
     val paneWidth by uiLayoutState.paneWidth.collectAsState()
     val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
 
-    val topBarActions = remember {
+    val topBarActions =
         listOf(
-            PaneTopBarActionButton(iconResource = "icons/locate.svg", onClick = {}),
+            PaneTopBarActionButton(
+                iconResource = "icons/locate.svg",
+                onClick = { paneState.expandAndScrollToSelectedNode() },
+                enabled = paneState.isExpandAndScrollButtonEnabled,
+            ),
             PaneTopBarActionButton(
                 iconResource = "icons/collapse_all.svg",
                 onClick = { paneState.collapseAllLines() },
@@ -51,10 +54,12 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                 onClick = { paneState.expandAllLines() },
             ),
         )
-    }
+
+    val treeListState = rememberLazyListState()
 
     val density = LocalDensity.current.density
-    val treeListState = rememberLazyListState()
+
+    // Listen for scroll events.
     LaunchedEffect(Unit) {
         paneState.combinedTreeScrollEvents.collect { scrollEvent ->
             val visibleItemsInfo = treeListState.layoutInfo.visibleItemsInfo
