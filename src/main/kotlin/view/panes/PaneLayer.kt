@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalDensity
 import shared.Dimensions.mediumPadding
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
@@ -24,13 +26,12 @@ import view.panes.properties.topbar.LowerPaneTitleBar
 import view.panes.topbar.PaneTopBarActionButton
 import view.panes.tree.XmlTree
 import view.panes.tree.topbar.UpperPaneTopBars
+import view.utils.toPx
 
 @Composable
 fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modifier = Modifier) {
     val showXmlTree by paneState.showXmlTree.collectAsState(initial = false)
     val flatXmlTree by paneState.flatXmlTree.collectAsState(initial = emptyList())
-    val selectedNodeIndex by paneState.selectedNodeIndex.collectAsState(initial = 0)
-    val activateScroll by paneState.activateScroll.collectAsState(initial = false)
     val showSelectedNodeProperties by
         paneState.showSelectedNodeProperties.collectAsState(initial = false)
     val selectedNodePropertyMap by
@@ -50,6 +51,28 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                 onClick = { paneState.expandAllLines() },
             ),
         )
+    }
+
+    val density = LocalDensity.current.density
+    val treeListState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        paneState.combinedTreeScrollEvents.collect { scrollEvent ->
+            val visibleItemsInfo = treeListState.layoutInfo.visibleItemsInfo
+
+            val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
+            val targetIndex = scrollEvent.targetIndex
+            val isScrollNecessary = targetIndex !in visibleItemIndexes
+
+            val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
+            // Divide the upper pane height by 2 so that the selected node ends up in the center
+            // of the Box.
+            val scrollOffset =
+                -upperPaneHeight.toPx(density).div(2).minus(selectedNodeHeightPx).toInt()
+
+            if (isScrollNecessary) {
+                treeListState.animateScrollToItem(index = targetIndex, scrollOffset = scrollOffset)
+            }
+        }
     }
 
     // As an exception we are not passing the modifier parameter to the outer composable, as we are
@@ -77,9 +100,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                 UpperPane(
                     showXmlTree = showXmlTree,
                     flatXmlTree = flatXmlTree,
-                    selectedNodeIndex = selectedNodeIndex,
-                    activateScroll = activateScroll,
-                    upperPaneHeight = upperPaneHeight,
+                    treeListState = treeListState,
                     topBarActions = topBarActions,
                     modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
                 )
@@ -103,9 +124,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 private fun UpperPane(
     showXmlTree: Boolean,
     flatXmlTree: List<XmlTreeLine>,
-    selectedNodeIndex: Int,
-    activateScroll: Boolean,
-    upperPaneHeight: Dp,
+    treeListState: LazyListState,
     topBarActions: List<PaneTopBarActionButton>,
     modifier: Modifier = Modifier,
 ) {
@@ -120,12 +139,7 @@ private fun UpperPane(
                 totalSearchResultCount = 0,
             )
 
-            XmlTree(
-                flatXmlTree = flatXmlTree,
-                selectedNodeIndex = selectedNodeIndex,
-                activateScroll = activateScroll,
-                upperPaneHeight = upperPaneHeight,
-            )
+            XmlTree(flatXmlTree = flatXmlTree, treeListState = treeListState)
         }
     }
 }

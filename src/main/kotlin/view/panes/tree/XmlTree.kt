@@ -4,52 +4,26 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import shared.Dimensions.mediumPadding
 import shared.Dimensions.scrollbarThickness
 import view.panes.ScrollableBox
 import view.panes.XmlTreeLine
-import view.utils.toPx
 
 @Composable
 fun XmlTree(
     flatXmlTree: List<XmlTreeLine>,
-    selectedNodeIndex: Int,
-    activateScroll: Boolean,
-    upperPaneHeight: Dp,
+    treeListState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current.density
-
-    val lazyListState = rememberLazyListState()
     val horizontalScrollState = rememberScrollState(initial = 0)
-
-    LaunchedEffect(selectedNodeIndex) {
-        val visibleItemsInfo = lazyListState.layoutInfo.visibleItemsInfo
-        val visibleItemIndexes = visibleItemsInfo.map { it.index }.drop(1).dropLast(1)
-        val selectedNodeHeightPx = visibleItemsInfo.firstOrNull()?.size ?: 0
-
-        if (activateScroll && selectedNodeIndex !in visibleItemIndexes) {
-            // Scroll to the selected node in the upper right box.
-            lazyListState.animateScrollToItem(
-                index = selectedNodeIndex,
-                // Divide the upper pane height by 2 so that the selected node ends up in the center
-                // of the Box.
-                scrollOffset =
-                    -upperPaneHeight.toPx(density).div(2).minus(selectedNodeHeightPx).toInt(),
-            )
-        }
-    }
 
     val visibleTreeLines =
         flatXmlTree.filter {
@@ -58,12 +32,12 @@ fun XmlTree(
         }
 
     ScrollableBox(
-        verticalScrollbarAdapter = rememberScrollbarAdapter(lazyListState),
+        verticalScrollbarAdapter = rememberScrollbarAdapter(treeListState),
         horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScrollState),
         modifier = modifier,
     ) {
         LazyColumn(
-            state = lazyListState,
+            state = treeListState,
             contentPadding =
                 PaddingValues(
                     top = mediumPadding,

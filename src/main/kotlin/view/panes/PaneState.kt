@@ -2,10 +2,13 @@ package view.panes
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -37,13 +40,33 @@ class PaneState(
 
     val flatXmlTree = flatXmlTreeMap.map { it.values.toList() }
 
-    val selectedNodeIndex =
+    private val selectedNodeIndex =
         combine(flatXmlTreeMap, selectedNode) { flatXmlTreeMap, selectedNode ->
-            flatXmlTreeMap.keys.indexOf(selectedNode)
-        }
-    val activateScroll =
+                flatXmlTreeMap.keys.indexOf(selectedNode)
+            }
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.Eagerly,
+                // Todo: this default is ok currently because we only scroll when we are allowed
+                initialValue = 0,
+            )
+    // Todo: remove this and use nullable states or something...
+    private val isTreeScrollAllowed =
         combine(inspectorState, isNodeSelected) { inspectorState, isNodeSelected ->
             inspectorState == InspectorState.POPULATED && isNodeSelected
+        }
+
+    private val automaticTreeScrollEvents =
+        selectedNodeIndex.map { TreeScrollEvent(targetIndex = it) }
+    private val manualTreeScrollEvents = MutableSharedFlow<TreeScrollEvent>()
+
+    val combinedTreeScrollEvents =
+        merge(automaticTreeScrollEvents, manualTreeScrollEvents).combineTransform(
+            isTreeScrollAllowed
+        ) { scrollEvent, isScrollAllowed ->
+            if (isScrollAllowed) {
+                emit(scrollEvent)
+            }
         }
 
     val showSelectedNodeProperties =
@@ -71,13 +94,14 @@ class PaneState(
         }
     }
 
+    // Select and expands to the new selected node and deselect the old one.
     private fun propagateNodeSelection(selectedNodes: SelectedNodes) {
         val treeLineToSelect = flatXmlTreeMap.value[selectedNodes.current]
 
         val lastSelectedNode = selectedNodes.last
         val treeLineToDeselect =
             if (lastSelectedNode != null) {
-                flatXmlTreeMap.value.get(selectedNodes.last)
+                flatXmlTreeMap.value[selectedNodes.last]
             } else {
                 null
             }
@@ -110,10 +134,14 @@ class PaneState(
     }
 
     // Todo: use
-    fun expandToSelectedNode() {
+    fun expandAndScrollToSelectedNode() {
         val selectedLine = flatXmlTreeMap.value[selectedNode.value]
         selectedLine?.expandUntilVisible()
+
+        // Todo: add scroll logic
     }
 }
 
 private data class SelectedNodes(val current: GenericNode, val last: GenericNode?)
+
+data class TreeScrollEvent(val targetIndex: Int)
