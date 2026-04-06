@@ -1,28 +1,28 @@
 package view.utils
 
-import model.parser.PropertyName
+import model.parser.PropertyInfo
 import model.parser.dataClasses.GenericNode
 
 val GenericNode.propertyMap
     get() =
         linkedMapOf(
-                PropertyName.Node.INDEX to index.toString(),
-                PropertyName.Node.TEXT to text,
-                PropertyName.Node.RESOURCE_ID to resourceId,
-                PropertyName.Node.CLASS to className,
-                PropertyName.Node.PACKAGE to packageName,
-                PropertyName.Node.CONTENT_DESCRIPTION to contentDesc,
-                PropertyName.Node.CHECKABLE to checkable.toString(),
-                PropertyName.Node.CHECKED to checked.toString(),
-                PropertyName.Node.CLICKABLE to clickable.toString(),
-                PropertyName.Node.ENABLED to enabled.toString(),
-                PropertyName.Node.FOCUSABLE to focusable.toString(),
-                PropertyName.Node.FOCUSED to focused.toString(),
-                PropertyName.Node.SCROLLABLE to scrollable.toString(),
-                PropertyName.Node.LONG_CLICKABLE to longClickable.toString(),
-                PropertyName.Node.PASSWORD to password.toString(),
-                PropertyName.Node.SELECTED to selected.toString(),
-                PropertyName.Node.BOUNDS to bounds,
+                PropertyInfo.Node.Index.displayName to index.toString(),
+                PropertyInfo.Node.Text.displayName to text,
+                PropertyInfo.Node.ResourceId.displayName to resourceId,
+                PropertyInfo.Node.Class.displayName to className,
+                PropertyInfo.Node.Package.displayName to packageName,
+                PropertyInfo.Node.ContentDescription.displayName to contentDesc,
+                PropertyInfo.Node.Checkable.displayName to checkable.toString(),
+                PropertyInfo.Node.Checked.displayName to checked.toString(),
+                PropertyInfo.Node.Clickable.displayName to clickable.toString(),
+                PropertyInfo.Node.Enabled.displayName to enabled.toString(),
+                PropertyInfo.Node.Focusable.displayName to focusable.toString(),
+                PropertyInfo.Node.Focused.displayName to focused.toString(),
+                PropertyInfo.Node.Scrollable.displayName to scrollable.toString(),
+                PropertyInfo.Node.LongClickable.displayName to longClickable.toString(),
+                PropertyInfo.Node.Password.displayName to password.toString(),
+                PropertyInfo.Node.Selected.displayName to selected.toString(),
+                PropertyInfo.Node.Bounds.displayName to bounds,
             )
             .mapValues { (_, value) -> value.ifEmpty { "-" } }
             .toMap(LinkedHashMap())
