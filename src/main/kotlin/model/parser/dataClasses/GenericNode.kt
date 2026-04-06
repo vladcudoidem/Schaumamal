@@ -1,5 +1,8 @@
 package model.parser.dataClasses
 
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
 data class GenericNode(
     val index: Int,
     val text: String,
@@ -20,6 +23,8 @@ data class GenericNode(
     val bounds: String,
     override val children: List<GenericNode>,
 ) : Node {
+    @OptIn(ExperimentalUuidApi::class)
+    override val uuid: Uuid = Uuid.random()
 
     companion object {
         val Empty =
