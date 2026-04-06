@@ -77,6 +77,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 
             // Todo: this is not the only place where I am creating loose dependencies for UI stuff.
             //  Create some sort of system for this. It is very easy to change stuff and break it.
+            //  Search for comments that contain "break".
 
             val treeListViewportHeightPx = treeListViewportHeight.toPx(density)
             // We need this to offset the scrolling by a little so the element ends up in the middle

@@ -34,7 +34,7 @@ object Dimensions {
 
     /* Pane Layer */
 
-    val minimumPaneDimension = 100.dp
+    val minimumPaneDimension = 150.dp
     val paneBorderWidth = 1.dp
     val defaultTopBarContentHeight = 38.dp
 

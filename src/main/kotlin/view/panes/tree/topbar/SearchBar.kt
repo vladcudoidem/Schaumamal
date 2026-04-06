@@ -150,7 +150,7 @@ private fun computeLayoutState(
     requiredInputFieldWidth: Dp,
 ): SearchBarLayoutState {
     val minimumInputFieldWidth = 160.dp
-    val maximumInputFieldWidthForNoInput = 300.dp
+    val maximumInputFieldWidthForNoInput = 380.dp
 
     val isEnoughSpaceForInputField = availableInputFieldWidth > minimumInputFieldWidth
     val isWideEnoughForCurrentInput = requiredInputFieldWidth < maximumInputFieldWidthForNoInput
