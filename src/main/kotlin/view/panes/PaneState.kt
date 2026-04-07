@@ -2,11 +2,15 @@ package view.panes
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
@@ -15,6 +19,7 @@ import kotlinx.coroutines.launch
 import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
+import model.parser.dataClasses.Node
 import view.utils.getFlatXmlTreeMap
 import view.utils.propertyMap
 
@@ -39,16 +44,31 @@ class PaneState(
 
     val flatXmlTree = flatXmlTreeMap.map { it.values.toList() }
 
-    private val selectedNodeIndex =
-        combine(flatXmlTreeMap, selectedNode) { flatXmlTreeMap, selectedNode ->
-                // When calculating the index to scroll to, we only take into account the visible
-                // lines,
-                // and thus only the lines that can be scrolled over/to.
-                val treeMapEntriesWithVisibleLines =
-                    flatXmlTreeMap.filter { it.value.isVisible.value }
-                val selectedNodeIndex = treeMapEntriesWithVisibleLines.keys.indexOf(selectedNode)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val flatVisibleXmlTreeMap: Flow<Map<Node, XmlTreeLine>> =
+        flatXmlTreeMap.flatMapLatest { currentTreeMap ->
+            if (currentTreeMap.isEmpty()) {
+                return@flatMapLatest flowOf(emptyMap())
+            }
 
-                selectedNodeIndex
+            val nodeLinePairs = currentTreeMap.toList()
+            val visibilityStates = nodeLinePairs.map { (_, line) -> line.isVisible }
+
+            combine(visibilityStates) { visibilityStates ->
+                buildMap {
+                    nodeLinePairs.forEachIndexed { index, (node, line) ->
+                        val isVisible = visibilityStates[index]
+                        if (isVisible) {
+                            put(node, line)
+                        }
+                    }
+                }
+            }
+        }
+
+    private val selectedNodeIndex =
+        combine(flatVisibleXmlTreeMap, selectedNode) { flatVisibleXmlTreeMap, selectedNode ->
+                flatVisibleXmlTreeMap.keys.indexOf(selectedNode)
             }
             .stateIn(
                 scope = coroutineScope,
