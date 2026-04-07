@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.IntSize
 import java.awt.Cursor
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.cancel
+import model.parser.dataClasses.Bounds
 import shared.Dimensions.Initial.maximumInitialScreenshotHeight
 import shared.Dimensions.Initial.maximumInitialScreenshotWidth
 import shared.Dimensions.defaultHighlighterStrokeWidth
@@ -41,7 +42,9 @@ import shared.Dimensions.largePadding
 import shared.Values.minimalTouchSlop
 import view.FadeVisibility
 import view.UiLayoutState
+import view.utils.toOffset
 import view.utils.toPx
+import view.utils.toSize
 
 @Composable
 fun ScreenshotLayer(
@@ -52,8 +55,8 @@ fun ScreenshotLayer(
     val showScreenshot by screenshotState.showScreenshot.collectAsState(initial = false)
     val imageBitmap by screenshotState.imageBitmap.collectAsState(initial = ImageBitmap(0, 0))
     val showHighlighter by screenshotState.showHighlighter.collectAsState(initial = false)
-    val selectedNodeDisplayGraphics by
-        screenshotState.selectedNodeDisplayGraphics.collectAsState(initial = Graphics.Unspecified)
+    val selectedNodeDisplayBounds by
+        screenshotState.selectedNodeDisplayBounds.collectAsState(initial = Bounds.Zero)
     val screenshotLayerOffset by uiLayoutState.screenshotLayerOffset.collectAsState()
     val screenshotLayerScale by uiLayoutState.screenshotLayerScale.collectAsState()
 
@@ -97,8 +100,8 @@ fun ScreenshotLayer(
 
             FadeVisibility(showHighlighter) {
                 Highlighter(
-                    offset = selectedNodeDisplayGraphics.offset,
-                    size = selectedNodeDisplayGraphics.size,
+                    offset = selectedNodeDisplayBounds.toOffset(),
+                    size = selectedNodeDisplayBounds.toSize(),
                     strokeWidth = highlighterStrokeWidth,
                 )
             }

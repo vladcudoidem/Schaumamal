@@ -22,7 +22,7 @@ val GenericNode.propertyMap
                 PropertyInfo.Node.LongClickable.displayName to longClickable.toString(),
                 PropertyInfo.Node.Password.displayName to password.toString(),
                 PropertyInfo.Node.Selected.displayName to selected.toString(),
-                PropertyInfo.Node.Bounds.displayName to bounds,
+                PropertyInfo.Node.Bounds.displayName to bounds.displayRepresentation,
             )
             .mapValues { (_, value) -> value.ifEmpty { "-" } }
             .toMap(LinkedHashMap())

@@ -13,10 +13,12 @@ fun DisplayNode.getNodesUnder(
     children.forEach { window ->
         window.children.forEach { rootNode ->
             rootNode.forThisAndDescendants { node ->
-                val (nodeOffset, nodeSize) = node.getGraphics(displayPixelConversionFactor)
+                val displayBounds = node.bounds * displayPixelConversionFactor
 
-                val isWithinWidth = offset.x in nodeOffset.x..(nodeOffset.x + nodeSize.width)
-                val isWithinHeight = offset.y in nodeOffset.y..(nodeOffset.y + nodeSize.height)
+                val isWithinWidth =
+                    offset.x in displayBounds.x..(displayBounds.x + displayBounds.width)
+                val isWithinHeight =
+                    offset.y in displayBounds.y..(displayBounds.y + displayBounds.height)
 
                 if (isWithinWidth && isWithinHeight) {
                     nodes.add(node)

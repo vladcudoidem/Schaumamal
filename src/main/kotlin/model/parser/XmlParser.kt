@@ -3,6 +3,7 @@ package model.parser
 import java.io.File
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import model.parser.dataClasses.Bounds
 import model.parser.dataClasses.DisplayNode
 import model.parser.dataClasses.GenericNode
 import model.parser.dataClasses.WindowNode
@@ -99,7 +100,11 @@ class XmlParser(
                 longClickable = getAttribute(PropertyInfo.Node.LongClickable.rawName).toBoolean(),
                 password = getAttribute(PropertyInfo.Node.Password.rawName).toBoolean(),
                 selected = getAttribute(PropertyInfo.Node.Selected.rawName).toBoolean(),
-                bounds = getAttribute(PropertyInfo.Node.Bounds.rawName),
+                bounds =
+                    run {
+                        val boundsString = getAttribute(PropertyInfo.Node.Bounds.rawName)
+                        Bounds.fromBoundsString(boundsString)
+                    },
                 children = children,
             )
         }

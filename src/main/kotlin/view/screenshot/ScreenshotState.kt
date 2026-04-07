@@ -22,8 +22,6 @@ import model.InspectorState
 import model.displayDataResolver.DisplayData
 import model.parser.dataClasses.GenericNode
 import view.utils.Irrelevant
-import view.utils.area
-import view.utils.getGraphics
 import view.utils.getNodesUnder
 
 class ScreenshotState(
@@ -65,11 +63,13 @@ class ScreenshotState(
         get() = _screenshotComposableSize.asStateFlow()
 
     // It is irrelevant whether we use width or height when calculating the conversion factor.
+    // "displayPixelConversionFactor" is for transforming the offset and size to screen pixels by
+    // multiplying the screenshot pixels with a conversion factor.
     private val displayPixelConversionFactor: StateFlow<Float> =
         combine(_screenshotComposableSize, screenshotFileSize) {
-                _screenshotComposableSize,
+                screenshotComposableSize,
                 screenshotFileSize ->
-                _screenshotComposableSize.height / screenshotFileSize.height
+                screenshotComposableSize.height / screenshotFileSize.height
             }
             .stateIn(
                 scope = CoroutineScope(Dispatchers.Default),
@@ -81,11 +81,11 @@ class ScreenshotState(
         combine(showScreenshot, isNodeSelected) { showScreenshot, isNodeSelected ->
             showScreenshot && isNodeSelected
         }
-    val selectedNodeDisplayGraphics =
+    val selectedNodeDisplayBounds =
         combine(selectedNode, displayPixelConversionFactor) {
             selectedNode,
             displayPixelConversionFactor ->
-            selectedNode.getGraphics(displayPixelConversionFactor)
+            selectedNode.bounds * displayPixelConversionFactor
         }
 
     fun onImageSizeChanged(size: IntSize) {
@@ -97,13 +97,17 @@ class ScreenshotState(
         val nodes =
             displayData.value.displayNode.getNodesUnder(offset, displayPixelConversionFactor.value)
         if (nodes.isEmpty()) return
-        val nodeAreas = nodes.map { it.getGraphics().size.area }
+        val nodeAreas =
+            nodes.map {
+                // We use not conversion factor here because we only want to compare the areas, and
+                // multiplying each area by a factor does not change the result of the comparison.
+                it.bounds.area
+            }
 
         val smallestNodeIndex = nodeAreas.indexOf(nodeAreas.min())
         if (smallestNodeIndex == -1) return
 
-        val smallestNode = nodes.getOrNull(smallestNodeIndex)
-        if (smallestNode == null) return
+        val smallestNode = nodes.getOrNull(smallestNodeIndex) ?: return
         selectNode(smallestNode)
     }
 }

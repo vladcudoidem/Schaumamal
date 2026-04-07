@@ -20,7 +20,7 @@ data class GenericNode(
     val longClickable: Boolean,
     val password: Boolean,
     val selected: Boolean,
-    val bounds: String,
+    val bounds: Bounds,
     override val children: List<GenericNode>,
 ) : Node {
     @OptIn(ExperimentalUuidApi::class) override val uuid: Uuid = Uuid.random()
@@ -44,7 +44,7 @@ data class GenericNode(
                 longClickable = false,
                 password = false,
                 selected = false,
-                bounds = "[0,0][0,0]",
+                bounds = Bounds.Zero,
                 children = emptyList(),
             )
     }
