@@ -41,7 +41,14 @@ class PaneState(
 
     private val selectedNodeIndex =
         combine(flatXmlTreeMap, selectedNode) { flatXmlTreeMap, selectedNode ->
-                flatXmlTreeMap.keys.indexOf(selectedNode)
+                // When calculating the index to scroll to, we only take into account the visible
+                // lines,
+                // and thus only the lines that can be scrolled over/to.
+                val treeMapEntriesWithVisibleLines =
+                    flatXmlTreeMap.filter { it.value.isVisible.value }
+                val selectedNodeIndex = treeMapEntriesWithVisibleLines.keys.indexOf(selectedNode)
+
+                selectedNodeIndex
             }
             .stateIn(
                 scope = coroutineScope,

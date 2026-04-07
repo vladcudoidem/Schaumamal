@@ -23,8 +23,7 @@ data class GenericNode(
     val bounds: String,
     override val children: List<GenericNode>,
 ) : Node {
-    @OptIn(ExperimentalUuidApi::class)
-    override val uuid: Uuid = Uuid.random()
+    @OptIn(ExperimentalUuidApi::class) override val uuid: Uuid = Uuid.random()
 
     companion object {
         val Empty =

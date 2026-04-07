@@ -15,6 +15,5 @@ data class WindowNode(
     val accessibilityFocused: Boolean,
     override val children: List<GenericNode>,
 ) : Node {
-    @OptIn(ExperimentalUuidApi::class)
-    override val uuid: Uuid = Uuid.random()
+    @OptIn(ExperimentalUuidApi::class) override val uuid: Uuid = Uuid.random()
 }
