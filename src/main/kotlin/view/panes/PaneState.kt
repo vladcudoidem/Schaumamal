@@ -158,6 +158,9 @@ class PaneState(
         allLines.forEach { it.expand() }
     }
 
+    // Todo: fix (auto and manual) scrolling. We are currently not waiting for the UI to be updated.
+    //  This can lead to race conditions and to scrolling not working properly.
+
     fun expandAndScrollToSelectedNode() {
         val selectedLine = flatXmlTreeMap.value[selectedNode.value]
         selectedLine?.expandUntilVisible()
