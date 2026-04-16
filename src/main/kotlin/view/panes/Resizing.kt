@@ -25,6 +25,7 @@ import shared.Dimensions
 @Composable
 fun ResizingHandle(
     onDrag: (PointerInputChange, Offset, Float) -> Unit,
+    onDragEnd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -35,7 +36,11 @@ fun ResizingHandle(
                 .background(Color.Transparent)
                 .pointerHoverIcon(PointerIcon(Cursor(Cursor.CROSSHAIR_CURSOR)))
                 .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount -> onDrag(change, dragAmount, density) }
+                    detectDragGestures(
+                        onDrag = { change, dragAmount -> onDrag(change, dragAmount, density) },
+                        onDragEnd = onDragEnd,
+                        onDragCancel = onDragEnd,
+                    )
                 },
         contentAlignment = Alignment.Center,
     ) {
@@ -52,12 +57,17 @@ fun ResizingHandle(
 fun ResizingArea(
     pointerIcon: PointerIcon,
     onDrag: (PointerInputChange, Offset, Float) -> Unit,
+    onDragEnd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier.pointerHoverIcon(pointerIcon).pointerInput(Unit) {
-                detectDragGestures { change, dragAmount -> onDrag(change, dragAmount, density) }
+                detectDragGestures(
+                    onDrag = { change, dragAmount -> onDrag(change, dragAmount, density) },
+                    onDragEnd = onDragEnd,
+                    onDragCancel = onDragEnd,
+                )
             }
     )
 }

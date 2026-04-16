@@ -47,8 +47,8 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
         paneState.showSelectedNodeProperties.collectAsState(initial = false)
     val selectedNodePropertyMap by
         paneState.selectedNodePropertyMap.collectAsState(initial = LinkedHashMap())
-    val paneWidth by uiLayoutState.paneWidth.collectAsState()
-    val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState()
+    val paneWidth by uiLayoutState.paneWidth.collectAsState(0.dp)
+    val upperPaneHeight by uiLayoutState.upperPaneHeight.collectAsState(0.dp)
 
     val topBarActions =
         listOf(
@@ -134,6 +134,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                 ResizingArea(
                     pointerIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
                     onDrag = uiLayoutState::onHorizontalHandleDrag,
+                    onDragEnd = uiLayoutState::onHandleDragEnd,
                     modifier = Modifier.fillMaxHeight().width(resizingAreaWidth),
                 )
 
@@ -153,6 +154,7 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                     ResizingArea(
                         pointerIcon = PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)),
                         onDrag = uiLayoutState::onVerticalHandleDrag,
+                        onDragEnd = uiLayoutState::onHandleDragEnd,
                         modifier = Modifier.fillMaxWidth().height(resizingAreaWidth),
                     )
 
@@ -172,7 +174,10 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
                             Dimensions.handleDiameter / 2
                 )
 
-                ResizingHandle(onDrag = uiLayoutState::onHandleDrag)
+                ResizingHandle(
+                    onDrag = uiLayoutState::onHandleDrag,
+                    onDragEnd = uiLayoutState::onHandleDragEnd,
+                )
             }
         }
     }

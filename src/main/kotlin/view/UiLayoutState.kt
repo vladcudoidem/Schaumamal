@@ -13,6 +13,7 @@ import kotlin.math.min
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import shared.Dimensions.Initial.initialPaneWidth
 import shared.Dimensions.Initial.initialUpperPaneHeight
@@ -49,19 +50,20 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
     val screenshotLayerScale
         get() = _screenshotLayerScale.asStateFlow()
 
-    private val _paneWidth = MutableStateFlow(initialPaneWidth)
-    val paneWidth
-        get() = _paneWidth.asStateFlow()
+    // Todo: remove "get() =" for "asStateFlow()". Maybe also use new Kotlin version to remove need
+    //  for two properties.
 
-    private val _upperPaneHeight = MutableStateFlow(initialUpperPaneHeight)
-    val upperPaneHeight
-        get() = _upperPaneHeight.asStateFlow()
+    private val rawPaneWidth = MutableStateFlow(initialPaneWidth)
+    val paneWidth = rawPaneWidth.map { it.coerceAsPaneWidth() }
+
+    private val rawUpperPaneHeight = MutableStateFlow(initialUpperPaneHeight)
+    val upperPaneHeight = rawUpperPaneHeight.map { it.coerceAsPaneHeight() }
 
     fun onPanesHeightConstraintChanged(newHeightConstraint: Dp) {
         // First update the height constraint.
         panesHeightConstraint = newHeightConstraint
 
-        _upperPaneHeight.update {
+        rawUpperPaneHeight.update {
             val minUpperPaneHeight = minimumPaneDimension
             val maxUpperPaneHeight =
                 max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
@@ -73,7 +75,7 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         // First update the width constraint.
         panesWidthConstraint = newWidthConstraint
 
-        _paneWidth.update {
+        rawPaneWidth.update {
             val minPaneWidth = minimumPaneDimension
             val maxPaneWidth = max(minPaneWidth, panesWidthConstraint - minimumPaneDimension)
             it.coerceIn(minPaneWidth, maxPaneWidth)
@@ -84,28 +86,37 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.x.toDp(density)
-        _paneWidth.update {
-            val minPaneWidth = minimumPaneDimension
-            val maxPaneWidth = max(minPaneWidth, panesWidthConstraint - minimumPaneDimension)
-            (it - dragAmountDp).coerceIn(minPaneWidth, maxPaneWidth)
-        }
+        rawPaneWidth.update { it - dragAmountDp }
     }
 
     fun onVerticalHandleDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.y.toDp(density)
-        _upperPaneHeight.update {
-            val minUpperPaneHeight = minimumPaneDimension
-            val maxUpperPaneHeight =
-                max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
-            (it + dragAmountDp).coerceIn(minUpperPaneHeight, maxUpperPaneHeight)
-        }
+        rawUpperPaneHeight.update { it + dragAmountDp }
     }
 
     fun onHandleDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         onHorizontalHandleDrag(change, dragAmount, density)
         onVerticalHandleDrag(change, dragAmount, density)
+    }
+
+    fun onHandleDragEnd() {
+        rawPaneWidth.update { it.coerceAsPaneWidth() }
+        rawUpperPaneHeight.update { it.coerceAsPaneHeight() }
+    }
+
+    fun Dp.coerceAsPaneWidth(): Dp {
+        val minPaneWidth = minimumPaneDimension
+        val maxPaneWidth = max(minPaneWidth, panesWidthConstraint - minimumPaneDimension)
+        return this.coerceIn(minPaneWidth, maxPaneWidth)
+    }
+
+    fun Dp.coerceAsPaneHeight(): Dp {
+        val minUpperPaneHeight = minimumPaneDimension
+        val maxUpperPaneHeight =
+            max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
+        return this.coerceIn(minUpperPaneHeight, maxUpperPaneHeight)
     }
 
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
@@ -152,7 +163,7 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         val startVisibleScreenshotAreaBound = mediumPadding + extractButtonDiameter
         val endVisibleScreenshotAreaBound =
             panesWidthConstraint -
-                (wedgeSmallDimension + (smallPadding + 3.dp) + _paneWidth.value + mediumPadding)
+                (wedgeSmallDimension + (smallPadding + 3.dp) + rawPaneWidth.value + mediumPadding)
 
         // We first place the screenshot in the center of the screenshot area.
 
