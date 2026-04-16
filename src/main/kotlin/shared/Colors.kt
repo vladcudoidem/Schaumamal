@@ -35,7 +35,8 @@ object Colors {
 
     /* Screenshot Layer */
 
-    val highlighterColor = Color.Red
+    val selectedNodeHighlighterColor = Color.Red
+    val searchResultHighlighterColor = Color.Green
 
     /* Notifications */
 
