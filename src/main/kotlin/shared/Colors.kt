@@ -19,6 +19,8 @@ object Colors {
     val backgroundColor = Color(0xFF121317)
     val elevatedBackgroundColor = Color(0xFF1E2024)
 
+    val searchResultBackgroundColor = Color(0xFF273927)
+
     /* Button Layer */
 
     val extractionButtonColor = Color(0xFFBA1A1A)

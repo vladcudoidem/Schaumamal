@@ -50,6 +50,9 @@ data class XmlTreeLine(
     private val _isSelected: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isSelected = _isSelected.asStateFlow()
 
+    private val _isSearchResult: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isSearchResult = _isSearchResult.asStateFlow()
+
     fun select() {
         _isSelected.update { true }
     }
