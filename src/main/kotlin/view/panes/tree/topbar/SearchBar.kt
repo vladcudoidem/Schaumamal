@@ -50,7 +50,9 @@ import view.utils.toDp
 // Todo: persist screenshot lock setting, pane and window sizes.
 
 // This approximation depends on the UI elements that are used and might break often.
-private val widthOfOtherSearchBarElements = 245.dp
+// We use this to approximate how much space the search bar field has, starting from the width of
+// the search bar.
+private val widthOfOtherSearchBarElements = 260.dp
 
 @Composable
 fun SearchBar(
@@ -144,6 +146,8 @@ fun SearchBar(
                     isActive = isImageSearchActive,
                     onClick = { isImageSearchActive = !isImageSearchActive },
                 )
+
+                Spacer(width = smallPadding + mediumPadding)
             }
         }
     }
