@@ -45,7 +45,6 @@ import view.utils.toDp
 
 // Todo: fix stutter when resizing search bar, use ".weight(...)"
 // Todo: implement search on screenshot
-// Todo: make bounds nicer
 // Todo: make panes draggable in both directions at once
 // Todo: add feature to lock screenshot to center
 // Todo: persist screenshot lock setting, pane and window sizes.

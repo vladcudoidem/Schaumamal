@@ -26,7 +26,7 @@ object Colors {
 
     /* Pane Layer */
 
-    val wedgeColor = Color(0xBBC3C6D2)
+    val resizingHandleColor = Color(0x79C3C6D2)
 
     val scrollbarHoverColor = Color.White.copy(alpha = 0.50f)
     val scrollbarUnhoverColor = Color.White.copy(alpha = 0.12f)

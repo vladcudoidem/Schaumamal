@@ -1,5 +1,6 @@
 package view.panes
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,10 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import java.awt.Cursor
+import shared.Dimensions
 import shared.Dimensions.mediumPadding
+import view.Spacer
 import view.UiLayoutState
 import view.panes.properties.SelectedNodeProperties
 import view.panes.properties.topbar.LowerPaneTitleBar
@@ -31,6 +36,8 @@ import view.panes.topbar.PaneTopBarActionButton
 import view.panes.tree.XmlTree
 import view.panes.tree.topbar.UpperPaneTopBars
 import view.utils.toPx
+
+private val resizingAreaWidth = 10.dp
 
 @Composable
 fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modifier = Modifier) {
@@ -108,38 +115,64 @@ fun PaneLayer(uiLayoutState: UiLayoutState, paneState: PaneState, modifier: Modi
 
         LaunchedEffect(maxHeight) { uiLayoutState.onPanesHeightConstraintChanged(maxHeight) }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.fillMaxHeight().padding(mediumPadding),
-        ) {
-            Wedge(
-                orientation = WedgeOrientation.VERTICAL,
-                onDrag = uiLayoutState::onVerticalWedgeDrag,
-            )
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(paneWidth),
+        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    modifier
+                        .fillMaxHeight()
+                        .padding(
+                            top = Dimensions.mediumPadding,
+                            end = Dimensions.mediumPadding,
+                            bottom = Dimensions.mediumPadding,
+                        ),
             ) {
-                UpperPane(
-                    showXmlTree = showXmlTree,
-                    flatXmlTree = flatXmlTree,
-                    treeListState = treeListState,
-                    topBarActions = topBarActions,
-                    onTreeListViewportHeightChanged = { treeListViewportHeight = it },
-                    modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
+                // Some arbitrary padding to fit the resizing area properly into the gap between
+                // the upper and lower pane.
+                Spacer(width = 12.dp)
+
+                ResizingArea(
+                    pointerIcon = PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)),
+                    onDrag = uiLayoutState::onHorizontalHandleDrag,
+                    modifier = Modifier.fillMaxHeight().width(resizingAreaWidth),
                 )
 
-                Wedge(
-                    orientation = WedgeOrientation.HORIZONTAL,
-                    onDrag = uiLayoutState::onHorizontalWedgeDrag,
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.width(paneWidth),
+                ) {
+                    UpperPane(
+                        showXmlTree = showXmlTree,
+                        flatXmlTree = flatXmlTree,
+                        treeListState = treeListState,
+                        topBarActions = topBarActions,
+                        onTreeListViewportHeightChanged = { treeListViewportHeight = it },
+                        modifier = Modifier.height(upperPaneHeight).fillMaxWidth(),
+                    )
+
+                    ResizingArea(
+                        pointerIcon = PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)),
+                        onDrag = uiLayoutState::onVerticalHandleDrag,
+                        modifier = Modifier.fillMaxWidth().height(resizingAreaWidth),
+                    )
+
+                    LowerPane(
+                        showSelectedNodeProperties = showSelectedNodeProperties,
+                        selectedNodePropertyMap = selectedNodePropertyMap,
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight()) {
+                Spacer(
+                    height =
+                        // This will break easily. Fix later in some way.
+                        upperPaneHeight + Dimensions.mediumPadding / 2 + Dimensions.mediumPadding -
+                            Dimensions.handleDiameter / 2
                 )
 
-                LowerPane(
-                    showSelectedNodeProperties = showSelectedNodeProperties,
-                    selectedNodePropertyMap = selectedNodePropertyMap,
-                    modifier = Modifier.fillMaxHeight().fillMaxWidth(),
-                )
+                ResizingHandle(onDrag = uiLayoutState::onHandleDrag)
             }
         }
     }

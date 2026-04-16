@@ -80,7 +80,7 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         }
     }
 
-    fun onVerticalWedgeDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
+    fun onHorizontalHandleDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.x.toDp(density)
@@ -91,7 +91,7 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
         }
     }
 
-    fun onHorizontalWedgeDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
+    fun onVerticalHandleDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
         if (change.positionChange() != Offset.Zero) change.consume()
 
         val dragAmountDp = dragAmount.y.toDp(density)
@@ -101,6 +101,11 @@ class UiLayoutState(private val screenshotComposableSize: StateFlow<Size>) {
                 max(minUpperPaneHeight, panesHeightConstraint - minimumPaneDimension)
             (it + dragAmountDp).coerceIn(minUpperPaneHeight, maxUpperPaneHeight)
         }
+    }
+
+    fun onHandleDrag(change: PointerInputChange, dragAmount: Offset, density: Float) {
+        onHorizontalHandleDrag(change, dragAmount, density)
+        onVerticalHandleDrag(change, dragAmount, density)
     }
 
     fun onImageGesture(centroid: Offset, pan: Offset, zoom: Float, rotation: Float) {
