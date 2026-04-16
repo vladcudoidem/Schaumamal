@@ -53,6 +53,7 @@ class AppViewModel(
         get() = _selectedDump.asStateFlow()
 
     private val displayDataList =
+        // Todo: fix this freaking ugly formatting.
         combineTransform(dumpsDirectoryName, _selectedDump) { dumpsDirectoryName, selectedDump ->
                 if (selectedDump != Dump.Empty && selectedDump.displays.isNotEmpty()) {
                     emit(displayDataResolver.resolve(dumpsDirectoryName, selectedDump))
@@ -87,6 +88,7 @@ class AppViewModel(
                 initialValue = DisplayData.Empty,
             )
 
+    // Todo: this is not really needed. Use "_selectedNode".
     private val _isNodeSelected = MutableStateFlow(false)
     val isNodeSelected
         get() = _isNodeSelected.asStateFlow()
