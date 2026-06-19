@@ -16,9 +16,6 @@ jobs:
           - os: ubuntu-latest
             platformName: "Linux"
             architectureId: "x64"
-          - os: macos-13
-            platformName: "Apple"
-            architectureId: "x64"
           - os: macos-latest
             platformName: "Apple"
             architectureId: "arm64"
